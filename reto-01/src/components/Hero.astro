@@ -1,0 +1,161 @@
+---
+import { knowledgeBase } from '../data/knowledge-base';
+
+const kb = knowledgeBase;
+---
+
+<section class="hero">
+  <div class="hero__textura" aria-hidden="true"></div>
+
+  <div class="contenedor hero__wrap">
+    <a class="marca" href="#top">
+      <span>parla</span><span class="marca__punto">.</span>
+    </a>
+
+    <div class="hero__cuerpo">
+      <p class="hero__kicker">🦜 Kiko te espera</p>
+
+      <h1 class="hero__titulo">
+        {kb.eslogan}
+        <span class="hero__subrayado" aria-hidden="true"></span>
+      </h1>
+
+      <p class="hero__bajada">
+        Aprende <strong>{kb.idiomas.length} de los idiomas más hablados del mundo</strong> con
+        clases grupales, 1-a-1 u online — a tu ritmo, sin presión y con Kiko
+        resolviendo tus dudas 24/7.
+      </p>
+
+      <ul class="hero__idiomas" aria-label="Idiomas que enseñamos">
+        {
+          kb.idiomas.map((idioma) => (
+            <li class="pill hero__idioma">
+              <span aria-hidden="true">{idioma.bandera}</span>
+              {idioma.nombre}
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="hero__cta">
+        <button type="button" class="btn-grande btn-grande--brand" data-open-chat>
+          💬 Pregúntale a Kiko 🦜
+        </button>
+        <p class="hero__cta-nota">Clase de prueba gratis · sin tarjeta, sin miedo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-brand);
+    border-bottom: var(--border-thick);
+  }
+
+  .hero__textura {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(var(--color-ink) 2px, transparent 2px),
+      radial-gradient(var(--color-ink) 2px, transparent 2px);
+    background-size: 34px 34px;
+    background-position: 0 0, 17px 17px;
+    opacity: 0.06;
+  }
+
+  .hero__wrap {
+    position: relative;
+    padding-block: 1.75rem clamp(3.5rem, 8vw, 6.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 6vw, 3.5rem);
+  }
+
+  .hero__cuerpo {
+    max-width: 46rem;
+  }
+
+  .hero__kicker {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: var(--color-ink);
+    color: var(--color-brand);
+    padding: 0.4em 0.9em;
+    border-radius: var(--radius-pill);
+    margin: 0 0 1.25rem;
+  }
+
+  .hero__titulo {
+    position: relative;
+    margin-bottom: 0.6em;
+  }
+
+  .hero__subrayado {
+    position: absolute;
+    left: 0.05em;
+    bottom: 0.02em;
+    width: 6.6em;
+    max-width: 70%;
+    height: 0.32em;
+    background: var(--color-coral);
+    border-radius: var(--radius-pill);
+    z-index: -1;
+    transform: rotate(-1.5deg);
+  }
+
+  .hero__bajada {
+    font-size: clamp(1.05rem, 0.4vw + 1rem, 1.25rem);
+    color: var(--color-text-soft);
+    max-width: 38rem;
+  }
+
+  .hero__idiomas {
+    list-style: none;
+    margin: 1.75rem 0 2.25rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .hero__idioma {
+    background: var(--color-white);
+  }
+
+  .hero__idioma:nth-child(1) { transform: rotate(-2deg); }
+  .hero__idioma:nth-child(2) { transform: rotate(1.5deg); }
+  .hero__idioma:nth-child(3) { transform: rotate(-1deg); }
+  .hero__idioma:nth-child(4) { transform: rotate(2deg); }
+
+  .hero__cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+
+  .hero__cta-nota {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-text-soft);
+  }
+
+  @media (max-width: 40rem) {
+    .hero__cta {
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .hero__cta .btn-grande {
+      width: 100%;
+    }
+  }
+</style>
