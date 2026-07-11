@@ -4,11 +4,15 @@
 
 **Goal:** Construir una landing de la academia de idiomas "Parla" con un chat embebido (mascota Kiko 🦜) que responde preguntas del negocio desde una base de conocimiento, admite cuando no sabe (no inventa) y ofrece un diagnóstico adaptativo de nivel de idioma.
 
-**Architecture:** Astro 6 en modo `server` con el adapter de Cloudflare (`@astrojs/cloudflare`), desplegable en Cloudflare Pages. Una sola base de conocimiento tipada (`data/knowledge-base.ts`) es la fuente de verdad: alimenta tanto el system prompt del agente como las secciones de precios/FAQ de la landing. El chat es un island de TypeScript vanilla que llama a un endpoint `POST /api/chat`, el cual usa el binding de Cloudflare Workers AI (Llama) con el system prompt construido en `lib/system-prompt.ts`.
+**Architecture:** Astro 6 en modo `server` con el adapter de Cloudflare (`@astrojs/cloudflare` v13), desplegable en Cloudflare **Workers**. Una sola base de conocimiento tipada (`data/knowledge-base.ts`) es la fuente de verdad: alimenta tanto el system prompt del agente como las secciones de precios/FAQ de la landing. El chat es un island de TypeScript vanilla que llama a un endpoint `POST /api/chat`, el cual usa el binding de Cloudflare Workers AI (Llama) con el system prompt construido en `lib/system-prompt.ts`.
 
-**Tech Stack:** Astro 6, `@astrojs/cloudflare` v13, Cloudflare Workers AI (`@cf/meta/llama-3.1-8b-instruct`), TypeScript vanilla (sin React), Vitest para tests unitarios, Wrangler (modelo **Cloudflare Pages**) para dev/deploy.
+**Tech Stack:** Astro 6, `@astrojs/cloudflare` v13, Cloudflare Workers AI (`@cf/meta/llama-3.1-8b-instruct`), TypeScript vanilla (sin React), Vitest para tests unitarios, Wrangler (modelo **Cloudflare Workers**) para dev/deploy.
 
-**Modelo de despliegue (consistente en todo el plan):** Cloudflare **Pages** (advanced mode con `_worker.js` que produce el adapter). El binding `AI` se declara en `wrangler.toml` con `pages_build_output_dir`, y se accede vía `context.locals.runtime.env.AI` (patrón avalado por `@astrojs/cloudflare`). Verificación local con `wrangler pages dev`; despliegue con `wrangler pages deploy`. Nota: el binding de Workers AI llama al servicio real de Cloudflare incluso en local, así que requiere `npx wrangler login` antes de las verificaciones del chat.
+**Modelo de despliegue (consistente en todo el plan):** Cloudflare **Workers**. IMPORTANTE: `@astrojs/cloudflare` v13 **ya no soporta Cloudflare Pages** — despliega a Workers. Por eso:
+- `wrangler.toml` declara `main` (entrypoint del adapter) y el binding `AI`; **sin** `pages_build_output_dir` ni `[assets]` (el adapter maneja los assets automáticamente).
+- El binding se accede con `import { env } from 'cloudflare:workers'` → `env.AI`. (En v13 se removió `Astro.locals.runtime`; este es el patrón correcto y es el mismo que usó reto-10 de la edición 1.)
+- Comandos: dev `astro dev`; preview local del worker `astro build && astro preview`; deploy `astro build && wrangler deploy`.
+- El binding de Workers AI llama al servicio real de Cloudflare incluso en dev/preview, así que requiere `npx wrangler login` antes de las verificaciones del chat.
 
 **Nota de implementación (decisión de planeación):** el spec mencionaba streaming; para reducir riesgo y usar el patrón probado de la edición 1 (reto-10), el endpoint responde **sin streaming** (`ai.run` normal, respuestas cortas con `max_tokens`). El widget simula el efecto de escritura revelando el texto gradualmente en el cliente. Si más adelante se quiere streaming real, es un cambio aislado en el endpoint + widget.
 
@@ -24,7 +28,7 @@
 reto-01/
   package.json                    # deps + scripts (dev, build, preview, test, eval)
   astro.config.mjs                # output:'server', adapter cloudflare()
-  wrangler.toml                   # Pages: pages_build_output_dir + binding [ai] + nodejs_compat
+  wrangler.toml                   # Workers: main (adapter entrypoint) + binding [ai] + nodejs_compat
   tsconfig.json                   # config estricta de Astro
   vitest.config.ts                # runner de tests unitarios
   .gitignore                      # node_modules, dist, .astro, .wrangler
@@ -75,7 +79,8 @@ reto-01/
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "wrangler pages dev ./dist",
+    "preview": "astro preview",
+    "deploy": "astro build && wrangler deploy",
     "astro": "astro",
     "test": "vitest run",
     "eval": "node scripts/eval.mjs"
@@ -94,7 +99,7 @@ reto-01/
 
 - [ ] **Step 2: Crear `astro.config.mjs`**
 
-`platformProxy` expone los bindings de `wrangler.toml` (incluido `AI`) durante `astro dev`.
+En v13 el adapter corre el dev server sobre workerd y expone los bindings de `wrangler.toml` automáticamente (no hace falta `platformProxy`).
 
 ```js
 import { defineConfig } from 'astro/config';
@@ -102,25 +107,25 @@ import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
   output: 'server',
-  adapter: cloudflare({
-    platformProxy: { enabled: true },
-  }),
+  adapter: cloudflare(),
 });
 ```
 
-- [ ] **Step 3: Crear `wrangler.toml`** (modelo Cloudflare Pages)
+- [ ] **Step 3: Crear `wrangler.toml`** (modelo Cloudflare Workers)
 
-`pages_build_output_dir` es lo que hace que `wrangler pages dev`/`deploy` lean los bindings del `wrangler.toml`. NO usar `[assets]` (esa es la forma de Workers y rompería el binding `AI` en Pages).
+`main` apunta al entrypoint del adapter (así `wrangler deploy` sabe qué desplegar). NO usar `pages_build_output_dir` ni `[assets]` — el adapter v13 maneja los assets automáticamente.
 
 ```toml
 name = "parla"
-compatibility_date = "2025-01-01"
+main = "@astrojs/cloudflare/entrypoints/server"
+compatibility_date = "2025-05-21"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = "./dist"
 
 [ai]
 binding = "AI"
 ```
+
+Verificación de que la config es válida (Step 8): `npx wrangler deploy --dry-run` debe validar sin errores (no requiere login). Si por la versión instalada `main` con el entrypoint del paquete no valida, la alternativa avalada es desplegar con la config generada por el adapter: `wrangler deploy -c dist/server/wrangler.json` (y ajustar el script `deploy` en consecuencia). Reportar cuál funcionó.
 
 - [ ] **Step 4: Crear `tsconfig.json`**
 
@@ -175,10 +180,12 @@ dist/
 </html>
 ```
 
-- [ ] **Step 8: Instalar y verificar build**
+- [ ] **Step 8: Instalar y verificar build + config**
 
 Run: `cd reto-01 && npm install && npm run build`
 Expected: build termina sin errores y crea `dist/`.
+Run: `cd reto-01 && npx wrangler deploy --dry-run`
+Expected: Wrangler valida la config sin errores (no despliega, no requiere login). Si falla por `main`, aplicar la alternativa del Step 3 y re-verificar.
 
 - [ ] **Step 9: Commit**
 
@@ -427,18 +434,19 @@ git commit -m "feat(reto-01): add system prompt builder (Kiko tone + KB + no-hal
 **Files:**
 - Create: `reto-01/src/pages/api/chat.ts`
 
-Nota: la respuesta del LLM no es determinista → se verifica manualmente, no con test unitario (según el spec, sección 6). El binding `AI` requiere Cloudflare; se prueba con `wrangler pages dev` sobre el build (o desplegado), no con `astro dev`.
+Nota: la respuesta del LLM no es determinista → se verifica manualmente, no con test unitario (según el spec, sección 6). El binding `AI` llama al servicio real de Cloudflare; funciona en `astro dev` (en v13 el dev server corre sobre workerd y expone los bindings), pero requiere `npx wrangler login` previo.
 
 - [ ] **Step 1: Implementar el endpoint**
 
 ```ts
 // src/pages/api/chat.ts
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { buildSystemPrompt, MODEL } from '../../lib/system-prompt';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   try {
     const { messages } = await request.json();
 
@@ -446,8 +454,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return json({ error: 'Se requiere un arreglo de mensajes' }, 400);
     }
 
-    // Binding avalado por @astrojs/cloudflare (disponible en dev vía platformProxy).
-    const ai = (locals as any).runtime.env.AI;
+    // Acceso al binding en @astrojs/cloudflare v13 (Astro.locals.runtime fue removido).
+    const ai = (env as any).AI;
     const aiMessages = [
       { role: 'system', content: buildSystemPrompt() },
       ...messages,
@@ -479,19 +487,20 @@ function json(body: unknown, status: number): Response {
 
 Run:
 ```bash
-cd reto-01 && npm run build && npm run preview
-# en otra terminal (con la sesión de Cloudflare iniciada: npx wrangler login):
-curl -s -X POST http://localhost:8788/api/chat \
+npx wrangler login   # una sola vez, si no hay sesión
+cd reto-01 && npm run dev
+# en otra terminal (astro dev corre en http://localhost:4321):
+curl -s -X POST http://localhost:4321/api/chat \
   -H 'Content-Type: application/json' \
   -d '{"messages":[{"role":"user","content":"¿Cuánto cuesta el curso grupal?"}]}'
 ```
-Expected: JSON con `response` que menciona `$189.000`. (Si Workers AI pide login, correr `npx wrangler login` primero.)
+Expected: JSON con `response` que menciona `$189.000`.
 
 - [ ] **Step 3: Verificar que admite lo que no sabe**
 
 Run:
 ```bash
-curl -s -X POST http://localhost:8788/api/chat \
+curl -s -X POST http://localhost:4321/api/chat \
   -H 'Content-Type: application/json' \
   -d '{"messages":[{"role":"user","content":"¿Tienen cursos de francés?"}]}'
 ```
@@ -769,7 +778,7 @@ Importar y colocar antes de cerrar `</body>`.
 
 - [ ] **Step 5: Verificar end-to-end**
 
-Run: `cd reto-01 && npm run build && npm run preview` (con `npx wrangler login` hecho)
+Run: `cd reto-01 && npm run dev` (con `npx wrangler login` hecho) → abrir `http://localhost:4321`
 Expected: clic en el botón grande abre el chat; preguntar "¿cuánto cuesta el intensivo?" responde `$650.000`; preguntar por algo fuera de la KB → admite que no sabe; pedir diagnóstico → hace preguntas y da nivel MCER.
 
 - [ ] **Step 6: Commit**
@@ -793,7 +802,7 @@ Script Node que dispara preguntas guion contra el endpoint local e imprime pregu
 
 ```js
 // scripts/eval.mjs
-const BASE = process.env.BASE_URL ?? 'http://localhost:8788';
+const BASE = process.env.BASE_URL ?? 'http://localhost:4321';
 
 const casos = [
   { q: '¿Cuánto cuesta el curso grupal?', espero: 'debe mencionar $189.000' },
@@ -817,12 +826,12 @@ for (const c of casos) {
 
 - [ ] **Step 2: Correr la evaluación y revisar**
 
-Run: `cd reto-01 && npm run preview` (en una terminal) y `npm run eval` (en otra).
+Run: `cd reto-01 && npm run dev` (en una terminal, con `npx wrangler login` hecho) y `npm run eval` (en otra).
 Expected: revisar a ojo que responde bien lo que está en la KB y admite lo que no sabe.
 
 - [ ] **Step 3: Escribir `README.md`**
 
-Incluir: nombre del reto, descripción del negocio (Parla), qué hace el asistente (Q&A + no-inventa + diagnóstico), tech stack, cómo correr (`npm install`, `npm run dev`, `npm run build`, `npm run preview`, `npx wrangler login` para Workers AI), cómo desplegar (`wrangler pages deploy dist`), y cómo cumple cada requisito del reto.
+Incluir: nombre del reto, descripción del negocio (Parla), qué hace el asistente (Q&A + no-inventa + diagnóstico), tech stack, cómo correr (`npm install`, `npm run dev`, `npx wrangler login` para Workers AI), cómo desplegar (`npm run deploy`, que corre `astro build && wrangler deploy` a Cloudflare Workers), y cómo cumple cada requisito del reto.
 
 - [ ] **Step 4: Commit**
 
@@ -847,7 +856,7 @@ Expected: build sin errores ni warnings de tipos.
 
 - [ ] **Step 3: Checklist de requisitos del reto (@superpowers:verification-before-completion)**
 
-Verificar manualmente en `npm run preview`:
+Verificar manualmente en `npm run dev` (con `npx wrangler login`):
 - [ ] KB con ≥10 datos concretos (test lo cubre).
 - [ ] Responde correctamente preguntas de la KB (precio, horario, reembolso).
 - [ ] Admite cuando no sabe, sin inventar.
@@ -855,10 +864,10 @@ Verificar manualmente en `npm run preview`:
 - [ ] Chat embebido en la landing funciona.
 - [ ] Diagnóstico de nivel funciona end-to-end.
 
-- [ ] **Step 4 (opcional): Desplegar a Cloudflare Pages**
+- [ ] **Step 4 (opcional): Desplegar a Cloudflare Workers**
 
-Run: `cd reto-01 && npx wrangler pages deploy dist`
-Expected: URL pública funcionando con el chat.
+Run: `cd reto-01 && npm run deploy`   (corre `astro build && wrangler deploy`)
+Expected: URL pública (`*.workers.dev`) funcionando con el chat.
 
 - [ ] **Step 5: Commit final / actualizar README raíz**
 
