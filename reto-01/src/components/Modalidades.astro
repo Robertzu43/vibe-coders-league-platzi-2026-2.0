@@ -1,0 +1,129 @@
+---
+import { knowledgeBase } from '../data/knowledge-base';
+
+const kb = knowledgeBase;
+const iconos = ['🧑‍🤝‍🧑', '🎯', '💻'];
+---
+
+<section class="seccion modalidades" id="modalidades" aria-labelledby="modalidades-titulo">
+  <div class="contenedor modalidades__wrap">
+    <div class="modalidades__intro">
+      <p class="kicker kicker--azul">🗓️ A tu manera</p>
+      <h2 id="modalidades-titulo">Estudia como te quede mejor</h2>
+      <p>
+        Grupal, privada u online: todas las modalidades siguen el mismo mapa de niveles
+        para que tu progreso siempre sea claro.
+      </p>
+
+      <p class="modalidades__nivel">
+        <span aria-hidden="true">📈</span>
+        <span>{kb.niveles}</span>
+      </p>
+    </div>
+
+    <ul class="modalidades__lista">
+      {
+        kb.modalidades.map((modalidad, i) => (
+          <li class="modalidad-card">
+            <span class="modalidad-card__icono" aria-hidden="true">{iconos[i % iconos.length]}</span>
+            <p class="modalidad-card__texto">{modalidad}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .modalidades {
+    background: var(--color-white);
+    border-block: var(--border-thick);
+  }
+
+  .modalidades__wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .modalidades__intro p {
+    color: var(--color-text-soft);
+    max-width: 32rem;
+  }
+
+  .modalidades__nivel {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    font-weight: 700;
+    color: var(--color-ink);
+    background: var(--color-yellow);
+    border: var(--border-thick);
+    border-radius: var(--radius-md);
+    padding: 0.9em 1.1em;
+    box-shadow: var(--shadow-hard-sm);
+    max-width: 30rem;
+  }
+
+  .modalidades__nivel span:first-child {
+    font-size: 1.3rem;
+  }
+
+  .modalidades__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .modalidad-card {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    background: var(--color-cream);
+    border: var(--border-thick);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.4rem;
+    box-shadow: var(--shadow-hard-sm);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .modalidad-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-hard-md);
+  }
+
+  .modalidad-card__icono {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.5rem;
+    background: var(--color-white);
+    border: var(--border-thick);
+    border-radius: var(--radius-pill);
+  }
+
+  .modalidad-card__texto {
+    margin: 0;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 55rem) {
+    .modalidades__wrap {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .modalidad-card {
+      transition: none;
+    }
+  }
+</style>

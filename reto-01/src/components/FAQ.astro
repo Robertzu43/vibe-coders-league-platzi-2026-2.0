@@ -1,0 +1,186 @@
+---
+import { knowledgeBase } from '../data/knowledge-base';
+
+const kb = knowledgeBase;
+
+const info = [
+  { icono: '🕒', titulo: 'Horarios', texto: kb.horarios },
+  { icono: '📍', titulo: 'Sede', texto: kb.sede },
+  { icono: '💳', titulo: 'Formas de pago', texto: kb.pagos },
+  { icono: '↩️', titulo: 'Política de reembolso', texto: kb.reembolso },
+  { icono: '❄️', titulo: 'Congelamiento', texto: kb.congelamiento },
+  { icono: '📜', titulo: 'Certificación', texto: kb.certificacion },
+];
+---
+
+<section class="seccion faq" id="faq" aria-labelledby="faq-titulo">
+  <div class="contenedor faq__wrap">
+    <div class="faq__preguntas">
+      <p class="kicker kicker--morado">🙋 Resolvemos tus dudas</p>
+      <h2 id="faq-titulo">Preguntas frecuentes</h2>
+
+      <div class="faq__acordeon">
+        {
+          kb.faqs.map((faq) => (
+            <details class="faq-item">
+              <summary class="faq-item__pregunta">
+                {faq.pregunta}
+                <span class="faq-item__icono" aria-hidden="true">+</span>
+              </summary>
+              <p class="faq-item__respuesta">{faq.respuesta}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+
+    <aside class="faq__info" aria-label="Información práctica">
+      <h3 class="faq__info-titulo">Info práctica</h3>
+      <ul class="faq__info-lista">
+        {
+          info.map((item) => (
+            <li class="faq__info-item">
+              <span class="faq__info-icono" aria-hidden="true">{item.icono}</span>
+              <div>
+                <p class="faq__info-etiqueta">{item.titulo}</p>
+                <p class="faq__info-texto">{item.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .faq {
+    background: var(--color-white);
+    border-block: var(--border-thick);
+  }
+
+  .faq__wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: clamp(2rem, 5vw, 3.5rem);
+    align-items: start;
+  }
+
+  .faq__acordeon {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .faq-item {
+    background: var(--color-cream);
+    border: var(--border-thick);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-hard-sm);
+    padding: 0.35rem 1.25rem;
+  }
+
+  .faq-item[open] {
+    box-shadow: var(--shadow-hard-md);
+  }
+
+  .faq-item__pregunta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+  }
+
+  .faq-item__pregunta::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item__icono {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: var(--color-yellow);
+    border: 2px solid var(--color-ink);
+    font-size: 1.1rem;
+    transition: transform 200ms ease;
+  }
+
+  .faq-item[open] .faq-item__icono {
+    transform: rotate(45deg);
+  }
+
+  .faq-item__respuesta {
+    margin: 0 0 1.1rem;
+    color: var(--color-text-soft);
+  }
+
+  .faq__info {
+    background: var(--color-ink);
+    color: var(--color-white);
+    border-radius: var(--radius-lg);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-hard-md);
+    padding: 1.75rem;
+  }
+
+  .faq__info-titulo {
+    color: var(--color-yellow);
+    margin-bottom: 1.1rem;
+  }
+
+  .faq__info-lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .faq__info-item {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+  }
+
+  .faq__info-icono {
+    flex: none;
+    font-size: 1.3rem;
+  }
+
+  .faq__info-etiqueta {
+    margin: 0 0 0.15em;
+    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+  }
+
+  .faq__info-texto {
+    margin: 0;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  @media (max-width: 55rem) {
+    .faq__wrap {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item__icono {
+      transition: none;
+    }
+  }
+</style>
