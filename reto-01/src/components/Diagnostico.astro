@@ -14,7 +14,7 @@ const pasos = [
   <div class="contenedor diagnostico__wrap">
     <div class="diagnostico__textura" aria-hidden="true"></div>
 
-    <p class="kicker">⚡ Gratis y toma 2 minutos</p>
+    <p class="kicker kicker--amarillo">⚡ Gratis y toma 2 minutos</p>
     <h2 id="diagnostico-titulo">¿No sabes en qué nivel estás? Kiko te lo dice.</h2>
     <p class="diagnostico__bajada">
       Nuestro diagnóstico adaptativo se ajusta a tus respuestas en tiempo real: nada de
@@ -66,17 +66,9 @@ const pasos = [
   }
 
   .kicker {
+    /* Necesita quedar en el flujo de elementos posicionados para pintarse
+       encima de .diagnostico__textura (position: absolute). */
     position: relative;
-    display: inline-flex;
-    align-items: center;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.95rem;
-    background: var(--color-yellow);
-    color: var(--color-ink);
-    padding: 0.4em 0.9em;
-    border-radius: var(--radius-pill);
-    margin: 0 0 1.1rem;
   }
 
   .diagnostico h2 {
