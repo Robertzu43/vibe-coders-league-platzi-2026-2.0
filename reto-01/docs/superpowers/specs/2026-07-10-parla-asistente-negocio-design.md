@@ -54,19 +54,20 @@ El asistente **Kiko** 🦜 tiene tres capacidades:
 1. **Responder preguntas del negocio** usando exclusivamente la base de conocimiento (sección 3).
 2. **Admitir cuando no sabe.** Si la pregunta cae fuera de la base de conocimiento, lo dice con gracia y ofrece el WhatsApp/correo de contacto. **Nunca inventa datos** (precios, horarios, políticas que no estén en la KB). Se refuerza con:
    - Regla explícita anti-invención en el system prompt.
-   - Temperatura baja en la llamada al modelo.
+   - Temperatura baja en la llamada al modelo: **`temperature: 0.2`**.
 3. **Diagnóstico de nivel adaptativo:**
    - El usuario elige uno de los 4 idiomas.
    - Kiko hace entre **4 y 6 preguntas** de dificultad creciente *en ese idioma*.
    - Evalúa las respuestas y entrega un **nivel MCER estimado (A1–C2)**.
    - Recomienda un curso/plan concreto de Parla acorde al nivel.
-   - El flujo es conversacional (una pregunta a la vez) y tiene un final claro (el veredicto de nivel + recomendación).
+   - El flujo es conversacional (una pregunta a la vez) y tiene un final claro: Kiko cierra con un veredicto en formato reconocible (p.ej. "📊 Tu nivel: **B1**") seguido de la recomendación de curso. El widget puede detectar ese marcador para resaltar el resultado.
+   - **Nota:** el diagnóstico es 100% dirigido por el LLM (genera preguntas, evalúa y asigna nivel vía system prompt). Su precisión es *best-effort* y no determinista; no es unit-testeable como el Q&A de la KB (se valida manualmente).
 
 ## 5. Arquitectura técnica
 
 **Stack:** Astro 5 + Cloudflare Pages + **Cloudflare Workers AI (Llama)**. Sin API key externa, cero costo. Mismo ecosistema que la edición 1.
 
-- **Modelo:** `@cf/meta/llama-3.1-8b-instruct` (rápido y gratis en Workers AI). Ajustable si otro modelo de Workers AI da mejor calidad multilingüe.
+- **Modelo:** `@cf/meta/llama-3.1-8b-instruct` (rápido y gratis en Workers AI) como opción por defecto. **Punto de decisión:** el diagnóstico opera en Mandarín y Hindi (scripts no latinos), donde el modelo 8B tiene calidad limitada — riesgo conocido. Si en la verificación manual el 8B falla en esos idiomas, se escala a un modelo mayor de Workers AI (p.ej. `@cf/meta/llama-3.3-70b-instruct-fp8-fast`). El modelo se define en una constante única para poder cambiarlo en un solo lugar.
 - **Dirección visual:** "Playful Pop" — amarillo brillante (`#FFE14D`), negro, tipografía chunky redondeada, banderas y acentos de color (coral `#FF5A5F`, azul `#00A3FF`, morado `#7C4DFF`). Máxima energía juvenil.
 
 ### Estructura de archivos
