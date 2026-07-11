@@ -1,12 +1,31 @@
 ---
+import '../styles/global.css';
+import Hero from '../components/Hero.astro';
+import { knowledgeBase } from '../data/knowledge-base';
+
+const kb = knowledgeBase;
+const titulo = `${kb.nombre} — ${kb.eslogan}`;
 ---
+
 <html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Parla — Idiomas sin miedo</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦜</text></svg>" />
+    <title>{titulo}</title>
+    <meta name="description" content={kb.descripcion} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,700&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body>
-    <h1>Parla 🦜</h1>
+  <body id="top">
+    <Hero />
+
+    <!-- Próximas secciones (tareas siguientes): Idiomas, Modalidades, Precios,
+         Diagnóstico de nivel, FAQ y Footer con contacto. -->
   </body>
 </html>
