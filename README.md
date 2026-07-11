@@ -30,7 +30,7 @@ Cada reto explora una dimensión distinta de la IA aplicada al desarrollo. **Tod
 
 | # | Reto | Categoría |
 |---|------|-----------|
-| 01 | [Reto 01](./reto-01) | Por definir |
+| 01 | [Parla — El asistente que responde por tu negocio](./reto-01) | AI Chatbot / Web App |
 
 _Esta tabla se irá completando conforme avancen los retos de esta edición._
 
@@ -40,7 +40,7 @@ _Esta tabla se irá completando conforme avancen los retos de esta edición._
 
 ```
 vibe-coders-league-platzi-2026-2.0/
-  reto-01/     Primer reto de la segunda edición
+  reto-01/     Parla — asistente de IA para una academia de idiomas (Astro + Cloudflare Workers AI)
 ```
 
 Cada carpeta es un proyecto independiente con su propio README, stack y documentación.
