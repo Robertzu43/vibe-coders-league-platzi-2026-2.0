@@ -1,0 +1,149 @@
+---
+import { knowledgeBase } from '../data/knowledge-base';
+
+const kb = knowledgeBase;
+
+const acentos = ['coral', 'azul', 'morado', 'ink'] as const;
+const giros = [-3, 2, -1.5, 2.5];
+const frases = [
+  '¡Hello! Ya casi puedes pedir un tea sin acento raro.',
+  '你好! El mandarín suena difícil, contigo no lo será.',
+  'नमस्ते! El idioma con más hablantes nativos del mundo.',
+  '¡Hola! Perfecciona tu español con acento bogotano.',
+];
+---
+
+<section class="seccion idiomas" id="idiomas" aria-labelledby="idiomas-titulo">
+  <div class="contenedor">
+    <p class="kicker">🌍 4 idiomas, una sola academia</p>
+    <h2 id="idiomas-titulo">Elige tu próximo superpoder</h2>
+    <p class="idiomas__intro">
+      Enseñamos {kb.idiomas.length} de los idiomas más hablados del planeta. Empiezas cuando
+      quieras, a tu ritmo, sin miedo a equivocarte.
+    </p>
+
+    <ul class="idiomas__grid">
+      {
+        kb.idiomas.map((idioma, i) => (
+          <li
+            class={`idioma-card idioma-card--${acentos[i % acentos.length]}`}
+            style={`--giro: ${giros[i % giros.length]}deg`}
+          >
+            <span class="idioma-card__bandera" aria-hidden="true">{idioma.bandera}</span>
+            <h3 class="idioma-card__nombre">{idioma.nombre}</h3>
+            <p class="idioma-card__frase">{frases[i % frases.length]}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .idiomas {
+    background: var(--color-bg);
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: var(--color-ink);
+    color: var(--color-yellow);
+    padding: 0.4em 0.9em;
+    border-radius: var(--radius-pill);
+    margin: 0 0 1.1rem;
+  }
+
+  .idiomas__intro {
+    max-width: 38rem;
+    font-size: 1.1rem;
+    color: var(--color-text-soft);
+  }
+
+  .idiomas__grid {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.75rem;
+  }
+
+  .idioma-card {
+    position: relative;
+    background: var(--color-white);
+    border: var(--border-thick);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.5rem 1.75rem;
+    box-shadow: var(--shadow-hard-md);
+    transform: rotate(var(--giro));
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  .idioma-card:hover {
+    transform: rotate(0deg) translateY(-4px);
+    box-shadow: var(--shadow-hard-lg);
+  }
+
+  .idioma-card::before {
+    content: '';
+    position: absolute;
+    inset: 0.6rem;
+    border-radius: calc(var(--radius-lg) - 0.4rem);
+    border: 2px dashed currentColor;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  .idioma-card--coral { color: var(--color-coral); }
+  .idioma-card--azul { color: var(--color-blue); }
+  .idioma-card--morado { color: var(--color-purple); }
+  .idioma-card--ink { color: var(--color-ink); }
+
+  .idioma-card__bandera {
+    display: inline-flex;
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: 0.75rem;
+  }
+
+  .idioma-card__nombre {
+    color: var(--color-ink);
+    margin-bottom: 0.4em;
+  }
+
+  .idioma-card__frase {
+    font-size: 0.95rem;
+    color: var(--color-text-soft);
+    margin: 0;
+  }
+
+  @media (max-width: 62rem) {
+    .idiomas__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .idiomas__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .idioma-card {
+      transform: none;
+    }
+
+    .idioma-card:hover {
+      transform: translateY(-4px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .idioma-card {
+      transition: none;
+    }
+  }
+</style>

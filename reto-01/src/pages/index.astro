@@ -1,6 +1,12 @@
 ---
 import '../styles/global.css';
 import Hero from '../components/Hero.astro';
+import Idiomas from '../components/Idiomas.astro';
+import Modalidades from '../components/Modalidades.astro';
+import Precios from '../components/Precios.astro';
+import Diagnostico from '../components/Diagnostico.astro';
+import FAQ from '../components/FAQ.astro';
+import Footer from '../components/Footer.astro';
 import { knowledgeBase } from '../data/knowledge-base';
 
 const kb = knowledgeBase;
@@ -24,8 +30,14 @@ const titulo = `${kb.nombre} — ${kb.eslogan}`;
   </head>
   <body id="top">
     <Hero />
+    <Idiomas />
+    <Modalidades />
+    <Precios />
+    <Diagnostico />
+    <FAQ />
+    <Footer />
 
-    <!-- Próximas secciones (tareas siguientes): Idiomas, Modalidades, Precios,
-         Diagnóstico de nivel, FAQ y Footer con contacto. -->
+    <!-- Próxima tarea: widget de chat embebido (vanilla TS), enlazado a los
+         botones [data-open-chat] de arriba. -->
   </body>
 </html>
