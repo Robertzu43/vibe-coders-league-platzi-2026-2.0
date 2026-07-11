@@ -1,7 +1,12 @@
 import { knowledgeBase as kb } from '../data/knowledge-base';
 
-/** Modelo de Cloudflare Workers AI. Cambiar aquí si el 8B falla en Mandarín/Hindi. */
-export const MODEL = '@cf/meta/llama-3.1-8b-instruct';
+/**
+ * Modelo de Cloudflare Workers AI (fuente única — cambiar aquí para probar otro).
+ * Se usa el 3.3 70B (variante fp8-fast): buena calidad multilingüe para el
+ * diagnóstico en Mandarín/Hindi y buen cumplimiento de la regla anti-invención.
+ * Nota: el `llama-3.1-8b-instruct` original fue deprecado por Cloudflare (2026-05-30).
+ */
+export const MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 
 export function buildSystemPrompt(): string {
   const precios = kb.precios.map((p) => `- ${p.plan}: ${p.valor} (${p.detalle})`).join('\n');
