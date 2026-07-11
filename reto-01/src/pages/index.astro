@@ -7,6 +7,7 @@ import Precios from '../components/Precios.astro';
 import Diagnostico from '../components/Diagnostico.astro';
 import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
+import ChatWidget from '../components/ChatWidget.astro';
 import { knowledgeBase } from '../data/knowledge-base';
 
 const kb = knowledgeBase;
@@ -37,7 +38,6 @@ const titulo = `${kb.nombre} — ${kb.eslogan}`;
     <FAQ />
     <Footer />
 
-    <!-- Próxima tarea: widget de chat embebido (vanilla TS), enlazado a los
-         botones [data-open-chat] de arriba. -->
+    <ChatWidget />
   </body>
 </html>
