@@ -14,15 +14,52 @@ let lastFocused: HTMLElement | null = null;
 const WELCOME =
   '¡Hola! Soy Kiko 🦜 el loro de Parla. Puedo contarte de precios, horarios y políticas, o hacerte un diagnóstico de tu nivel. ¿Qué necesitas?';
 
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function getFocusableElements(): HTMLElement[] {
+  return Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+}
+
+// Atrapa el foco (Tab / Shift+Tab) dentro del panel mientras el modal está abierto.
+function trapFocus(e: KeyboardEvent) {
+  if (e.key !== 'Tab' || modal.hidden) return;
+
+  const focusable = getFocusableElements();
+  if (focusable.length === 0) return;
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  const active = document.activeElement as HTMLElement | null;
+
+  if (e.shiftKey) {
+    if (active === first || !panel.contains(active)) {
+      e.preventDefault();
+      last.focus();
+    }
+  } else {
+    if (active === last || !panel.contains(active)) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+}
+
 function open() {
   lastFocused = document.activeElement as HTMLElement | null;
   modal.hidden = false;
+  document.body.style.overflow = 'hidden';
   if (messagesEl.childElementCount === 0) addBubble('assistant', WELCOME);
   input.focus();
 }
 
 function close() {
   modal.hidden = true;
+  document.body.style.overflow = '';
   lastFocused?.focus();
 }
 
@@ -36,12 +73,24 @@ function addBubble(role: Msg['role'], text: string): HTMLElement {
 }
 
 async function typeInto(el: HTMLElement, text: string) {
-  el.textContent = '';
-  for (const ch of text) {
-    el.textContent += ch;
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-    await new Promise((r) => setTimeout(r, 12));
+  // Oculta la burbuja de AT mientras se anima carácter a carácter para evitar
+  // que el lector de pantalla anuncie cada mutación individual del aria-live.
+  el.setAttribute('aria-hidden', 'true');
+
+  if (prefersReducedMotion()) {
+    el.textContent = text;
+  } else {
+    el.textContent = '';
+    for (const ch of text) {
+      el.textContent += ch;
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      await new Promise((r) => setTimeout(r, 12));
+    }
   }
+
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  // Revela el texto final completo: se anuncia una sola vez, de forma limpia.
+  el.removeAttribute('aria-hidden');
 }
 
 // Abre el modal desde cualquier botón/enlace marcado con [data-open-chat],
@@ -61,6 +110,9 @@ document.addEventListener('keydown', (e) => {
 modal.addEventListener('mousedown', (e) => {
   if (!panel.contains(e.target as Node)) close();
 });
+
+// Atrapa el foco dentro del panel mientras el modal está abierto.
+modal.addEventListener('keydown', trapFocus);
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
