@@ -1,0 +1,174 @@
+---
+import { knowledgeBase } from '../data/knowledge-base';
+
+const kb = knowledgeBase;
+
+const whatsappDigits = kb.contacto.whatsapp.replace(/[^\d]/g, '');
+const instagramHandle = kb.contacto.instagram.replace(/^@/, '');
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer" id="contacto">
+  <div class="contenedor footer__wrap">
+    <div class="footer__marca">
+      <a class="marca marca--claro" href="#top">
+        <span>{kb.nombre.toLowerCase()}</span><span class="marca__punto">.</span>
+      </a>
+      <p class="footer__eslogan">{kb.eslogan}</p>
+      <p class="footer__descripcion">{kb.descripcion}</p>
+      <p class="footer__profesores">
+        <span aria-hidden="true">🧑‍🏫</span> {kb.profesores}
+      </p>
+    </div>
+
+    <div class="footer__contacto">
+      <h3 class="footer__titulo">Hablemos</h3>
+      <ul class="footer__lista">
+        <li>
+          <a
+            class="footer__enlace"
+            href={`https://wa.me/${whatsappDigits}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span aria-hidden="true">💬</span> WhatsApp: {kb.contacto.whatsapp}
+          </a>
+        </li>
+        <li>
+          <a class="footer__enlace" href={`mailto:${kb.contacto.correo}`}>
+            <span aria-hidden="true">✉️</span> {kb.contacto.correo}
+          </a>
+        </li>
+        <li>
+          <a
+            class="footer__enlace"
+            href={`https://instagram.com/${instagramHandle}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span aria-hidden="true">📸</span> {kb.contacto.instagram}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer__sede">
+      <h3 class="footer__titulo">Visítanos</h3>
+      <p class="footer__enlace footer__enlace--texto">
+        <span aria-hidden="true">📍</span> {kb.sede}
+      </p>
+      <p class="footer__enlace footer__enlace--texto">
+        <span aria-hidden="true">🕒</span> {kb.horarios}
+      </p>
+    </div>
+  </div>
+
+  <div class="contenedor footer__legal">
+    <p>© {year} {kb.nombre}. Idiomas sin miedo, con Kiko a tu lado. 🦜</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-ink);
+    color: var(--color-white);
+    border-top: var(--border-thick);
+  }
+
+  .footer__wrap {
+    padding-block: clamp(3rem, 6vw, 4.5rem) 2.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 3rem);
+  }
+
+  .marca--claro {
+    color: var(--color-white);
+  }
+
+  .footer__eslogan {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-yellow);
+    margin: 0.75rem 0 0.5rem;
+    font-size: 1.15rem;
+  }
+
+  .footer__descripcion {
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 28rem;
+  }
+
+  .footer__profesores {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+  }
+
+  .footer__titulo {
+    color: var(--color-white);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .footer__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .footer__enlace {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 160ms ease;
+  }
+
+  .footer__enlace--texto {
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 400;
+  }
+
+  a.footer__enlace:hover,
+  a.footer__enlace:focus-visible {
+    color: var(--color-yellow);
+  }
+
+  .footer__legal {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-block: 1.25rem;
+  }
+
+  .footer__legal p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  @media (max-width: 55rem) {
+    .footer__wrap {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .footer__marca {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .footer__wrap {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

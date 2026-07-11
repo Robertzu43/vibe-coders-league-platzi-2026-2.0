@@ -1,0 +1,32 @@
+---
+import '../styles/chat.css';
+---
+
+<div id="chat-modal" class="chat-modal" hidden>
+  <div class="chat-panel" role="dialog" aria-modal="true" aria-labelledby="chat-titulo">
+    <header class="chat-header">
+      <span class="chat-header__titulo" id="chat-titulo">
+        <span class="chat-header__estado" aria-hidden="true"></span>
+        Kiko 🦜 · Parla
+      </span>
+      <button type="button" id="chat-close" aria-label="Cerrar chat">✕</button>
+    </header>
+
+    <div id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-label="Conversación con Kiko"></div>
+
+    <form id="chat-form" class="chat-form">
+      <input
+        id="chat-input"
+        type="text"
+        placeholder="Escríbele a Kiko…"
+        autocomplete="off"
+        aria-label="Escribe tu mensaje para Kiko"
+      />
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  import '../scripts/chat-widget.ts';
+</script>

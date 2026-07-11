@@ -1,0 +1,248 @@
+/*
+  Parla — "Playful Pop"
+  Base design tokens + reset + typography shared by every section of the landing.
+  Palette: amarillo señal + negro + acentos coral/azul/morado. Chunky, redondo, con energía.
+
+  Nota: la fuente "Fredoka" se carga vía <link> (preconnect + display=swap) en el
+  <head> del documento (ver index.astro), no con @import aquí, para no bloquear
+  el render. El stack de --font-display siempre cae a fuentes del sistema si la
+  fuente web no llega a cargar, así que el sitio nunca depende de la red externa.
+*/
+
+:root {
+  /* --- Paleta --- */
+  --color-yellow: #ffe14d;
+  --color-yellow-dark: #f5c400;
+  --color-ink: #111111;
+  --color-coral: #ff5a5f;
+  --color-blue: #00a3ff;
+  --color-purple: #7c4dff;
+  --color-white: #ffffff;
+  --color-cream: #fffdf5;
+
+  /* --- Roles semánticos --- */
+  --color-bg: var(--color-cream);
+  --color-surface: var(--color-white);
+  --color-text: var(--color-ink);
+  --color-text-soft: #3c3630;
+  --color-brand: var(--color-yellow);
+  --color-accent-1: var(--color-coral);
+  --color-accent-2: var(--color-blue);
+  --color-accent-3: var(--color-purple);
+
+  /* --- Tipografía --- */
+  --font-display: 'Fredoka', 'Baloo 2', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* --- Forma --- */
+  --radius-sm: 0.6rem;
+  --radius-md: 1.1rem;
+  --radius-lg: 1.8rem;
+  --radius-pill: 999px;
+
+  /* --- Sombra "toy-like" (offset duro, sin difuminar) --- */
+  --shadow-hard-sm: 3px 3px 0 var(--color-ink);
+  --shadow-hard-md: 6px 6px 0 var(--color-ink);
+  --shadow-hard-lg: 10px 10px 0 var(--color-ink);
+
+  /* --- Bordes --- */
+  --border-thick: 3px solid var(--color-ink);
+
+  /* --- Ritmo --- */
+  --contenedor-max: 1100px;
+  --contenedor-pad: 1.5rem;
+}
+
+/* --- Reset ligero --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* --- Tipografía base --- */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.05;
+  margin: 0 0 0.5em;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+h1 {
+  font-size: clamp(2.6rem, 5vw + 1rem, 4.6rem);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: clamp(2rem, 3vw + 1rem, 2.75rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 1vw + 1rem, 1.6rem);
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+/* --- Layout helpers --- */
+.contenedor {
+  width: 100%;
+  max-width: var(--contenedor-max);
+  margin-inline: auto;
+  padding-inline: var(--contenedor-pad);
+}
+
+.seccion {
+  padding-block: clamp(3.5rem, 6vw, 6rem);
+}
+
+/* --- Marca --- */
+.marca {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.marca__punto {
+  color: var(--color-coral);
+}
+
+/* --- Pills (etiquetas redondeadas) --- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.55em 1.1em;
+  border-radius: var(--radius-pill);
+  border: var(--border-thick);
+  background: var(--color-white);
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-hard-sm);
+}
+
+/* --- Kicker (etiqueta corta encima de un título de sección) --- */
+.kicker {
+  --kicker-bg: var(--color-ink);
+  --kicker-fg: var(--color-yellow);
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.4em 0.9em;
+  border-radius: var(--radius-pill);
+  background: var(--kicker-bg);
+  color: var(--kicker-fg);
+  margin: 0 0 1.1rem;
+}
+
+.kicker--azul {
+  --kicker-bg: var(--color-blue);
+  --kicker-fg: var(--color-white);
+}
+
+.kicker--amarillo {
+  --kicker-bg: var(--color-yellow);
+  --kicker-fg: var(--color-ink);
+}
+
+.kicker--morado {
+  --kicker-bg: var(--color-purple);
+  --kicker-fg: var(--color-white);
+}
+
+/* --- Botón grande, chunky, con "lift" al pasar el mouse --- */
+.btn-grande {
+  --btn-bg: var(--color-ink);
+  --btn-fg: var(--color-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  border: var(--border-thick);
+  border-radius: var(--radius-pill);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.05rem, 1vw + 0.7rem, 1.35rem);
+  padding: 1.1em 2.1em;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: var(--shadow-hard-lg);
+  transform: translate(0, 0);
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.btn-grande:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 13px 13px 0 var(--color-ink);
+}
+
+.btn-grande:active {
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0 var(--color-ink);
+}
+
+.btn-grande:focus-visible {
+  outline: 3px solid var(--color-blue);
+  outline-offset: 3px;
+}
+
+.btn-grande--brand {
+  --btn-bg: var(--color-yellow);
+  --btn-fg: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .btn-grande {
+    transition: none;
+  }
+}
