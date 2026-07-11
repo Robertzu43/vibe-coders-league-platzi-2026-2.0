@@ -1,0 +1,188 @@
+---
+import { knowledgeBase } from '../data/knowledge-base';
+
+const kb = knowledgeBase;
+
+const esGratis = (valor: string) => /gratis/i.test(valor);
+const acentos = ['azul', 'morado', 'coral', 'yellow'] as const;
+---
+
+<section class="seccion precios" id="precios" aria-labelledby="precios-titulo">
+  <div class="contenedor">
+    <p class="kicker">💸 Sin letra chiquita</p>
+    <h2 id="precios-titulo">Planes claros, precios en pesos reales</h2>
+    <p class="precios__intro">
+      Elige el plan que se ajuste a tu bolsillo y tu horario. Todos incluyen materiales y
+      seguimiento de tu profesor.
+    </p>
+
+    <ul class="precios__grid">
+      {
+        kb.precios.map((precio, i) => (
+          <li
+            class={`precio-card precio-card--${acentos[i % acentos.length]} ${
+              esGratis(precio.valor) ? 'precio-card--gratis' : ''
+            }`}
+          >
+            {esGratis(precio.valor) && <span class="precio-card__cinta">Empieza aquí 👇</span>}
+            <p class="precio-card__plan">{precio.plan}</p>
+            <p class="precio-card__valor">{precio.valor}</p>
+            <p class="precio-card__detalle">{precio.detalle}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="precios__descuento">
+      <span aria-hidden="true">🎁</span>
+      <span>{kb.descuentos}</span>
+    </p>
+  </div>
+</section>
+
+<style>
+  .precios {
+    background: var(--color-bg);
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: var(--color-ink);
+    color: var(--color-yellow);
+    padding: 0.4em 0.9em;
+    border-radius: var(--radius-pill);
+    margin: 0 0 1.1rem;
+  }
+
+  .precios__intro {
+    max-width: 38rem;
+    font-size: 1.1rem;
+    color: var(--color-text-soft);
+  }
+
+  .precios__grid {
+    list-style: none;
+    margin: 2.5rem 0 2rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .precio-card {
+    position: relative;
+    background: var(--color-white);
+    border: var(--border-thick);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.4rem;
+    box-shadow: var(--shadow-hard-md);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .precio-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-hard-lg);
+  }
+
+  .precio-card--azul { border-top: 8px solid var(--color-blue); }
+  .precio-card--morado { border-top: 8px solid var(--color-purple); }
+  .precio-card--coral { border-top: 8px solid var(--color-coral); }
+  .precio-card--yellow { border-top: 8px solid var(--color-yellow-dark); }
+
+  .precio-card--gratis {
+    background: var(--color-ink);
+    color: var(--color-white);
+    transform: rotate(-1.5deg);
+  }
+
+  .precio-card--gratis:hover {
+    transform: rotate(0deg) translate(-3px, -3px);
+  }
+
+  .precio-card--gratis .precio-card__detalle {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .precio-card__cinta {
+    position: absolute;
+    top: -0.9rem;
+    right: 1rem;
+    background: var(--color-yellow);
+    color: var(--color-ink);
+    border: var(--border-thick);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.3em 0.7em;
+    transform: rotate(4deg);
+    box-shadow: var(--shadow-hard-sm);
+  }
+
+  .precio-card__plan {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+
+  .precio-card__valor {
+    margin: 0;
+    font-size: clamp(1.4rem, 1vw + 1.1rem, 1.7rem);
+    font-weight: 800;
+    font-family: var(--font-display);
+  }
+
+  .precio-card--gratis .precio-card__valor {
+    color: var(--color-yellow);
+  }
+
+  .precio-card__detalle {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text-soft);
+  }
+
+  .precios__descuento {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    font-weight: 700;
+    color: var(--color-ink);
+    background: var(--color-white);
+    border: var(--border-thick);
+    border-radius: var(--radius-md);
+    padding: 1em 1.2em;
+    box-shadow: var(--shadow-hard-sm);
+    max-width: 42rem;
+  }
+
+  @media (max-width: 62rem) {
+    .precios__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .precios__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .precio-card--gratis {
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .precio-card {
+      transition: none;
+    }
+  }
+</style>

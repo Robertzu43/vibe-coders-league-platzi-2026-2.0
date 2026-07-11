@@ -1,0 +1,180 @@
+---
+import { knowledgeBase } from '../data/knowledge-base';
+
+const kb = knowledgeBase;
+
+const pasos = [
+  { icono: '🌐', titulo: 'Elige tu idioma', texto: `De los ${kb.idiomas.length} que enseñamos: inglés, mandarín, hindi o español.` },
+  { icono: '🦜', titulo: 'Kiko te pregunta', texto: 'Unas preguntas cortas y conversacionales, sin cronómetro ni presión.' },
+  { icono: '🎓', titulo: 'Recibes tu nivel', texto: 'Tu nivel MCER exacto y una recomendación de plan hecha a tu medida.' },
+];
+---
+
+<section class="seccion diagnostico" id="diagnostico" aria-labelledby="diagnostico-titulo">
+  <div class="contenedor diagnostico__wrap">
+    <div class="diagnostico__textura" aria-hidden="true"></div>
+
+    <p class="kicker">⚡ Gratis y toma 2 minutos</p>
+    <h2 id="diagnostico-titulo">¿No sabes en qué nivel estás? Kiko te lo dice.</h2>
+    <p class="diagnostico__bajada">
+      Nuestro diagnóstico adaptativo se ajusta a tus respuestas en tiempo real: nada de
+      exámenes largos ni resultados genéricos.
+    </p>
+
+    <ol class="diagnostico__pasos">
+      {
+        pasos.map((paso, i) => (
+          <li class="paso">
+            <span class="paso__numero" aria-hidden="true">{i + 1}</span>
+            <span class="paso__icono" aria-hidden="true">{paso.icono}</span>
+            <h3 class="paso__titulo">{paso.titulo}</h3>
+            <p class="paso__texto">{paso.texto}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="diagnostico__cta">
+      <button type="button" class="btn-grande btn-grande--brand" data-open-chat>
+        Empieza tu diagnóstico ⚡
+      </button>
+      <p class="diagnostico__nota">Al final te decimos tu nivel MCER (A1 → C2) y el plan ideal para ti.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .diagnostico {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-ink);
+    color: var(--color-white);
+    border-block: var(--border-thick);
+  }
+
+  .diagnostico__wrap {
+    position: relative;
+  }
+
+  .diagnostico__textura {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(var(--color-yellow) 2px, transparent 2px);
+    background-size: 30px 30px;
+    opacity: 0.08;
+  }
+
+  .kicker {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: var(--color-yellow);
+    color: var(--color-ink);
+    padding: 0.4em 0.9em;
+    border-radius: var(--radius-pill);
+    margin: 0 0 1.1rem;
+  }
+
+  .diagnostico h2 {
+    position: relative;
+    color: var(--color-white);
+    max-width: 34rem;
+  }
+
+  .diagnostico__bajada {
+    position: relative;
+    max-width: 36rem;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.1rem;
+  }
+
+  .diagnostico__pasos {
+    position: relative;
+    list-style: none;
+    counter-reset: paso;
+    margin: 2.75rem 0 3rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .paso {
+    position: relative;
+    background: var(--color-white);
+    color: var(--color-ink);
+    border: var(--border-thick);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.4rem 1.5rem;
+    box-shadow: var(--shadow-hard-md);
+  }
+
+  .paso__numero {
+    position: absolute;
+    top: -1rem;
+    left: -1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--color-coral);
+    color: var(--color-white);
+    font-family: var(--font-display);
+    font-weight: 700;
+    border: var(--border-thick);
+  }
+
+  .paso__icono {
+    display: inline-flex;
+    font-size: 2.25rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .paso__titulo {
+    margin-bottom: 0.4em;
+  }
+
+  .paso__texto {
+    margin: 0;
+    color: var(--color-text-soft);
+    font-size: 0.95rem;
+  }
+
+  .diagnostico__cta {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+
+  .diagnostico__nota {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  @media (max-width: 55rem) {
+    .diagnostico__pasos {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .diagnostico__cta {
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .diagnostico__cta .btn-grande {
+      width: 100%;
+    }
+  }
+</style>
