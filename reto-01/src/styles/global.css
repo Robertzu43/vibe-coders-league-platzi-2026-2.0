@@ -163,6 +163,37 @@ p {
   box-shadow: var(--shadow-hard-sm);
 }
 
+/* --- Kicker (etiqueta corta encima de un título de sección) --- */
+.kicker {
+  --kicker-bg: var(--color-ink);
+  --kicker-fg: var(--color-yellow);
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.4em 0.9em;
+  border-radius: var(--radius-pill);
+  background: var(--kicker-bg);
+  color: var(--kicker-fg);
+  margin: 0 0 1.1rem;
+}
+
+.kicker--azul {
+  --kicker-bg: var(--color-blue);
+  --kicker-fg: var(--color-white);
+}
+
+.kicker--amarillo {
+  --kicker-bg: var(--color-yellow);
+  --kicker-fg: var(--color-ink);
+}
+
+.kicker--morado {
+  --kicker-bg: var(--color-purple);
+  --kicker-fg: var(--color-white);
+}
+
 /* --- Botón grande, chunky, con "lift" al pasar el mouse --- */
 .btn-grande {
   --btn-bg: var(--color-ink);
