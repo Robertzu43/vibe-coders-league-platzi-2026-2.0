@@ -1,0 +1,148 @@
+---
+import { producto } from '../data/product';
+---
+
+<section class="faq seccion" id="faq">
+  <div class="contenedor faq__marco">
+    <p class="faq__etiqueta">Preguntas frecuentes</p>
+    <h2 class="faq__titulo">Antes de reservar</h2>
+
+    <div class="faq__lista">
+      {producto.faqs.map((item, i) => (
+        <details class="faq__item" name="faq-altura" open={i === 0}>
+          <summary class="faq__pregunta">
+            <span>{item.q}</span>
+            <span class="faq__icono" aria-hidden="true"></span>
+          </summary>
+          <p class="faq__respuesta">{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__marco {
+    max-width: 42rem;
+  }
+
+  .faq__etiqueta {
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-terracota-fuerte);
+    margin-bottom: 0.75rem;
+  }
+
+  .faq__titulo {
+    margin-bottom: clamp(2rem, 4vw, 2.75rem);
+  }
+
+  .faq__lista {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .faq__item {
+    border-top: 1px solid var(--color-tinta-15);
+    padding-block: 1.25rem;
+  }
+
+  .faq__item:last-child {
+    border-bottom: 1px solid var(--color-tinta-15);
+  }
+
+  .faq__pregunta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--fuente-display);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-tinta);
+  }
+
+  .faq__pregunta::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__pregunta:focus-visible {
+    outline: 2px solid var(--color-terracota);
+    outline-offset: 4px;
+  }
+
+  .faq__icono {
+    position: relative;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--color-papel-suave);
+    box-shadow: var(--sombra-sm);
+    transition: transform var(--transicion), background-color var(--transicion);
+  }
+
+  .faq__icono::before,
+  .faq__icono::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: var(--color-terracota-fuerte);
+    transform: translate(-50%, -50%);
+    transition: transform var(--transicion), opacity var(--transicion);
+  }
+
+  .faq__icono::before {
+    width: 0.6rem;
+    height: 2px;
+  }
+
+  .faq__icono::after {
+    width: 2px;
+    height: 0.6rem;
+  }
+
+  .faq__item[open] .faq__icono {
+    background: var(--color-terracota);
+  }
+
+  .faq__item[open] .faq__icono::before,
+  .faq__item[open] .faq__icono::after {
+    background: var(--color-papel-suave);
+  }
+
+  .faq__item[open] .faq__icono::after {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .faq__respuesta {
+    margin-top: 0.85rem;
+    max-width: 56ch;
+    color: var(--color-tinta-70);
+    animation: faq-surgir 320ms ease both;
+  }
+
+  @keyframes faq-surgir {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__respuesta {
+      animation: none;
+    }
+  }
+</style>

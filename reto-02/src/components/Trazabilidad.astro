@@ -1,0 +1,203 @@
+---
+import { producto } from '../data/product';
+---
+
+<section class="trazabilidad seccion" id="trazabilidad">
+  <div class="contenedor">
+    <p class="trazabilidad__etiqueta">Trazabilidad</p>
+    <h2 class="trazabilidad__titulo">La ficha completa de tu lote</h2>
+    <p class="trazabilidad__intro">
+      Cada bolsa lleva el mismo origen documentado: de dónde viene, cómo se procesó
+      y qué vas a encontrar en la taza.
+    </p>
+
+    <div class="trazabilidad__tarjeta">
+      <div class="trazabilidad__puntaje" role="img" aria-label={`Puntaje SCA ${producto.sca} sobre 100`}>
+        <span class="trazabilidad__puntaje-etiqueta">SCA</span>
+        <strong class="trazabilidad__puntaje-valor">{producto.sca}</strong>
+        <span class="trazabilidad__puntaje-unidad">/ 100</span>
+      </div>
+
+      <dl class="trazabilidad__specs">
+        <div class="trazabilidad__spec">
+          <dt>Altitud</dt>
+          <dd>{producto.altitud}</dd>
+        </div>
+        <div class="trazabilidad__spec">
+          <dt>Variedad</dt>
+          <dd>{producto.variedad}</dd>
+        </div>
+        <div class="trazabilidad__spec">
+          <dt>Proceso</dt>
+          <dd>{producto.proceso}</dd>
+        </div>
+        <div class="trazabilidad__spec">
+          <dt>Presentación</dt>
+          <dd>{producto.presentacion}</dd>
+        </div>
+      </dl>
+
+      <div class="trazabilidad__notas">
+        <span class="trazabilidad__notas-etiqueta">Notas de cata</span>
+        <ul class="trazabilidad__chips">
+          {producto.notas.map((nota) => (
+            <li class="trazabilidad__chip">{nota}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .trazabilidad__etiqueta {
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-terracota-fuerte);
+    margin-bottom: 0.75rem;
+  }
+
+  .trazabilidad__titulo {
+    max-width: 22ch;
+    margin-bottom: 0.85rem;
+  }
+
+  .trazabilidad__intro {
+    max-width: 52ch;
+    margin-bottom: clamp(2.25rem, 4vw, 3rem);
+  }
+
+  .trazabilidad__tarjeta {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.75rem, 4vw, 2.5rem);
+    background: var(--color-papel-suave);
+    border-radius: var(--radio-lg);
+    padding: clamp(1.75rem, 4vw, 3rem);
+    box-shadow: var(--sombra-md);
+  }
+
+  .trazabilidad__puntaje {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.4rem;
+    justify-self: center;
+    background: linear-gradient(135deg, var(--color-ambar-suave), var(--color-ambar));
+    color: var(--color-tinta);
+    padding: 0.9rem 1.75rem;
+    border-radius: var(--radio-pill);
+    box-shadow: var(--sombra-sm);
+  }
+
+  .trazabilidad__puntaje-etiqueta {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    align-self: center;
+  }
+
+  .trazabilidad__puntaje-valor {
+    font-family: var(--fuente-display);
+    font-size: clamp(1.7rem, 1.4rem + 1vw, 2.1rem);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .trazabilidad__puntaje-unidad {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-tinta-70);
+  }
+
+  .trazabilidad__specs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .trazabilidad__spec {
+    border-top: 1px solid var(--color-tinta-15);
+    padding-top: 0.75rem;
+  }
+
+  .trazabilidad__spec dt {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-tinta-45);
+    margin-bottom: 0.3rem;
+  }
+
+  .trazabilidad__spec dd {
+    font-family: var(--fuente-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--color-tinta);
+    margin: 0;
+  }
+
+  .trazabilidad__notas {
+    border-top: 1px dashed var(--color-tinta-15);
+    padding-top: clamp(1.25rem, 3vw, 1.75rem);
+  }
+
+  .trazabilidad__notas-etiqueta {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-tinta-45);
+    margin-bottom: 0.85rem;
+  }
+
+  .trazabilidad__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .trazabilidad__chip {
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-tinta);
+    background: var(--color-papel);
+    border: 1px solid var(--color-tinta-15);
+    padding: 0.45rem 1rem;
+    border-radius: var(--radio-pill);
+  }
+
+  @media (min-width: 780px) {
+    .trazabilidad__tarjeta {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas:
+        "puntaje specs"
+        "notas notas";
+      align-items: center;
+    }
+
+    .trazabilidad__puntaje {
+      grid-area: puntaje;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      justify-self: start;
+    }
+
+    .trazabilidad__specs {
+      grid-area: specs;
+    }
+
+    .trazabilidad__notas {
+      grid-area: notas;
+    }
+  }
+</style>

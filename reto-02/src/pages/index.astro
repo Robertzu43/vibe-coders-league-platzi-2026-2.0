@@ -1,6 +1,12 @@
 ---
 import '../styles/global.css';
 import Hero from '../components/Hero.astro';
+import Historia from '../components/Historia.astro';
+import Trazabilidad from '../components/Trazabilidad.astro';
+import ComoFunciona from '../components/ComoFunciona.astro';
+import Escasez from '../components/Escasez.astro';
+import FAQ from '../components/FAQ.astro';
+import Footer from '../components/Footer.astro';
 import { producto } from '../data/product';
 
 const titulo = `${producto.marca} — ${producto.eslogan}`;
@@ -24,16 +30,14 @@ const descripcionMeta = `${producto.descripcion} ${producto.finca}, ${producto.r
   </head>
   <body>
     <Hero />
+    <Historia />
+    <Trazabilidad />
+    <ComoFunciona />
+    <Escasez />
 
-    <!--
-      Próximas secciones (tareas siguientes):
-      - Historia del origen
-      - Ficha de trazabilidad
-      - Cómo funciona
-      - Escasez ("X de 300 bolsas reservadas")
-      - Formulario de pre-orden (#reservar)
-      - FAQ
-      - Footer
-    -->
+    <!-- Formulario: Task 8 -->
+
+    <FAQ />
+    <Footer />
   </body>
 </html>
