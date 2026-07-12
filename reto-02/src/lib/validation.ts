@@ -24,7 +24,10 @@ export function validatePreorder(input: PreorderInput): ValidationResult {
   const email = typeof input.email === 'string' ? input.email.trim() : '';
   const ciudad = typeof input.ciudad === 'string' ? input.ciudad.trim() : '';
   const molido = typeof input.molido === 'string' ? input.molido : '';
-  const cantidad = Number(input.cantidad);
+  const cantidad =
+    typeof input.cantidad === 'number' || typeof input.cantidad === 'string'
+      ? Number(input.cantidad)
+      : NaN;
 
   if (!nombre) errors.push('El nombre es obligatorio.');
   if (!EMAIL_RE.test(email)) errors.push('El correo no es válido.');
