@@ -190,7 +190,7 @@ strong {
 }
 
 .btn:hover {
-  background: var(--color-terracota);
+  background: var(--color-terracota-fuerte);
   box-shadow: var(--sombra-md);
   transform: translateY(-2px);
 }
