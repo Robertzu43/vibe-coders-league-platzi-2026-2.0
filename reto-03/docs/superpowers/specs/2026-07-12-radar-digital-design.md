@@ -60,8 +60,8 @@ create table if not exists public.leads (
   created_at timestamptz not null default now(),
   nombre text not null,
   email text not null,
-  negocio text,                       -- nombre del negocio (opcional)
-  tipo_negocio text,                  -- opcional (ej: restaurante, tienda…)
+  negocio text,                       -- nombre del negocio (opcional, campo del gate)
+  tipo_negocio text,                  -- tipo de negocio; proviene de una pregunta del quiz (ej: restaurante, tienda…)
   respuestas jsonb not null,          -- respuestas crudas del quiz
   puntaje_web int not null,
   puntaje_automatizacion int not null,
