@@ -26,4 +26,8 @@ describe('validatePreorder', () => {
   it('rechaza si el honeypot viene lleno (bot)', () => {
     expect(validatePreorder({ ...base, website: 'http://spam' }).ok).toBe(false);
   });
+  it('rechaza cantidad de tipo no numérico (bool/array)', () => {
+    expect(validatePreorder({ ...base, cantidad: true as any }).ok).toBe(false);
+    expect(validatePreorder({ ...base, cantidad: [3] as any }).ok).toBe(false);
+  });
 });
