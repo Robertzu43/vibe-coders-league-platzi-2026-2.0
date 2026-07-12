@@ -47,7 +47,7 @@ Estilo **"Editorial cálido"**: papel crema (`#F4ECD8`), café espresso (`#3B2A1
 2. **Historia del origen** — finca, productor, región.
 3. **Ficha de trazabilidad** — altitud, variedad, proceso, notas de cata, puntaje SCA.
 4. **Cómo funciona** — reservas → tostamos al pedir → enviamos fresco.
-5. **Escasez** — "X de 300 bolsas reservadas" (el número refleja las filas reales en Supabase; ver 6).
+5. **Escasez** — "X de 300 bolsas reservadas". El número es un valor de marketing **estático** en el MVP (no se lee la tabla en vivo; ver sección 6 y la restricción RLS solo-INSERT).
 6. **Formulario de pre-orden** (sección 6).
 7. **FAQ** — envíos, fechas de despacho, política de reembolso.
 8. **Footer** — marca, contacto.
@@ -65,7 +65,7 @@ Estilo **"Editorial cálido"**: papel crema (`#F4ECD8`), café espresso (`#3B2A1
 | Molido | select: `grano_entero` / `molido` | ✅ |
 
 - **Honeypot** oculto anti-bots (campo señuelo; si viene lleno, se rechaza sin insertar).
-- Checkout como invitado (sin cuenta). Total estimado en vivo (cantidad × $58.000).
+- Checkout como invitado (sin cuenta). Total estimado en vivo (cantidad × $58.000), con nota "Envío calculado al despacho · gratis sobre $200.000" (no se cobra ahora; es una reserva).
 - Estados de UI: idle → enviando → éxito ("¡Reserva confirmada! 🎉") / error.
 
 **Tabla Supabase `public.preorders`:**
@@ -129,4 +129,9 @@ Mobile-first. Layout fluido (grid/flex), imágenes `max-width:100%`, formulario 
 - Nombre "Altura" y detalles del lote (Huila, Caturra, SCA 86.5): **aprobados**.
 - Campos del formulario (5 + honeypot): **aprobados**.
 - Base de datos: **Supabase** (publishable key + RLS solo-INSERT).
-- Credenciales entregadas por el usuario (proyecto `yotlmzydbrkzwzqmhmgz`). Pendiente: token nuevo de Cloudflare para el deploy final.
+- Credenciales de Supabase entregadas por el usuario (proyecto `yotlmzydbrkzwzqmhmgz`).
+
+## 13. Prerrequisitos / bloqueadores conocidos
+
+- **Deploy final:** requiere un **token nuevo de Cloudflare** (con scope Workers). Bloquea únicamente el paso de despliegue; todo lo demás (build, dev local, tests, verificación de inserción en Supabase) se puede hacer sin él. Se pedirá al usuario antes del paso de deploy.
+- **Tabla `preorders`:** debe existir en Supabase con su política RLS (sección 6) antes de la verificación en vivo de la inserción. Se crea al inicio de la implementación (SQL de la sección 6, vía SQL Editor de Supabase o conexión directa).
