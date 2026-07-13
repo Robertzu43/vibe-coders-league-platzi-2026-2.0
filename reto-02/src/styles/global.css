@@ -1,0 +1,206 @@
+/*
+  Altura — sistema de estilos "Editorial cálido"
+  Café de especialidad, storytelling de origen: papel crema, tinta espresso,
+  acentos terracota/ámbar, serif display + sans de cuerpo.
+  Estos tokens son la base compartida de todas las secciones de la landing.
+*/
+
+:root {
+  color-scheme: light;
+
+  /* ---- Paleta ---- */
+  --color-papel: #f4ecd8; /* fondo principal, "papel" crema */
+  --color-papel-suave: #fbf6ea; /* fondo de tarjetas/superficies elevadas */
+  --color-papel-fuerte: #ffffff;
+  --color-tinta: #3b2a1e; /* café espresso — texto e íconos */
+  --color-tinta-80: rgba(59, 42, 30, 0.8);
+  --color-tinta-70: rgba(59, 42, 30, 0.7);
+  --color-tinta-45: rgba(59, 42, 30, 0.45);
+  --color-tinta-15: rgba(59, 42, 30, 0.15);
+  --color-tinta-08: rgba(59, 42, 30, 0.08);
+  --color-terracota: #c0703b;
+  --color-terracota-fuerte: #a35a2c;
+  --color-ambar: #e0a96d;
+  --color-ambar-suave: #f1d3a4;
+
+  /* ---- Tipografía ---- */
+  /* Fraunces: serif editorial con carácter — títulos y momentos de marca. */
+  --fuente-display: "Fraunces", Georgia, "Times New Roman", serif;
+  /* Work Sans: sans cálida y legible para cuerpo de texto y UI. */
+  --fuente-cuerpo: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* ---- Radios ---- */
+  --radio-sm: 10px;
+  --radio-md: 18px;
+  --radio-lg: 30px;
+  --radio-pill: 999px;
+
+  /* ---- Sombras suaves (nunca duras) ---- */
+  --sombra-sm: 0 2px 10px rgba(59, 42, 30, 0.08);
+  --sombra-md: 0 14px 34px -12px rgba(59, 42, 30, 0.28);
+  --sombra-lg: 0 28px 64px -20px rgba(59, 42, 30, 0.32);
+
+  /* ---- Layout ---- */
+  --ancho-contenedor: 1080px;
+  --transicion: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============ Reset ligero ============ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100svh;
+}
+
+img,
+svg,
+video,
+picture {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: currentColor;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============ Base tipográfica ============ */
+body {
+  background-color: var(--color-papel);
+  color: var(--color-tinta);
+  font-family: var(--fuente-cuerpo);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--fuente-display);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--color-tinta);
+}
+
+h1 {
+  font-size: clamp(2.5rem, 1.4rem + 4.5vw, 4.6rem);
+}
+
+h2 {
+  font-size: clamp(1.9rem, 1.3rem + 2.4vw, 2.75rem);
+}
+
+h3 {
+  font-size: clamp(1.3rem, 1.05rem + 1vw, 1.6rem);
+  font-weight: 600;
+}
+
+p {
+  max-width: 62ch;
+  color: var(--color-tinta-80);
+}
+
+strong {
+  font-weight: 600;
+  color: var(--color-tinta);
+}
+
+::selection {
+  background: var(--color-terracota);
+  color: var(--color-papel-suave);
+}
+
+/* ============ Utilidades de layout ============ */
+.contenedor {
+  width: 100%;
+  max-width: var(--ancho-contenedor);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw + 0.5rem, 2.5rem);
+}
+
+.seccion {
+  padding-block: clamp(3.5rem, 6vw + 1.5rem, 6.5rem);
+}
+
+/* ============ Botón principal ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--fuente-cuerpo);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  letter-spacing: 0.01em;
+  color: var(--color-papel-suave);
+  background: var(--color-tinta);
+  padding: 0.95rem 1.9rem;
+  border: 1px solid transparent;
+  border-radius: var(--radio-pill);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--sombra-sm);
+  transition: transform var(--transicion), box-shadow var(--transicion),
+    background-color var(--transicion);
+}
+
+.btn:hover {
+  background: var(--color-terracota-fuerte);
+  box-shadow: var(--sombra-md);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: var(--sombra-sm);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-terracota);
+  outline-offset: 3px;
+}

@@ -1,0 +1,263 @@
+---
+import { PRECIO_COP, MOLIDOS, producto } from '../data/product';
+---
+
+<section class="formulario seccion" id="reservar">
+  <div class="formulario__textura" aria-hidden="true"></div>
+
+  <div class="contenedor formulario__marco">
+    <div class="formulario__intro">
+      <p class="formulario__etiqueta">Reserva tu bolsa</p>
+      <h2 class="formulario__titulo">Asegura tu lote de {producto.finca}</h2>
+      <p class="formulario__subtitulo">
+        Dejas tus datos, tostamos tu café al pedir y te avisamos para coordinar el
+        envío. No se cobra nada ahora.
+      </p>
+    </div>
+
+    <form id="preorder-form" class="formulario__tarjeta" data-precio={PRECIO_COP} novalidate>
+      <div class="formulario__fila">
+        <div class="formulario__campo">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" autocomplete="name" required />
+        </div>
+        <div class="formulario__campo">
+          <label for="email">Correo</label>
+          <input type="email" id="email" name="email" autocomplete="email" required />
+        </div>
+      </div>
+
+      <div class="formulario__fila">
+        <div class="formulario__campo">
+          <label for="ciudad">Ciudad</label>
+          <input type="text" id="ciudad" name="ciudad" autocomplete="address-level2" required />
+        </div>
+        <div class="formulario__campo">
+          <label for="cantidad">Cantidad (bolsas)</label>
+          <input type="number" id="cantidad" name="cantidad" min="1" max="5" value="1" required />
+        </div>
+      </div>
+
+      <div class="formulario__campo">
+        <label for="molido">Molido</label>
+        <select id="molido" name="molido" required>
+          {MOLIDOS.map((m) => <option value={m.value}>{m.label}</option>)}
+        </select>
+      </div>
+
+      <!-- Honeypot anti-spam: oculto para personas, visible para bots -->
+      <input
+        type="text"
+        name="website"
+        id="website"
+        tabindex="-1"
+        autocomplete="off"
+        class="hp"
+        aria-hidden="true"
+      />
+
+      <div class="formulario__resumen">
+        <p id="total-line" class="formulario__total">
+          Total estimado: <strong>1 × {PRECIO_COP}</strong>
+        </p>
+        <p class="formulario__nota">
+          Envío calculado al despacho · gratis sobre $200.000. No se cobra ahora — es
+          una reserva.
+        </p>
+      </div>
+
+      <button type="submit" class="btn formulario__boton">Reservar mi bolsa</button>
+
+      <div id="form-status" class="formulario__status" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+
+<script>
+  import '../scripts/preorder-form.ts';
+</script>
+
+<style>
+  .formulario {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .formulario__textura {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(
+      circle at 90% 8%,
+      rgba(192, 112, 59, 0.1),
+      transparent 55%
+    );
+  }
+
+  .formulario__marco {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .formulario__intro {
+    max-width: 48ch;
+  }
+
+  .formulario__etiqueta {
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-terracota-fuerte);
+    margin-bottom: 0.75rem;
+  }
+
+  .formulario__titulo {
+    max-width: 20ch;
+    margin-bottom: 0.85rem;
+  }
+
+  .formulario__subtitulo {
+    color: var(--color-tinta-70);
+  }
+
+  .formulario__tarjeta {
+    display: grid;
+    gap: 1.35rem;
+    background: var(--color-papel-suave);
+    border-radius: var(--radio-lg);
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+    box-shadow: var(--sombra-md);
+  }
+
+  .formulario__fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.35rem;
+  }
+
+  .formulario__campo {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .formulario__campo label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--color-tinta-70);
+  }
+
+  .formulario__campo input,
+  .formulario__campo select {
+    width: 100%;
+    font-family: var(--fuente-cuerpo);
+    font-size: 1rem;
+    color: var(--color-tinta);
+    background: var(--color-papel-fuerte);
+    border: 1.5px solid var(--color-tinta-15);
+    border-radius: var(--radio-sm);
+    padding: 0.85rem 1rem;
+    transition: border-color var(--transicion), box-shadow var(--transicion);
+  }
+
+  .formulario__campo select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%233b2a1e' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+  }
+
+  .formulario__campo input:hover,
+  .formulario__campo select:hover {
+    border-color: var(--color-tinta-45);
+  }
+
+  .formulario__campo input:focus-visible,
+  .formulario__campo select:focus-visible {
+    outline: none;
+    border-color: var(--color-terracota);
+    box-shadow: 0 0 0 4px rgba(192, 112, 59, 0.18);
+  }
+
+  /* Honeypot: oculto de forma accesible, sin display:none (para no delatar el truco a bots simples) */
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .formulario__resumen {
+    border-top: 1px dashed var(--color-tinta-15);
+    padding-top: 1.15rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .formulario__total {
+    font-family: var(--fuente-display);
+    font-size: 1.15rem;
+    color: var(--color-tinta);
+  }
+
+  .formulario__total strong {
+    color: var(--color-terracota-fuerte);
+  }
+
+  .formulario__nota {
+    font-size: 0.85rem;
+    color: var(--color-tinta-45);
+  }
+
+  .formulario__boton {
+    justify-self: start;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .formulario__boton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .formulario__status {
+    min-height: 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .formulario__status:not(:empty) {
+    padding: 0.85rem 1rem;
+    border-radius: var(--radio-sm);
+  }
+
+  .formulario__status[data-tipo="exito"] {
+    color: #2f5d3a;
+    background: rgba(58, 122, 74, 0.12);
+  }
+
+  .formulario__status[data-tipo="error"] {
+    color: #8a2f1f;
+    background: rgba(163, 90, 44, 0.14);
+  }
+
+  @media (min-width: 560px) {
+    .formulario__fila {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formulario__boton {
+      width: auto;
+      justify-self: end;
+      padding-inline: 2.75rem;
+    }
+  }
+</style>
