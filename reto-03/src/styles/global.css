@@ -103,6 +103,27 @@ a { color: inherit; }
 /* Honeypot — visually hidden, off-screen */
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
+/* Informe (nodos creados por JS → estilos globales) */
+.informe__title { margin: 0.6rem 0 1.4rem; }
+.informe__bloques { list-style: none; counter-reset: paso; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.informe__bloque {
+  counter-increment: paso; position: relative;
+  padding: 1.2rem 1.3rem 1.2rem 3.4rem;
+  background: var(--canvas); border: 1.5px solid var(--line); border-radius: var(--r);
+}
+.informe__bloque::before {
+  content: counter(paso); position: absolute; left: 1.1rem; top: 1.15rem;
+  width: 1.7rem; height: 1.7rem; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 600; font-size: 0.95rem;
+  color: var(--ink); background: var(--lime); border: 1.5px solid var(--ink); border-radius: 50%;
+}
+.informe__bloque h4 { margin: 0 0 0.35rem; font-size: 1.12rem; font-weight: 700; }
+.informe__bloque p { margin: 0; color: var(--muted); }
+.informe__cierre {
+  margin: 1.5rem 0 0; padding: 1.2rem 1.3rem; border-radius: var(--r);
+  background: var(--ink); color: rgba(242, 238, 226, 0.9); font-weight: 500;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
