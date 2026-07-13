@@ -21,7 +21,7 @@
 
 **Skills relevantes:** @superpowers:test-driven-development · @superpowers:verification-before-completion · @frontend-design:frontend-design (landing) · Spec: `reto-02/docs/superpowers/specs/2026-07-12-altura-preorden-design.md`
 
-**Notas de credenciales para el CONTROLADOR** (no van en el repo): proyecto Supabase `yotlmzydbrkzwzqmhmgz`; `SUPABASE_URL=https://yotlmzydbrkzwzqmhmgz.supabase.co`; publishable key `sb_publishable_L1fKXxenm6T1SxN4yWuoYw_-8APt6t_`. Todas las rutas son relativas a `reto-02/`.
+**Notas de credenciales para el CONTROLADOR** (NO se comitean): la `SUPABASE_URL` y la `SUPABASE_PUBLISHABLE_KEY` del proyecto se manejan fuera del repo — localmente en `reto-02/.dev.vars` (gitignored) y en producción como secrets del Worker (`wrangler secret put`). `<redactado>`. Todas las rutas son relativas a `reto-02/`.
 
 ---
 

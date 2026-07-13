@@ -129,7 +129,7 @@ Mobile-first. Layout fluido (grid/flex), imágenes `max-width:100%`, formulario 
 - Nombre "Altura" y detalles del lote (Huila, Caturra, SCA 86.5): **aprobados**.
 - Campos del formulario (5 + honeypot): **aprobados**.
 - Base de datos: **Supabase** (publishable key + RLS solo-INSERT).
-- Credenciales de Supabase entregadas por el usuario (proyecto `yotlmzydbrkzwzqmhmgz`).
+- Credenciales de Supabase entregadas por el usuario (URL + publishable key; manejadas fuera del repo, no se comitean).
 
 ## 13. Prerrequisitos / bloqueadores conocidos
 
