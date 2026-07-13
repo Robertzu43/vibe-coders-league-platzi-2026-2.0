@@ -1,4 +1,35 @@
 ---
+import '../styles/global.css';
+import Hero from '../components/Hero.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'Radar Digital — ¿Tu negocio necesita web y automatización? | Órbita';
+const description =
+  'Diagnóstico gratis de 2 minutos: descubre qué tan preparado está tu negocio en presencia web y automatización, y recibe un informe con tus acciones prioritarias.';
 ---
-<html lang="es"><head><meta charset="utf-8" /><title>Radar Digital — Órbita</title></head>
-<body><h1>Radar Digital 📡</h1></body></html>
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#17153b" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Hero />
+    <!-- Task 9: <Quiz /> con id="diagnostico" (incluye resultado, gate e informe) -->
+    <Footer />
+  </body>
+</html>
