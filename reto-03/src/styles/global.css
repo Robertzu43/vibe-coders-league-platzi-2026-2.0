@@ -1,0 +1,110 @@
+/* Radar Digital — "Instrumento de diagnóstico editorial"
+   Warm paper + deep indigo ink + vivid lime accent + coral for the result moment.
+   Display: Fraunces · Body: Hanken Grotesk (loaded via <link> in index.astro). */
+
+:root {
+  /* Color */
+  --ink: #17153b;          /* deep indigo, near-black — text + dark sections */
+  --indigo: #302a63;
+  --violet: #574ac0;
+  --canvas: #f2eee2;       /* warm paper */
+  --paper: #fbf9f2;        /* cards / raised surfaces */
+  --lime: #c8f23a;         /* primary accent */
+  --lime-deep: #a6d016;
+  --coral: #ff6b5c;        /* secondary accent — result moment */
+  --muted: #6d6889;        /* secondary text */
+  --line: rgba(23, 21, 59, 0.12);
+  --line-strong: rgba(23, 21, 59, 0.22);
+
+  /* Type */
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Shape */
+  --r: 14px;
+  --r-lg: 26px;
+  --r-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(23, 21, 59, 0.06), 0 2px 6px rgba(23, 21, 59, 0.05);
+  --shadow: 0 6px 20px rgba(23, 21, 59, 0.09), 0 2px 6px rgba(23, 21, 59, 0.06);
+  --shadow-lg: 0 24px 60px rgba(23, 21, 59, 0.16), 0 8px 20px rgba(23, 21, 59, 0.08);
+
+  /* Layout */
+  --maxw: 1040px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.08rem);
+  line-height: 1.6;
+  color: var(--ink);
+  background-color: var(--canvas);
+  /* subtle paper depth: faint radial glow + grain-free gradient wash */
+  background-image:
+    radial-gradient(1200px 600px at 78% -8%, rgba(87, 74, 192, 0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 12%, rgba(200, 242, 58, 0.10), transparent 55%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-optical-sizing: auto;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.4em;
+}
+h1 { font-size: clamp(2.6rem, 1.7rem + 4.2vw, 5rem); font-weight: 600; }
+h2 { font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3rem); }
+h3 { font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.6rem); }
+
+p { margin: 0 0 1rem; }
+a { color: inherit; }
+
+/* Layout helpers */
+.contenedor { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: clamp(1.1rem, 0.6rem + 2.5vw, 2.2rem); }
+.seccion { padding-block: clamp(3.5rem, 2rem + 7vw, 7rem); }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--violet);
+}
+.eyebrow::before {
+  content: ""; width: 22px; height: 1px; background: currentColor; opacity: 0.6;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  font-family: var(--font-body); font-weight: 700; font-size: 1.02rem;
+  padding: 0.95rem 1.7rem; border-radius: var(--r-pill);
+  border: 1.5px solid var(--ink);
+  background: var(--lime); color: var(--ink);
+  cursor: pointer; text-decoration: none;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.2s ease;
+}
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
+.btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); }
+.btn:focus-visible { outline: 3px solid var(--violet); outline-offset: 3px; }
+.btn--ghost { background: transparent; box-shadow: none; }
+.btn--ghost:hover { background: rgba(23, 21, 59, 0.06); transform: none; box-shadow: none; }
+.btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: 3px 3px 0 var(--ink); }
+
+/* Honeypot — visually hidden, off-screen */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
