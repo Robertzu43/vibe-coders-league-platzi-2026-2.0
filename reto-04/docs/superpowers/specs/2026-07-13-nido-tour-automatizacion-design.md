@@ -76,17 +76,17 @@ Un **Code node** (JavaScript, determinista) deriva `segmento`, `plan_sugerido` y
 | 3–8 | Equipo pequeño | Oficina privada | Alta |
 | 9 o más | Enterprise | Piso dedicado | 🔥 Hot lead |
 
-Regla exacta: `n = Number(tamaño)`. `n <= 2` → Independiente. `n <= 8` → Equipo pequeño. `n >= 9` → Enterprise. Entrada inválida o vacía (`NaN`, `< 1`) → Independiente + prioridad Normal, con una nota `clasificacion_incierta = true` para revisión humana. El node también compone un saludo y un texto de confirmación de tour reutilizados por los nodos de email y Telegram (fuente única del copy dinámico).
+Regla exacta: `n = Number(tamaño)`. `n <= 2` → Independiente. `n <= 8` → Equipo pequeño. `n >= 9` → Enterprise. Entrada inválida o vacía (`NaN`, `< 1`) → Independiente + prioridad Normal, con una nota `clasificacion_incierta = true` para revisión humana. Como el campo del formulario es numérico y requerido (§5), esta rama defensiva será rara en la práctica; se mantiene como seguro barato (p. ej. si el workflow se dispara desde otra fuente en el futuro) y **no** requiere un caso de evidencia dedicado. El node también compone un saludo y un texto de confirmación de tour reutilizados por los nodos de email y Telegram (fuente única del copy dinámico).
 
 ## 7. Las 3+ acciones (detalle)
 
-1. **Google Sheets — Append row.** Hoja `Nido — Tours` con columnas: `timestamp`, `nombre`, `email`, `empresa`, `tamano_equipo`, `dia_tour`, `segmento`, `plan_sugerido`, `prioridad`, `mensaje`. Este es el registro real del lead (equivalente a "hoja/CRM" del reto).
+1. **Google Sheets — Append row.** Hoja `Nido — Tours` con columnas: `timestamp`, `nombre`, `email`, `empresa`, `tamano_equipo`, `dia_tour`, `segmento`, `plan_sugerido`, `prioridad`, `clasificacion_incierta`, `mensaje`. Este es el registro real del lead (equivalente a "hoja/CRM" del reto). La columna `clasificacion_incierta` persiste el flag de §6 donde un humano lo verá, no solo en el log.
 2. **Gmail — Send.** Correo personalizado al prospecto: saludo por nombre, confirmación del día del tour, dirección de Nido, el **plan recomendado** según su tamaño de equipo y qué esperar en la visita. Asunto: *"Tu tour en Nido está confirmado, {nombre} 🌱"*.
 3. **Telegram — Send message.** Mensaje al canal interno del equipo de Nido con: nombre, empresa, correo, tamaño de equipo, día del tour, **segmento + plan + prioridad**. Los hot leads (9+) se marcan con 🔥 para priorizar el seguimiento.
 
 ## 8. Manejo de errores y degradación
 
-- **Telegram** con *Continue On Fail*: si la notificación interna falla, el correo al cliente **ya se envió** y la fila **ya se guardó** — el lead no se pierde.
+- **Telegram** con *Continue On Fail*: es el nodo terminal, así que no protege pasos posteriores; su efecto práctico es que un fallo de la notificación **no marca toda la ejecución como fallida** (evita un falso estado de error) mientras el correo al cliente **ya se envió** y la fila **ya se guardó** — el lead no se pierde.
 - **Gmail** con *Continue On Fail* + registro del error: si el correo falla, la fila en Sheets y la alerta interna igual ocurren, y queda traza en el log de ejecución de n8n para reintento manual.
 - **Google Sheets** es el paso más crítico (persistencia); si falla, se registra el error en el log de n8n. (Opcional: un *Error Trigger workflow* que notifique fallos por Telegram.)
 - Todos los errores quedan visibles en el **historial de ejecuciones** de n8n. Espíritu de degradación elegante consistente con retos 02/03.
