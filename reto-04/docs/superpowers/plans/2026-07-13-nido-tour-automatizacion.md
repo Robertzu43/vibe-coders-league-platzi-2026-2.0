@@ -81,7 +81,7 @@ Exportar el token real fuera de git: `export N8N_MCP_TOKEN='<token>'` (el contro
 
 - [ ] **Step 4: Crear `reto-04/.mcp.json.example`** (SÍ commiteado — solo placeholder)
 
-Igual que arriba pero con `"Authorization": "Bearer ${N8N_MCP_TOKEN}"` y un comentario en el README explicando cómo exportar el token.
+Igual que arriba, con `"Authorization": "Bearer ${N8N_MCP_TOKEN}"`, y un comentario en el README explicando cómo exportar el token. **Nota:** el `.example` y el `.mcp.json` real son intencionalmente idénticos — ambos usan la expansión `${N8N_MCP_TOKEN}` porque el token real vive SOLO en la variable de entorno, nunca en un archivo. No "arreglar" esta aparente duplicación hardcodeando un placeholder de token.
 
 - [ ] **Step 5: Activar/reconectar el MCP y descubrir sus herramientas**
 
@@ -120,7 +120,7 @@ git -C <WT> commit -m "chore(reto-04): add n8n MCP config example + gitignore se
 
 **Outcome esperado:** existe una hoja con la pestaña `Tours` y la fila de encabezados exacta, lista para `append`.
 
-- [ ] **Step 1:** (Humano/controlador) Crear una Google Sheet, pestaña `Tours`, fila 1 con encabezados EXACTOS y en este orden:
+- [ ] **Step 1:** (Humano/controlador) Crear una Google Sheet (nombre del archivo sugerido: **"Nido — Tours"**) con una **pestaña llamada `Tours`** (ojo: el nombre del archivo y el de la pestaña son cosas distintas; los nodos de n8n apuntan al *Spreadsheet ID* + nombre de pestaña `Tours`), fila 1 con encabezados EXACTOS y en este orden:
 
 ```
 timestamp | nombre | email | empresa | tamano_equipo | dia_tour | segmento | plan_sugerido | prioridad | clasificacion_incierta | mensaje
@@ -245,7 +245,8 @@ return { json: {
 
 - [ ] **Step 1:** Añadir nodo **Telegram** (operación *Send Message*), credencial Telegram (bot token), `Chat ID` del canal.
 - [ ] **Step 2:** `Text` = `{{$json.telegramText}}`, parse mode = *Markdown*. Conectar después de Gmail.
-- [ ] **Step 3: Verify** — ejecutar con `n=20`; confirmar el mensaje en Telegram con 🔥 HOT LEAD y `Prioridad: 🔥 Hot lead`.
+  - **⚠️ Riesgo de parseo:** el texto incluye campos del usuario (`nombre`, `empresa`, `mensaje`) que pueden traer `_ * [ ]` y romper el parseo Markdown. Si el Verify (Step 3) da error de parseo de Telegram: o (a) cambiar parse mode a *ninguno* (texto plano — se pierde el negrita pero es robusto), o (b) escapar esos caracteres / usar MarkdownV2. Preferir (a) por simplicidad salvo que el negrita importe.
+- [ ] **Step 3: Verify** — ejecutar con `n=20`; confirmar el mensaje en Telegram con 🔥 HOT LEAD y `Prioridad: 🔥 Hot lead`. Probar también un caso con un `_` o `*` en el nombre/empresa para descartar errores de parseo.
 - [ ] **Step 4:** Marcar checkboxes.
 
 ---
