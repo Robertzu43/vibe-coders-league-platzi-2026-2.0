@@ -1,0 +1,130 @@
+---
+import { producto } from '../data/product';
+
+const instagramHandle = producto.contacto.instagram;
+const instagramUsuario = instagramHandle.replace(/^@/, '');
+const instagramUrl = `https://instagram.com/${instagramUsuario}`;
+const correoUrl = `mailto:${producto.contacto.correo}`;
+---
+
+<footer class="pie">
+  <div class="contenedor pie__marco">
+    <div class="pie__marca">
+      <span class="pie__grano" aria-hidden="true"></span>
+      <span class="pie__nombre">{producto.marca}</span>
+    </div>
+
+    <p class="pie__descripcion">
+      Café de especialidad de un solo origen: {producto.finca}, {producto.region}.
+      Tostamos al pedir para que cada bolsa llegue lo más fresca posible.
+    </p>
+
+    <div class="pie__contacto">
+      <a class="pie__enlace" href={correoUrl}>{producto.contacto.correo}</a>
+      <span class="pie__separador" aria-hidden="true">·</span>
+      <a class="pie__enlace" href={instagramUrl} target="_blank" rel="noopener noreferrer">
+        {instagramHandle}
+      </a>
+    </div>
+
+    <p class="pie__derechos">© {new Date().getFullYear()} {producto.marca}. Un lote, una cosecha.</p>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    background: var(--color-tinta);
+    color: var(--color-papel-suave);
+    padding-block: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .pie__marco {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .pie__marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .pie__grano {
+    position: relative;
+    width: 0.75rem;
+    height: 1rem;
+    background: linear-gradient(135deg, var(--color-ambar), var(--color-terracota));
+    border-radius: 60% 60% 55% 55% / 65% 65% 45% 45%;
+    transform: rotate(-18deg);
+  }
+
+  .pie__grano::after {
+    content: "";
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    width: 1.5px;
+    height: 84%;
+    background: var(--color-tinta);
+    transform: translateX(-50%) rotate(6deg);
+    opacity: 0.85;
+  }
+
+  .pie__nombre {
+    font-family: var(--fuente-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-papel-suave);
+  }
+
+  .pie__descripcion {
+    max-width: 40ch;
+    color: rgba(251, 246, 234, 0.68);
+    font-size: 0.92rem;
+  }
+
+  .pie__contacto {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.92rem;
+  }
+
+  .pie__enlace {
+    color: var(--color-ambar);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transicion);
+  }
+
+  .pie__enlace:hover,
+  .pie__enlace:focus-visible {
+    border-color: var(--color-ambar);
+  }
+
+  .pie__separador {
+    color: rgba(251, 246, 234, 0.4);
+  }
+
+  .pie__derechos {
+    font-size: 0.8rem;
+    color: rgba(251, 246, 234, 0.45);
+    margin-top: 0.5rem;
+  }
+
+  @media (min-width: 780px) {
+    .pie__marco {
+      text-align: left;
+      align-items: flex-start;
+    }
+
+    .pie__contacto {
+      justify-content: flex-start;
+    }
+  }
+</style>

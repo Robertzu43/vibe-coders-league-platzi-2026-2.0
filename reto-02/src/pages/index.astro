@@ -1,0 +1,44 @@
+---
+import '../styles/global.css';
+import Hero from '../components/Hero.astro';
+import Historia from '../components/Historia.astro';
+import Trazabilidad from '../components/Trazabilidad.astro';
+import ComoFunciona from '../components/ComoFunciona.astro';
+import Escasez from '../components/Escasez.astro';
+import Formulario from '../components/Formulario.astro';
+import FAQ from '../components/FAQ.astro';
+import Footer from '../components/Footer.astro';
+import { producto } from '../data/product';
+
+const titulo = `${producto.marca} — ${producto.eslogan}`;
+const descripcionMeta = `${producto.descripcion} ${producto.finca}, ${producto.region}.`;
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcionMeta} />
+
+    <!-- Webfonts (Fraunces + Work Sans) con fallback de sistema en global.css -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Hero />
+    <Historia />
+    <Trazabilidad />
+    <ComoFunciona />
+    <Escasez />
+
+    <Formulario />
+
+    <FAQ />
+    <Footer />
+  </body>
+</html>
