@@ -1,5 +1,4 @@
 export const PRECIO_COP = 58000;
-export const ENVIO_GRATIS_COP = 200000;
 export const LOTE_TOTAL = 300;
 export const LOTE_RESERVADAS = 128; // número de marketing estático (MVP; ver spec §6)
 

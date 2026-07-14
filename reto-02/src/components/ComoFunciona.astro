@@ -1,0 +1,91 @@
+---
+import { producto } from '../data/product';
+---
+
+<section class="como seccion" id="como-funciona">
+  <div class="contenedor">
+    <p class="como__etiqueta">Cómo funciona</p>
+    <h2 class="como__titulo">De la reserva a tu taza, en tres pasos</h2>
+
+    <ol class="como__pasos">
+      {producto.pasos.map((paso, i) => (
+        <li class="como__paso">
+          <span class="como__numero" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="como__paso-titulo">{paso.t}</h3>
+          <p class="como__paso-descripcion">{paso.d}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .como__etiqueta {
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-terracota-fuerte);
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+
+  .como__titulo {
+    max-width: 22ch;
+    margin-inline: auto;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+    text-align: center;
+  }
+
+  .como__pasos {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    counter-reset: paso;
+  }
+
+  .como__paso {
+    position: relative;
+    padding-left: 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-tinta-15);
+  }
+
+  .como__numero {
+    display: block;
+    font-family: var(--fuente-display);
+    font-size: clamp(2.4rem, 2rem + 1.5vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-terracota);
+    margin-bottom: 0.75rem;
+  }
+
+  .como__paso-titulo {
+    margin-bottom: 0.5rem;
+  }
+
+  .como__paso-descripcion {
+    max-width: 34ch;
+  }
+
+  @media (min-width: 780px) {
+    .como__pasos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(1.75rem, 4vw, 3rem);
+    }
+
+    .como__paso:not(:first-child) {
+      border-left: 1px dashed var(--color-tinta-15);
+      border-top: none;
+      padding-left: clamp(1.5rem, 3vw, 2.5rem);
+      padding-top: 0;
+    }
+
+    .como__paso:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+  }
+</style>
