@@ -1,0 +1,59 @@
+---
+// GateForm — captura de correo para desbloquear el informe. Va dentro de #gate.
+---
+
+<form id="lead-form" class="gate__form" novalidate>
+  <div class="gate__head">
+    <span class="eyebrow">Tu informe personalizado</span>
+    <h3>¿A qué correo te lo enviamos?</h3>
+    <p>Recibe las <strong>3–4 acciones prioritarias</strong> para tu negocio, con el porqué de cada una. También lo verás aquí al instante.</p>
+  </div>
+
+  <div class="gate__fields">
+    <label class="campo">
+      <span>Nombre</span>
+      <input name="nombre" type="text" required autocomplete="name" placeholder="Tu nombre" />
+    </label>
+    <label class="campo">
+      <span>Correo</span>
+      <input name="email" type="email" required autocomplete="email" placeholder="tucorreo@ejemplo.com" />
+    </label>
+    <label class="campo">
+      <span>Negocio <em>(opcional)</em></span>
+      <input name="negocio" type="text" autocomplete="organization" placeholder="Nombre de tu negocio" />
+    </label>
+  </div>
+
+  <!-- Honeypot anti-bots: oculto, fuera de pantalla -->
+  <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <div class="gate__actions">
+    <button type="submit" class="btn" data-submit>Ver mi informe →</button>
+    <span class="gate__note">No enviamos spam. Solo tu informe.</span>
+  </div>
+  <p class="gate__status" data-gate-status role="status" aria-live="polite"></p>
+</form>
+
+<style>
+  .gate__form { display: grid; gap: 1.4rem; }
+  .gate__head h3 { margin: 0.5rem 0 0.4rem; }
+  .gate__head p { color: var(--muted); max-width: 46ch; margin: 0; }
+  .gate__head strong { color: var(--ink); }
+  .gate__fields { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.2rem; }
+  .gate__fields .campo:last-child { grid-column: 1 / -1; }
+  .campo { display: grid; gap: 0.4rem; font-weight: 600; font-size: 0.92rem; }
+  .campo em { color: var(--muted); font-style: normal; font-weight: 500; }
+  .campo input {
+    font: inherit; font-weight: 500; padding: 0.85rem 1rem;
+    border: 1.5px solid var(--line-strong); border-radius: var(--r);
+    background: var(--canvas); color: var(--ink);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .campo input::placeholder { color: var(--muted); opacity: 0.7; }
+  .campo input:focus-visible { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(87, 74, 192, 0.2); }
+  .gate__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1.2rem; }
+  .gate__note { font-size: 0.85rem; color: var(--muted); }
+  .gate__status { margin: 0; font-weight: 600; min-height: 1.2em; }
+  .gate__status[data-tone="error"] { color: var(--coral); }
+  @media (max-width: 560px) { .gate__fields { grid-template-columns: 1fr; } }
+</style>

@@ -32,6 +32,7 @@ Cada reto explora una dimensión distinta de la IA aplicada al desarrollo. **Tod
 |---|------|-----------|
 | 01 | [Parla — El asistente que responde por tu negocio](./reto-01) | AI Chatbot / Web App |
 | 02 | [Altura — Tu producto en línea capturando datos reales](./reto-02) | Web App / E-commerce landing + Supabase |
+| 03 | [Radar Digital — La forma más creativa de capturar leads](./reto-03) | Lead magnet / Quiz diagnóstico + Supabase |
 
 _Esta tabla se irá completando conforme avancen los retos de esta edición._
 
@@ -43,6 +44,7 @@ _Esta tabla se irá completando conforme avancen los retos de esta edición._
 vibe-coders-league-platzi-2026-2.0/
   reto-01/     Parla — asistente de IA para una academia de idiomas (Astro + Cloudflare Workers AI)
   reto-02/     Altura — landing de pre-orden de café con datos reales (Astro + Cloudflare Workers + Supabase)
+  reto-03/     Radar Digital — lead magnet: quiz diagnóstico + Supabase (Astro + Cloudflare Workers)
 ```
 
 Cada carpeta es un proyecto independiente con su propio README, stack y documentación.
