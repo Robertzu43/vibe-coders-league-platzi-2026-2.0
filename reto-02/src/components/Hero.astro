@@ -1,0 +1,257 @@
+---
+import { producto } from '../data/product';
+---
+
+<section class="hero" id="inicio">
+  <div class="hero__textura" aria-hidden="true"></div>
+
+  <div class="contenedor hero__marco">
+    <p class="hero__marca">
+      <span class="hero__grano" aria-hidden="true"></span>
+      {producto.marca}
+    </p>
+
+    <div class="hero__cuerpo">
+      <div class="hero__texto">
+        <p class="hero__kicker">{producto.finca} · {producto.region}</p>
+        <h1 class="hero__titular">{producto.eslogan}</h1>
+        <p class="hero__subtitular">{producto.descripcion}</p>
+
+        <div class="hero__acciones">
+          <a href="#reservar" class="btn">Reserva tu bolsa</a>
+          <p class="hero__nota">{producto.presentacion} · tostado al pedir</p>
+        </div>
+      </div>
+
+      <div class="hero__insignia-envoltorio">
+        <div
+          class="hero__insignia"
+          role="img"
+          aria-label={`Sello de café de especialidad, puntaje SCA ${producto.sca} sobre 100`}
+        >
+          <span class="hero__insignia-etiqueta">Especialidad</span>
+          <span class="hero__insignia-valor">{producto.sca}</span>
+          <span class="hero__insignia-unidad">SCA</span>
+        </div>
+        <p class="hero__insignia-pie">☕ Un solo lote, una sola cosecha</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 4vw + 1rem, 4rem) clamp(3rem, 6vw, 5rem);
+    isolation: isolate;
+  }
+
+  /* Textura de fondo: líneas topográficas (guiño a "Altura"/msnm) + grano de papel */
+  .hero__textura {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--color-papel);
+    background-image:
+      repeating-radial-gradient(
+        circle at 82% 12%,
+        transparent 0 24px,
+        rgba(192, 112, 59, 0.14) 24px 26px
+      ),
+      radial-gradient(circle at 82% 12%, rgba(224, 169, 109, 0.4), transparent 62%),
+      radial-gradient(circle at 6% 92%, rgba(192, 112, 59, 0.12), transparent 55%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.23  0 0 0 0 0.16  0 0 0 0 0.12  0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+  }
+
+  .hero__marco {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero__marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    align-self: flex-start;
+    font-family: var(--fuente-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-tinta);
+    margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+    animation: surgir 700ms ease both;
+  }
+
+  /* Grano de café dibujado en CSS: dos curvas elípticas + hendidura central */
+  .hero__grano {
+    position: relative;
+    width: 0.85rem;
+    height: 1.15rem;
+    background: linear-gradient(135deg, var(--color-terracota), var(--color-tinta));
+    border-radius: 60% 60% 55% 55% / 65% 65% 45% 45%;
+    transform: rotate(-18deg);
+    box-shadow: var(--sombra-sm);
+  }
+
+  .hero__grano::after {
+    content: "";
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    width: 2px;
+    height: 84%;
+    background: var(--color-papel-suave);
+    border-radius: var(--radio-pill);
+    transform: translateX(-50%) scaleX(1) rotate(6deg);
+    opacity: 0.85;
+  }
+
+  .hero__cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 5vw, 3.5rem);
+    align-items: center;
+  }
+
+  .hero__texto {
+    max-width: 40rem;
+  }
+
+  .hero__kicker {
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-terracota-fuerte);
+    margin-bottom: 0.9rem;
+    animation: surgir 700ms 80ms ease both;
+  }
+
+  .hero__titular {
+    margin-bottom: 1.25rem;
+    animation: surgir 800ms 140ms ease both;
+  }
+
+  .hero__subtitular {
+    font-size: clamp(1.05rem, 0.4vw + 1rem, 1.2rem);
+    color: var(--color-tinta-70);
+    max-width: 46ch;
+    animation: surgir 800ms 220ms ease both;
+  }
+
+  .hero__acciones {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    animation: surgir 800ms 300ms ease both;
+  }
+
+  .hero__nota {
+    font-size: 0.9rem;
+    color: var(--color-tinta-70);
+    max-width: none;
+  }
+
+  .hero__insignia-envoltorio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    justify-self: center;
+    animation: surgir 900ms 260ms ease both;
+  }
+
+  .hero__insignia {
+    position: relative;
+    width: clamp(9.5rem, 8rem + 8vw, 13rem);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, var(--color-ambar) 0%, var(--color-terracota) 62%, var(--color-terracota-fuerte) 100%);
+    color: var(--color-papel-suave);
+    box-shadow: var(--sombra-lg);
+    transform: rotate(-6deg);
+  }
+
+  .hero__insignia::before {
+    content: "";
+    position: absolute;
+    inset: 0.5rem;
+    border: 1.5px dashed rgba(251, 246, 234, 0.55);
+    border-radius: 50%;
+  }
+
+  .hero__insignia-etiqueta {
+    position: absolute;
+    top: 22%;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .hero__insignia-valor {
+    font-family: var(--fuente-display);
+    font-size: clamp(2.2rem, 1.6rem + 2vw, 3rem);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .hero__insignia-unidad {
+    position: absolute;
+    bottom: 24%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+  }
+
+  .hero__insignia-pie {
+    font-size: 0.9rem;
+    color: var(--color-tinta-70);
+    text-align: center;
+    max-width: 20ch;
+  }
+
+  @keyframes surgir {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ---- Responsive: a partir de tablet, dos columnas ---- */
+  @media (min-width: 780px) {
+    .hero__cuerpo {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+
+    .hero__acciones {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__marca,
+    .hero__kicker,
+    .hero__titular,
+    .hero__subtitular,
+    .hero__acciones,
+    .hero__insignia-envoltorio {
+      animation: none;
+    }
+  }
+</style>

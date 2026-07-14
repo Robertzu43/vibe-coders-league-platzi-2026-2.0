@@ -1,0 +1,142 @@
+---
+import { LOTE_RESERVADAS, LOTE_TOTAL } from '../data/product';
+
+const porcentaje = Math.round((LOTE_RESERVADAS / LOTE_TOTAL) * 100);
+const disponibles = LOTE_TOTAL - LOTE_RESERVADAS;
+---
+
+<section class="escasez seccion" id="escasez">
+  <div class="escasez__textura" aria-hidden="true"></div>
+  <div class="contenedor escasez__marco">
+    <p class="escasez__etiqueta">Lote limitado</p>
+    <h2 class="escasez__titulo">Solo hay {LOTE_TOTAL} bolsas de esta cosecha</h2>
+    <p class="escasez__subtitulo">
+      Cuando se agoten, este lote no vuelve. La próxima cosecha será otra historia,
+      otro punto de corte, otra taza.
+    </p>
+
+    <div
+      class="escasez__barra"
+      role="progressbar"
+      aria-valuenow={LOTE_RESERVADAS}
+      aria-valuemin="0"
+      aria-valuemax={LOTE_TOTAL}
+      aria-label={`${LOTE_RESERVADAS} de ${LOTE_TOTAL} bolsas reservadas`}
+    >
+      <div class="escasez__barra-relleno" style={`width: ${porcentaje}%`}></div>
+    </div>
+
+    <div class="escasez__cifras">
+      <p class="escasez__cifra-principal">
+        <strong>{LOTE_RESERVADAS}</strong> de {LOTE_TOTAL} bolsas reservadas
+      </p>
+      <p class="escasez__cifra-secundaria">{disponibles} bolsas disponibles todavía</p>
+    </div>
+
+    <a href="#reservar" class="btn escasez__boton">Reservar antes de que se agote</a>
+  </div>
+</section>
+
+<style>
+  .escasez {
+    position: relative;
+    background: var(--color-tinta);
+    color: var(--color-papel-suave);
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .escasez__textura {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: repeating-radial-gradient(
+      circle at 12% 88%,
+      transparent 0 26px,
+      rgba(224, 169, 109, 0.08) 26px 28px
+    );
+  }
+
+  .escasez__marco {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .escasez__etiqueta {
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ambar);
+    margin-bottom: 0.85rem;
+  }
+
+  .escasez__titulo {
+    color: var(--color-papel-suave);
+    max-width: 20ch;
+    margin-bottom: 1rem;
+  }
+
+  .escasez__subtitulo {
+    color: rgba(251, 246, 234, 0.72);
+    max-width: 48ch;
+    margin-bottom: clamp(2.25rem, 5vw, 3rem);
+  }
+
+  .escasez__barra {
+    width: min(100%, 32rem);
+    height: 0.85rem;
+    background: rgba(251, 246, 234, 0.14);
+    border-radius: var(--radio-pill);
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .escasez__barra-relleno {
+    height: 100%;
+    border-radius: var(--radio-pill);
+    background: linear-gradient(90deg, var(--color-terracota), var(--color-ambar));
+    transition: width 900ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .escasez__cifras {
+    margin-top: 1.15rem;
+  }
+
+  .escasez__cifra-principal {
+    font-family: var(--fuente-display);
+    font-size: 1.15rem;
+    color: var(--color-papel-suave);
+  }
+
+  .escasez__cifra-principal strong {
+    color: var(--color-ambar);
+    font-size: 1.3rem;
+  }
+
+  .escasez__cifra-secundaria {
+    font-size: 0.9rem;
+    color: rgba(251, 246, 234, 0.6);
+    margin-top: 0.25rem;
+  }
+
+  .escasez__boton {
+    margin-top: clamp(2rem, 4vw, 2.75rem);
+    background: var(--color-papel-suave);
+    color: var(--color-tinta);
+  }
+
+  .escasez__boton:hover {
+    background: var(--color-ambar);
+    color: var(--color-tinta);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .escasez__barra-relleno {
+      transition: none;
+    }
+  }
+</style>

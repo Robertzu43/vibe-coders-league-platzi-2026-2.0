@@ -1,0 +1,170 @@
+---
+import { producto } from '../data/product';
+---
+
+<section class="historia seccion" id="historia">
+  <div class="contenedor historia__marco">
+    <div class="historia__visual" aria-hidden="true">
+      <div class="historia__anillos"></div>
+      <div class="historia__pin">
+        <span class="historia__pin-punta"></span>
+      </div>
+      <p class="historia__msnm">{producto.altitud}</p>
+    </div>
+
+    <div class="historia__texto">
+      <p class="historia__etiqueta">Origen</p>
+      <h2 class="historia__titulo">De {producto.finca} a tu taza</h2>
+
+      <p class="historia__parrafo">
+        En lo alto de <strong>{producto.region}</strong> crece un único lote, cosechado
+        a mano grano por grano en su punto justo de madurez. No mezclamos cosechas ni
+        compramos por volumen: es la misma finca, la misma familia, el mismo suelo,
+        añada tras añada.
+      </p>
+      <p class="historia__parrafo">
+        El café descansa en verde hasta que reservas tu bolsa. Solo entonces lo
+        tostamos, para que lo que llega a tu taza sea lo más cercano posible al
+        momento de la cosecha.
+      </p>
+
+      <div class="historia__firma">
+        <span class="historia__firma-linea" aria-hidden="true"></span>
+        <p class="historia__firma-texto">{producto.finca} · {producto.region}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .historia__marco {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  /* ---- Visual: sello topográfico + pin de altitud ---- */
+  .historia__visual {
+    position: relative;
+    justify-self: center;
+    width: clamp(14rem, 10rem + 14vw, 19rem);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+  }
+
+  .historia__anillos {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      repeating-radial-gradient(
+        circle at 50% 46%,
+        transparent 0 16px,
+        var(--color-terracota) 16px 17.5px,
+        transparent 17.5px 34px
+      );
+    opacity: 0.85;
+    -webkit-mask-image: radial-gradient(circle, black 62%, transparent 100%);
+    mask-image: radial-gradient(circle, black 62%, transparent 100%);
+  }
+
+  .historia__visual::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--color-papel-suave);
+    box-shadow: var(--sombra-md);
+  }
+
+  .historia__anillos {
+    z-index: 1;
+  }
+
+  .historia__pin {
+    position: relative;
+    z-index: 2;
+    width: 2.1rem;
+    height: 2.75rem;
+    background: linear-gradient(160deg, var(--color-terracota), var(--color-terracota-fuerte));
+    border-radius: 50% 50% 50% 4%;
+    transform: rotate(-45deg);
+    box-shadow: var(--sombra-sm);
+    margin-top: -0.75rem;
+  }
+
+  .historia__pin-punta {
+    position: absolute;
+    inset: 22%;
+    background: var(--color-papel-suave);
+    border-radius: 50%;
+  }
+
+  .historia__msnm {
+    position: relative;
+    z-index: 2;
+    margin-top: 1rem;
+    font-family: var(--fuente-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    color: var(--color-tinta);
+    background: var(--color-papel-suave);
+    padding: 0.35rem 1rem;
+    border-radius: var(--radio-pill);
+    box-shadow: var(--sombra-sm);
+  }
+
+  /* ---- Texto ---- */
+  .historia__etiqueta {
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-terracota-fuerte);
+    margin-bottom: 0.75rem;
+  }
+
+  .historia__titulo {
+    margin-bottom: 1.25rem;
+    max-width: 20ch;
+  }
+
+  .historia__parrafo {
+    margin-bottom: 1.1rem;
+    max-width: 58ch;
+  }
+
+  .historia__firma {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.75rem;
+  }
+
+  .historia__firma-linea {
+    width: 2.5rem;
+    height: 1.5px;
+    background: var(--color-tinta-45);
+  }
+
+  .historia__firma-texto {
+    font-family: var(--fuente-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--color-tinta-70);
+  }
+
+  @media (min-width: 780px) {
+    .historia__marco {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+
+    .historia__visual {
+      justify-self: start;
+    }
+  }
+</style>
