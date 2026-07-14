@@ -1,0 +1,12 @@
+{
+  "//": "Plantilla del MCP de n8n para reto-04. Copia este archivo a `.mcp.json` en la raíz del repo (está gitignored) y exporta el token real como variable de entorno antes de iniciar Claude Code:  export N8N_MCP_TOKEN='...'.  El token NUNCA se comitea. El `.mcp.json` real y este `.example` son intencionalmente idénticos: el secreto solo vive en la variable de entorno.",
+  "mcpServers": {
+    "n8n-mcp": {
+      "type": "http",
+      "url": "https://robertzu43.app.n8n.cloud/mcp-server/http",
+      "headers": {
+        "Authorization": "Bearer ${N8N_MCP_TOKEN}"
+      }
+    }
+  }
+}

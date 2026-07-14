@@ -1,0 +1,191 @@
+{
+  "name": "Nido — Agenda tu tour",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Agenda tu tour en Nido",
+        "formDescription": "Déjanos tus datos y coordinamos una visita guiada por el espacio. Te confirmamos por correo en minutos.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nombre completo",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Correo",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Empresa",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Tamaño del equipo",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Día preferido del tour",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Mensaje",
+              "fieldType": "textarea",
+              "requiredField": false
+            }
+          ]
+        },
+        "options": {
+          "formSubmittedText": "¡Listo! Te enviamos la confirmación de tu tour al correo. Nuestro equipo te contactará pronto."
+        }
+      },
+      "id": "a1b2c3d4-0001-4a01-8a01-000000000001",
+      "name": "Agenda tu tour",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -40,
+        300
+      ],
+      "webhookId": "f0e1d2c3-b4a5-4c6d-8e7f-000000000abc"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Nido — Clasificar lead. Determinista, por tamaño de equipo.\n// Modo del nodo: \"Run Once for All Items\".\nconst DIRECCION = 'Nido · Cra. 13 #93-40, Chapinero, Bogotá';\nconst out = [];\n\nfor (const item of $input.all()) {\n  const j = item.json;\n\n  const nombre  = String(j['Nombre completo'] ?? '').trim();\n  const email   = String(j['Correo'] ?? '').trim();\n  const empresa = String(j['Empresa'] ?? '').trim();\n  const diaTour = String(j['Día preferido del tour'] ?? '').trim();\n  const mensaje = String(j['Mensaje'] ?? '').trim();\n  const n = Number(j['Tamaño del equipo']);\n\n  let segmento, plan_sugerido, prioridad;\n  let clasificacion_incierta = false;\n\n  if (!Number.isFinite(n) || n < 1) {\n    segmento = 'Independiente'; plan_sugerido = 'Hot-desk flexible'; prioridad = 'Normal';\n    clasificacion_incierta = true;\n  } else if (n <= 2) {\n    segmento = 'Independiente'; plan_sugerido = 'Hot-desk flexible'; prioridad = 'Normal';\n  } else if (n <= 8) {\n    segmento = 'Equipo pequeño'; plan_sugerido = 'Oficina privada'; prioridad = 'Alta';\n  } else {\n    segmento = 'Enterprise'; plan_sugerido = 'Piso dedicado'; prioridad = 'Hot lead';\n  }\n\n  const primerNombre = (nombre.split(/\\s+/)[0] || nombre);\n  const equipoTxt = Number.isFinite(n) ? String(n) : 's/d';\n\n  const emailSubject = `Tu tour en Nido está confirmado, ${primerNombre} 🌱`;\n  const emailBody =\n`Hola ${primerNombre},\n\n¡Gracias por agendar tu tour en Nido! Te esperamos el ${diaTour || 'día acordado'} en:\n${DIRECCION}\n\nSegún nos contaste (equipo de ${equipoTxt}), creemos que el plan ideal para ti es:\n👉 ${plan_sugerido} (${segmento})\n\nEn la visita te mostramos el espacio, resolvemos tus dudas y armamos una propuesta a tu medida.\n\nNos vemos pronto,\nEl equipo de Nido`;\n\n  const esHot = prioridad === 'Hot lead';\n  const telegramText =\n`${esHot ? '🔥 HOT LEAD — ' : ''}🏢 Nuevo tour agendado en Nido\n• Nombre: ${nombre}\n• Empresa: ${empresa || '—'}\n• Correo: ${email}\n• Equipo: ${equipoTxt} personas\n• Día del tour: ${diaTour || 's/d'}\n• Segmento: ${segmento}\n• Plan sugerido: ${plan_sugerido}\n• Prioridad: ${prioridad}${clasificacion_incierta ? '\\n⚠️ Clasificación incierta — revisar' : ''}${mensaje ? `\\n• Mensaje: ${mensaje}` : ''}`;\n\n  out.push({\n    json: {\n      timestamp: new Date().toISOString(),\n      nombre, email, empresa,\n      tamano_equipo: Number.isFinite(n) ? n : '',\n      dia_tour: diaTour,\n      segmento, plan_sugerido, prioridad,\n      clasificacion_incierta,\n      mensaje,\n      emailSubject, emailBody, telegramText,\n    },\n  });\n}\n\nreturn out;\n"
+      },
+      "id": "a1b2c3d4-0002-4a02-8a02-000000000002",
+      "name": "Clasificar lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zCasISyvhFcVWZJUazQnAtcDB1AWy1mGBOEEsaTlLvI",
+          "mode": "list",
+          "cachedResultName": "Nido — Tours",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zCasISyvhFcVWZJUazQnAtcDB1AWy1mGBOEEsaTlLvI/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tours",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zCasISyvhFcVWZJUazQnAtcDB1AWy1mGBOEEsaTlLvI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-4a03-8a03-000000000003",
+      "name": "Guardar en Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Clasificar lead').item.json.email }}",
+        "subject": "={{ $('Clasificar lead').item.json.emailSubject }}",
+        "emailType": "text",
+        "message": "={{ $('Clasificar lead').item.json.emailBody }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a1b2c3d4-0004-4a04-8a04-000000000004",
+      "name": "Email de confirmación",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        300
+      ],
+      "webhookId": "c3d4e5f6-a7b8-4c9d-8e0f-000000000def",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "REEMPLAZA_CON_TU_CHAT_ID",
+        "text": "={{ $('Clasificar lead').item.json.telegramText }}",
+        "additionalFields": {}
+      },
+      "id": "a1b2c3d4-0005-4a05-8a05-000000000005",
+      "name": "Alerta interna (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        920,
+        300
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Agenda tu tour": {
+      "main": [
+        [
+          {
+            "node": "Clasificar lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificar lead": {
+      "main": [
+        [
+          {
+            "node": "Guardar en Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Email de confirmación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email de confirmación": {
+      "main": [
+        [
+          {
+            "node": "Alerta interna (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
