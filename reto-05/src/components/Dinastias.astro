@@ -7,8 +7,8 @@ const sorted = [...champions].sort((a, b) => b.titles - a.titles);
   <p class="label">Capítulo 1</p>
   <h2 id="din-title">Dinastías · quién manda</h2>
   <div role="group" aria-label="Modo de color" class="toggle">
-    <button data-mode="pais" class="btn" aria-pressed="true">Por país</button>
-    <button data-mode="conf" class="btn" aria-pressed="false">Por confederación</button>
+    <button type="button" data-mode="pais" class="btn" aria-pressed="true">Por país</button>
+    <button type="button" data-mode="conf" class="btn" aria-pressed="false">Por confederación</button>
   </div>
   <ul id="din-bars" class="bars" data-mode="pais" role="list">
     {sorted.map(c => (
