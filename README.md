@@ -35,6 +35,7 @@ Cada reto explora una dimensión distinta de la IA aplicada al desarrollo. **Tod
 | 03 | [Radar Digital — La forma más creativa de capturar leads](./reto-03) | Lead magnet / Quiz diagnóstico + Supabase |
 | 04 | [Nido — La automatización que responde después de capturar el lead](./reto-04) | Automatización / n8n (Form + Sheets + Gmail + Telegram) |
 | 05 | [GOLAZO — El Mundial en datos](./reto-05) | Landing interactiva / Data storytelling con Astro + Cloudflare Workers |
+| 06 | [Pulso — El reporte que se arma y se envía solo](./reto-06) | Automatización / Reporte programado (Cloudflare Worker Cron + Workers AI + Gmail API) |
 
 _Esta tabla se irá completando conforme avancen los retos de esta edición._
 
@@ -49,6 +50,7 @@ vibe-coders-league-platzi-2026-2.0/
   reto-03/     Radar Digital — lead magnet: quiz diagnóstico + Supabase (Astro + Cloudflare Workers)
   reto-04/     Nido — automatización post-captura de leads (n8n: Form + Google Sheets + Gmail + Telegram)
   reto-05/     GOLAZO — especial interactivo de datos del Mundial (Astro + Cloudflare Workers, sin backend)
+  reto-06/     Pulso — reporte automático de resultados de la liga (Cloudflare Worker Cron + Workers AI + Gmail API)
 ```
 
 Cada carpeta es un proyecto independiente con su propio README, stack y documentación.
