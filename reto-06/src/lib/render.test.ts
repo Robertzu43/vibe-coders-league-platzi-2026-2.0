@@ -24,12 +24,20 @@ test('renderHtml incluye métricas clave y el resumen', () => {
   expect(html).toContain('parla');
   expect(html).toContain('200');
   expect(html).toContain('Resumen ejecutivo.');
+  expect(html).toContain('CPU p50');
+});
+
+test('renderHtml escapa HTML en el resumen (defensa en profundidad)', () => {
+  const html = renderHtml(model, 'x <script>y</script>');
+  expect(html).toContain('&lt;script&gt;');
+  expect(html).not.toContain('<script>y');
 });
 
 test('renderText es texto plano con las métricas', () => {
   const txt = renderText(model, 'Resumen ejecutivo.');
   expect(txt).toContain('parla');
   expect(txt).toContain('Resumen ejecutivo.');
+  expect(txt).toContain('CPU');
   expect(txt).not.toContain('<');
 });
 
