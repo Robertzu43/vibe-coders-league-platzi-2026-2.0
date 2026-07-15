@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import { checkTrigger, runReport, type Env } from './index';
 
 vi.mock('./lib/cloudflare', () => ({ fetchTraffic: vi.fn(async () => { throw new Error('cf down'); }) }));
-vi.mock('./lib/supabase', () => ({ countRows: vi.fn(async () => 0) }));
+vi.mock('./lib/supabase', () => ({ fetchConversions: vi.fn(async () => ({ leads: 0, preorders: 0 })) }));
 const sendEmail = vi.fn(async (..._a: unknown[]) => {});
 vi.mock('./lib/gmail', () => ({ sendEmail: (...a: unknown[]) => sendEmail(...a) }));
 
@@ -26,7 +26,7 @@ test('runReport envía el correo aunque falle una fuente (degradado)', async () 
   const env = {
     AI: { run: async () => ({ response: '' }) },
     CF_ACCOUNT_ID: 'a', REPORT_TO: 'x@y.com', CF_ANALYTICS_TOKEN: 't',
-    SUPABASE_URL: 'https://s.co', SUPABASE_SECRET_KEY: 'k',
+    SUPABASE_URL: 'https://s.co', SUPABASE_PUBLISHABLE_KEY: 'k',
     GMAIL_CLIENT_ID: 'c', GMAIL_CLIENT_SECRET: 's', GMAIL_REFRESH_TOKEN: 'r', TRIGGER_TOKEN: 'z',
   } as unknown as Env;
   const out = await runReport(env, Date.parse('2026-07-17T22:00:00.000Z'));
