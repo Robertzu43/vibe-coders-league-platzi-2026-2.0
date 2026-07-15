@@ -4,7 +4,7 @@ const ENDPOINT = 'https://api.cloudflare.com/client/v4/graphql';
 
 const QUERY = `query($tag: String!, $start: Time!, $end: Time!, $scripts: [String!]!) {
   viewer { accounts(filter: { accountTag: $tag }) {
-    workersInvocationsAdaptiveGroups(limit: 100, filter: { datetime_geq: $start, datetime_leq: $end, scriptName_in: $scripts }) {
+    workersInvocationsAdaptive(limit: 100, filter: { datetime_geq: $start, datetime_leq: $end, scriptName_in: $scripts }) {
       dimensions { scriptName }
       sum { requests errors subrequests }
       quantiles { cpuTimeP50 cpuTimeP99 }
@@ -31,7 +31,7 @@ export async function fetchTraffic(opts: {
   if (!res.ok) throw new Error(`Cloudflare GraphQL HTTP ${res.status}`);
   const json = (await res.json()) as any;
   if (json.errors?.length) throw new Error(`Cloudflare GraphQL: ${JSON.stringify(json.errors)}`);
-  const groups = json.data?.viewer?.accounts?.[0]?.workersInvocationsAdaptiveGroups ?? [];
+  const groups = json.data?.viewer?.accounts?.[0]?.workersInvocationsAdaptive ?? [];
   return groups.map((g: any): LandingTraffic => ({
     scriptName: g.dimensions.scriptName,
     requests: g.sum?.requests ?? 0,
