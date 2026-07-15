@@ -1,7 +1,7 @@
 import { fetchTraffic } from './cloudflare';
 
 const sample = {
-  data: { viewer: { accounts: [ { workersInvocationsAdaptiveGroups: [
+  data: { viewer: { accounts: [ { workersInvocationsAdaptive: [
     { dimensions: { scriptName: 'parla' }, sum: { requests: 100, errors: 2, subrequests: 5 }, quantiles: { cpuTimeP50: 3, cpuTimeP99: 12 } },
     { dimensions: { scriptName: 'golazo' }, sum: { requests: 50, errors: 0, subrequests: 1 }, quantiles: { cpuTimeP50: 2, cpuTimeP99: 9 } },
   ] } ] } },
