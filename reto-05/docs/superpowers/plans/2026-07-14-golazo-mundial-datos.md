@@ -69,7 +69,9 @@ reto-05/
     "astro": "^6.0.4"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.0",
     "@cloudflare/workers-types": "^5.20260708.1",
+    "typescript": "^5.6.0",
     "vitest": "^2.1.0",
     "wrangler": "^4.61.1"
   }
@@ -596,7 +598,7 @@ Use @dataviz. Single-series line/area over time (goals-per-match by edition), `#
 
 - [ ] **Step 1: Write `src/components/EraGoles.astro`**
 
-Build an inline SVG (viewBox e.g. `0 0 720 300`, margins ~40). Compute per-edition `avg = goals/matches`. X = `scaleLinear([0, editions.length-1],[m, W-m])` by index; Y = `scaleLinear([2, 5.5],[H-m, m])`. Draw: recessive gridlines + y-ticks (2,3,4,5), an area path (line + baseline) at low opacity, the `linePath(...)` stroke, and one `<circle r="5">` per edition carrying `data-year data-goals data-matches data-avg` and `tabindex="0"` + `aria-label`. Add an empty `<div id="goles-tip" role="status">` tooltip and a `<details>` table of every edition.
+The `<section>` id MUST be `goles` (SectionNav links `#goles`); the SVG id MUST be `goles-svg`. Build an inline SVG (viewBox e.g. `0 0 720 300`, margins ~40). Compute per-edition `avg = goals/matches`. X = `scaleLinear([0, editions.length-1],[m, W-m])` by index; Y = `scaleLinear([2, 5.5],[H-m, m])`. Draw: recessive gridlines + y-ticks (2,3,4,5), an area path (line + baseline) at low opacity, the `linePath(...)` stroke, and one `<circle r="5">` per edition carrying `data-year data-goals data-matches data-avg` and `tabindex="0"` + `aria-label`. **`data-avg` must be pre-formatted** in the frontmatter as `(goals/matches).toFixed(2)` (the script renders `${avg}` verbatim). Add an empty `<div id="goles-tip" role="status">` tooltip and a `<details>` table of every edition.
 
 Pull `linePath`/`scaleLinear` from `../lib/chart`. Compute points server-side in the frontmatter and emit the path string + circles.
 
@@ -644,7 +646,7 @@ Use @dataviz. Vertical bars of notable attendances (`venues`), single hue `#e639
 **Files:**
 - Create: `src/components/Estadios.astro`, `src/scripts/estadios.ts`
 
-- [ ] **Step 1: Write `src/components/Estadios.astro`** — bars for each venue (height via `scaleLinear([0, maxAttendance],[0, 220])`), label `{name} {year}`, value `formatInt(attendance)`, `data-note` on each; a `#estadios-note` region; a Panini callout card with the 2026 facts; `<details>` table.
+- [ ] **Step 1: Write `src/components/Estadios.astro`** — the `<section>` id MUST be `estadios` (SectionNav links `#estadios`); the bars container id MUST be `estadios-bars`. Bars for each venue (height via `scaleLinear([0, maxAttendance],[0, 220])`), label `{name} {year}`, value `formatInt(attendance)`, `data-note` on each; a `#estadios-note` region; a Panini callout card with the 2026 facts; `<details>` table.
 
 - [ ] **Step 2: Write `src/scripts/estadios.ts`**
 
@@ -764,7 +766,7 @@ Reads the active selection from `#explora[data-seleccion]` (default `ARG` if uns
 **Files:**
 - Create: `src/components/Comparte.astro`, `src/scripts/comparte.ts`
 
-- [ ] **Step 1: Write `src/components/Comparte.astro`** — a button "Arma mi tarjeta", an initially-muted `#share-card` (Panini sticker look), and embed `teams` JSON again (or reuse a shared `<script type="application/json">`). Card fields mirror the explorer.
+- [ ] **Step 1: Write `src/components/Comparte.astro`** — the `<section>` id MUST be `comparte` (SectionNav links `#comparte`). A button `id="share-btn"` labeled "Arma mi tarjeta", an initially-muted `#share-card` (Panini sticker look), and embed the `teams` JSON in `<script type="application/json" id="share-data">` (the script reads `#share-data`). Card fields mirror the explorer.
 
 - [ ] **Step 2: Write `src/scripts/comparte.ts`**
 
