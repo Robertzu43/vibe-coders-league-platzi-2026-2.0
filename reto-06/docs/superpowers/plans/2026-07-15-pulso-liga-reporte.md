@@ -338,7 +338,7 @@ import type { LandingTraffic, Window } from '../types';
 
 const ENDPOINT = 'https://api.cloudflare.com/client/v4/graphql';
 
-const QUERY = `query($tag: string!, $start: Time!, $end: Time!, $scripts: [string!]!) {
+const QUERY = `query($tag: String!, $start: Time!, $end: Time!, $scripts: [String!]!) {
   viewer { accounts(filter: { accountTag: $tag }) {
     workersInvocationsAdaptiveGroups(limit: 100, filter: { datetime_geq: $start, datetime_leq: $end, scriptName_in: $scripts }) {
       dimensions { scriptName }
@@ -794,7 +794,10 @@ const model: ReportModel = {
 test('base64UrlEncode: sin +, /, ni =, y decodifica de vuelta', () => {
   const s = base64UrlEncode('Hola, liga ✅');
   expect(s).not.toMatch(/[+/=]/);
-  const restored = Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf-8');
+  // Decodificar con atob/TextDecoder (no Buffer: el tsconfig no incluye @types/node)
+  const bin = atob(s.replace(/-/g, '+').replace(/_/g, '/'));
+  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  const restored = new TextDecoder().decode(bytes);
   expect(restored).toBe('Hola, liga ✅');
 });
 
@@ -915,6 +918,8 @@ export function renderHtml(r: ReportModel, summary: string): string {
 }
 
 export function buildMime(opts: { to: string; subject: string; html: string; text: string }): string {
+  // Sin header `From:` a propósito: Gmail `users/me/messages/send` fija el remitente
+  // a la cuenta autenticada. NO agregar un From manual.
   return [
     `To: ${opts.to}`,
     `Subject: ${encodeSubject(opts.subject)}`,
@@ -1152,7 +1157,7 @@ export async function runReport(env: Env, now: number): Promise<{ subject: strin
   let previousTraffic: LandingTraffic[] = [];
   let degradedTraffic = false;
   try {
-    const base = { accountId: env.CF_ACCOUNT_ID, token: env.CF_ANALYTICS_TOKEN, scripts: LANDINGS as unknown as string[] };
+    const base = { accountId: env.CF_ACCOUNT_ID, token: env.CF_ANALYTICS_TOKEN, scripts: LANDINGS };
     currentTraffic = await fetchTraffic({ ...base, window: windows.current });
     previousTraffic = await fetchTraffic({ ...base, window: windows.previous });
   } catch (e) {
@@ -1292,6 +1297,7 @@ Expected: despliega el Worker `pulso` con el cron `0 22 * * 5` registrado.
 Run: `curl -s "https://pulso.robertzu43.workers.dev/__run?token=<TRIGGER_TOKEN>"`
 Expected: `{"ok":true,"subject":"Pulso de la liga · ...","summary":"..."}` y **el correo llega** a robertzu43@gmail.com. Si alguna fuente estaba vacía/caída, el correo igual llega en modo degradado.
 Revisar logs si algo falla: `npx wrangler tail pulso`.
+Si el tráfico llega vacío pero hay requests reales, es señal de **mismatch de esquema GraphQL**: correr una query cruda con `curl` al endpoint y diffear la forma del JSON contra el mapeo de `LandingTraffic` (nombres de campos `sum`/`quantiles`, filtros `datetime_geq`/`datetime_leq`/`scriptName_in`, y `accountTag`). Ajustar `cloudflare.ts` si el esquema difiere.
 
 - [ ] **Step 7: Capturar evidencia**
 
