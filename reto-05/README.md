@@ -16,13 +16,13 @@ Construir una landing **estática e interactiva** que cuente una historia con da
 
 ## El recorrido
 
-Seis secciones conectadas por un mini-nav pegajoso que resalta el capítulo activo:
+Seis paradas conectadas por un mini-nav pegajoso que resalta el capítulo activo. Las tres secciones de datos son **densas: dos gráficas lado a lado** (2 columnas en desktop, apiladas en móvil) para más impacto.
 
 1. **Hero** — la portada: `92 años`, un contador que sube de 0 a 22 Mundiales y de 0 a 8 países campeones al entrar en pantalla.
-2. **Dinastías** — quién manda: barras de palmarés por país, con un **toggle** que recolorea las barras por confederación (UEFA azul / CONMEBOL rojo) y revela la leyenda.
-3. **La era de los goles** — una línea de goles-por-partido por edición (pico en 1954), con **hover/foco** sobre cada punto que muestra un tooltip con el detalle de esa Copa.
-4. **Estadios llenos** — barras de asistencias históricas (Maracaná 1950, Azteca 1986, Wembley 1966...); **clic en una barra** la resalta y muestra su nota, junto a un callout con los datos del Mundial 2026 (48 selecciones, 104 partidos, 3 sedes).
-5. **Explora tú** — el corazón interactivo: un **selector** de 8 selecciones curadas que recalcula al instante títulos, mejor resultado, participaciones y goleador histórico.
+2. **Dinastías** — quién manda: barras de palmarés por país con un **toggle** que las recolorea por confederación (UEFA azul / CONMEBOL rojo), **+** una **dona** de títulos por confederación (UEFA 12 · CONMEBOL 10).
+3. **La era de los goles** — una línea de goles-por-partido por edición (pico en 1954) con **hover/foco** que muestra el detalle de cada Copa, **+** barras de **goleadores históricos** (Klose 16, Ronaldo 15, Messi 13, Fontaine 13…).
+4. **Estadios & 2026** — barras de asistencias históricas (Maracaná 1950, Azteca 1986, Wembley 1966…) con **clic** que resalta y muestra la nota, **+** una línea del **crecimiento del torneo** (13 selecciones en 1930 → 48 en 2026), junto a un callout del Mundial 2026 (48 selecciones, 104 partidos, 3 sedes).
+5. **Explora tú** — el corazón interactivo: un **selector** de 16 selecciones que recalcula al instante títulos, mejor resultado, participaciones y goleador histórico.
 6. **Comparte** — un botón arma una "tarjeta" tipo figurita Panini con la selección elegida en el capítulo anterior (por defecto Argentina si no se eligió ninguna).
 
 Todas las interacciones son reales: contador animado, toggle de color, hover con tooltip, clic que resalta y muestra contexto, selector que recalcula el estado de la página, y un botón que genera contenido a partir de ese estado.
@@ -65,19 +65,25 @@ Todos los datos (campeones, goles por edición, asistencias, selecciones y el Mu
 ```
 reto-05/
   src/
-    data/worldcup.ts            # fuente única: campeones, ediciones, selecciones, estadios, cup2026
+    data/worldcup.ts            # fuente única: campeones, ediciones, goleadores, selecciones, estadios, cup2026
     data/worldcup.test.ts       # pruebas de integridad de datos
-    lib/chart.ts                # scaleLinear, formatInt, linePath (puros, testeados)
+    lib/chart.ts                # scaleLinear, formatInt, linePath, polarToCartesian, donutSlice (puros, testeados)
     lib/chart.test.ts
-    styles/global.css           # tokens del tema Panini + base
-    components/                 # Hero, Dinastias, EraGoles, Estadios, Explora, Comparte, SectionNav, Footer
+    styles/global.css           # tokens del tema Panini + base + grid de 2 columnas
+    components/                 # Hero, Dinastias, Confederacion, EraGoles, Goleadores, Estadios,
+                                # Crecimiento, Explora, Comparte, SectionNav, Footer
     scripts/                    # counter, dinastias, era-goles, estadios, explora, comparte
-    pages/index.astro           # ensambla las 6 secciones + nav
+    pages/index.astro           # ensambla 3 secciones densas (2 charts c/u) + hero + explora + comparte
 ```
 
 ## Deploy
 
-Desplegado en: _pendiente_
+Desplegado en: **https://golazo.robertzu43.workers.dev**
+
+```bash
+cd reto-05
+npm run deploy   # astro build && wrangler deploy
+```
 
 ---
 
