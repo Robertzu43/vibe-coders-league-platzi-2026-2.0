@@ -9,6 +9,7 @@
           "values": [
             {
               "fieldLabel": "Nombre completo",
+              "fieldType": "text",
               "requiredField": true
             },
             {
@@ -18,6 +19,7 @@
             },
             {
               "fieldLabel": "Empresa",
+              "fieldType": "text",
               "requiredField": false
             },
             {
@@ -37,70 +39,274 @@
             }
           ]
         },
+        "responseMode": "onReceived",
         "options": {
-          "formSubmittedText": "¡Listo! Te enviamos la confirmación de tu tour al correo. Nuestro equipo te contactará pronto."
+          "appendAttribution": false,
+          "respondWithOptions": {
+            "values": {
+              "respondWith": "text",
+              "formSubmittedText": "Listo. Te enviamos la confirmacion de tu tour al correo. Nuestro equipo te contactara pronto."
+            }
+          }
         }
       },
-      "id": "a1b2c3d4-0001-4a01-8a01-000000000001",
+      "id": "node-form-trigger",
       "name": "Agenda tu tour",
       "type": "n8n-nodes-base.formTrigger",
-      "typeVersion": 2.2,
+      "typeVersion": 2.6,
       "position": [
-        -40,
+        0,
         300
       ],
-      "webhookId": "f0e1d2c3-b4a5-4c6d-8e7f-000000000abc"
+      "webhookId": "REPLACED_ON_IMPORT"
     },
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "// Nido — Clasificar lead. Determinista, por tamaño de equipo.\n// Modo del nodo: \"Run Once for All Items\".\nconst DIRECCION = 'Nido · Cra. 13 #93-40, Chapinero, Bogotá';\nconst out = [];\n\nfor (const item of $input.all()) {\n  const j = item.json;\n\n  const nombre  = String(j['Nombre completo'] ?? '').trim();\n  const email   = String(j['Correo'] ?? '').trim();\n  const empresa = String(j['Empresa'] ?? '').trim();\n  const diaTour = String(j['Día preferido del tour'] ?? '').trim();\n  const mensaje = String(j['Mensaje'] ?? '').trim();\n  const n = Number(j['Tamaño del equipo']);\n\n  let segmento, plan_sugerido, prioridad;\n  let clasificacion_incierta = false;\n\n  if (!Number.isFinite(n) || n < 1) {\n    segmento = 'Independiente'; plan_sugerido = 'Hot-desk flexible'; prioridad = 'Normal';\n    clasificacion_incierta = true;\n  } else if (n <= 2) {\n    segmento = 'Independiente'; plan_sugerido = 'Hot-desk flexible'; prioridad = 'Normal';\n  } else if (n <= 8) {\n    segmento = 'Equipo pequeño'; plan_sugerido = 'Oficina privada'; prioridad = 'Alta';\n  } else {\n    segmento = 'Enterprise'; plan_sugerido = 'Piso dedicado'; prioridad = 'Hot lead';\n  }\n\n  const primerNombre = (nombre.split(/\\s+/)[0] || nombre);\n  const equipoTxt = Number.isFinite(n) ? String(n) : 's/d';\n\n  const emailSubject = `Tu tour en Nido está confirmado, ${primerNombre} 🌱`;\n  const emailBody =\n`Hola ${primerNombre},\n\n¡Gracias por agendar tu tour en Nido! Te esperamos el ${diaTour || 'día acordado'} en:\n${DIRECCION}\n\nSegún nos contaste (equipo de ${equipoTxt}), creemos que el plan ideal para ti es:\n👉 ${plan_sugerido} (${segmento})\n\nEn la visita te mostramos el espacio, resolvemos tus dudas y armamos una propuesta a tu medida.\n\nNos vemos pronto,\nEl equipo de Nido`;\n\n  const esHot = prioridad === 'Hot lead';\n  const telegramText =\n`${esHot ? '🔥 HOT LEAD — ' : ''}🏢 Nuevo tour agendado en Nido\n• Nombre: ${nombre}\n• Empresa: ${empresa || '—'}\n• Correo: ${email}\n• Equipo: ${equipoTxt} personas\n• Día del tour: ${diaTour || 's/d'}\n• Segmento: ${segmento}\n• Plan sugerido: ${plan_sugerido}\n• Prioridad: ${prioridad}${clasificacion_incierta ? '\\n⚠️ Clasificación incierta — revisar' : ''}${mensaje ? `\\n• Mensaje: ${mensaje}` : ''}`;\n\n  out.push({\n    json: {\n      timestamp: new Date().toISOString(),\n      nombre, email, empresa,\n      tamano_equipo: Number.isFinite(n) ? n : '',\n      dia_tour: diaTour,\n      segmento, plan_sugerido, prioridad,\n      clasificacion_incierta,\n      mensaje,\n      emailSubject, emailBody, telegramText,\n    },\n  });\n}\n\nreturn out;\n"
+        "language": "javaScript",
+        "jsCode": "const NL = String.fromCharCode(10);\nconst DIRECCION = 'Nido - Cra. 13 #93-40, Chapinero, Bogota';\nconst out = [];\nfor (const item of $input.all()) {\n  const j = item.json;\n  const nombre = String(j['Nombre completo'] || '').trim();\n  const email = String(j['Correo'] || '').trim();\n  const empresa = String(j['Empresa'] || '').trim();\n  const diaTour = String(j['Día preferido del tour'] || '').trim();\n  const mensaje = String(j['Mensaje'] || '').trim();\n  const n = Number(j['Tamaño del equipo']);\n  let segmento; let plan; let prioridad; let incierta = false;\n  if (!Number.isFinite(n) || n < 1) { segmento = 'Independiente'; plan = 'Hot-desk flexible'; prioridad = 'Normal'; incierta = true; }\n  else if (n <= 2) { segmento = 'Independiente'; plan = 'Hot-desk flexible'; prioridad = 'Normal'; }\n  else if (n <= 8) { segmento = 'Equipo pequeño'; plan = 'Oficina privada'; prioridad = 'Alta'; }\n  else { segmento = 'Enterprise'; plan = 'Piso dedicado'; prioridad = 'Hot lead'; }\n  const primer = nombre.split(' ')[0] || nombre;\n  const equipoTxt = Number.isFinite(n) ? String(n) : 's/d';\n  const emailSubject = 'Tu tour en Nido esta confirmado, ' + primer;\n  const emailBody = [\n    'Hola ' + primer + ',',\n    '',\n    'Gracias por agendar tu tour en Nido. Te esperamos el ' + (diaTour || 'dia acordado') + ' en:',\n    DIRECCION,\n    '',\n    'Segun nos contaste (equipo de ' + equipoTxt + '), creemos que el plan ideal para ti es:',\n    plan + ' (' + segmento + ')',\n    '',\n    'En la visita te mostramos el espacio, resolvemos tus dudas y armamos una propuesta a tu medida.',\n    '',\n    'Nos vemos pronto,',\n    'El equipo de Nido'\n  ].join(NL);\n  const hot = prioridad === 'Hot lead';\n  const t = [];\n  t.push((hot ? 'HOT LEAD - ' : '') + 'Nuevo tour agendado en Nido');\n  t.push('Nombre: ' + nombre);\n  t.push('Empresa: ' + (empresa || '-'));\n  t.push('Correo: ' + email);\n  t.push('Equipo: ' + equipoTxt + ' personas');\n  t.push('Dia del tour: ' + (diaTour || 's/d'));\n  t.push('Segmento: ' + segmento);\n  t.push('Plan sugerido: ' + plan);\n  t.push('Prioridad: ' + prioridad);\n  if (incierta) { t.push('Clasificacion incierta - revisar'); }\n  if (mensaje) { t.push('Mensaje: ' + mensaje); }\n  const telegramText = t.join(NL);\n  out.push({ json: { timestamp: new Date().toISOString(), nombre: nombre, email: email, empresa: empresa, tamano_equipo: Number.isFinite(n) ? n : '', dia_tour: diaTour, segmento: segmento, plan_sugerido: plan, prioridad: prioridad, clasificacion_incierta: incierta, mensaje: mensaje, emailSubject: emailSubject, emailBody: emailBody, telegramText: telegramText } });\n}\nreturn out;\n"
       },
-      "id": "a1b2c3d4-0002-4a02-8a02-000000000002",
+      "id": "node-clasificar",
       "name": "Clasificar lead",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        200,
+        240,
         300
       ]
     },
     {
       "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "c2",
+              "name": "nombre",
+              "value": "={{ $json.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "c3",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "c4",
+              "name": "empresa",
+              "value": "={{ $json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "c5",
+              "name": "tamano_equipo",
+              "value": "={{ $json.tamano_equipo }}",
+              "type": "string"
+            },
+            {
+              "id": "c6",
+              "name": "dia_tour",
+              "value": "={{ $json.dia_tour }}",
+              "type": "string"
+            },
+            {
+              "id": "c7",
+              "name": "segmento",
+              "value": "={{ $json.segmento }}",
+              "type": "string"
+            },
+            {
+              "id": "c8",
+              "name": "plan_sugerido",
+              "value": "={{ $json.plan_sugerido }}",
+              "type": "string"
+            },
+            {
+              "id": "c9",
+              "name": "prioridad",
+              "value": "={{ $json.prioridad }}",
+              "type": "string"
+            },
+            {
+              "id": "c10",
+              "name": "clasificacion_incierta",
+              "value": "={{ $json.clasificacion_incierta }}",
+              "type": "string"
+            },
+            {
+              "id": "c11",
+              "name": "mensaje",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "node-preparar-fila",
+      "name": "Preparar fila",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        360,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1zCasISyvhFcVWZJUazQnAtcDB1AWy1mGBOEEsaTlLvI",
-          "mode": "list",
-          "cachedResultName": "Nido — Tours",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zCasISyvhFcVWZJUazQnAtcDB1AWy1mGBOEEsaTlLvI/edit"
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "cachedResultName": "Nido — Tours"
         },
         "sheetName": {
           "__rl": true,
-          "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "Tours",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zCasISyvhFcVWZJUazQnAtcDB1AWy1mGBOEEsaTlLvI/edit#gid=0"
+          "value": "gid=0",
+          "cachedResultName": "Sheet1"
         },
         "columns": {
-          "mappingMode": "autoMapInputData",
-          "value": {},
-          "matchingColumns": [],
-          "schema": []
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "nombre": "={{ $json.nombre }}",
+            "email": "={{ $json.email }}",
+            "empresa": "={{ $json.empresa }}",
+            "tamano_equipo": "={{ $json.tamano_equipo }}",
+            "dia_tour": "={{ $json.dia_tour }}",
+            "segmento": "={{ $json.segmento }}",
+            "plan_sugerido": "={{ $json.plan_sugerido }}",
+            "prioridad": "={{ $json.prioridad }}",
+            "clasificacion_incierta": "={{ $json.clasificacion_incierta }}",
+            "mensaje": "={{ $json.mensaje }}"
+          },
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "empresa",
+              "displayName": "empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "tamano_equipo",
+              "displayName": "tamano_equipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "dia_tour",
+              "displayName": "dia_tour",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "segmento",
+              "displayName": "segmento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "plan_sugerido",
+              "displayName": "plan_sugerido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "prioridad",
+              "displayName": "prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "clasificacion_incierta",
+              "displayName": "clasificacion_incierta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "mensaje",
+              "displayName": "mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
         },
         "options": {}
       },
-      "id": "a1b2c3d4-0003-4a03-8a03-000000000003",
+      "id": "node-sheets",
       "name": "Guardar en Google Sheets",
       "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
+      "typeVersion": 4.7,
       "position": [
-        440,
+        480,
         300
       ]
     },
     {
       "parameters": {
+        "resource": "message",
+        "operation": "send",
         "sendTo": "={{ $('Clasificar lead').item.json.email }}",
         "subject": "={{ $('Clasificar lead').item.json.emailSubject }}",
         "emailType": "text",
@@ -109,32 +315,37 @@
           "appendAttribution": false
         }
       },
-      "id": "a1b2c3d4-0004-4a04-8a04-000000000004",
+      "id": "node-gmail",
       "name": "Email de confirmación",
       "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
+      "typeVersion": 2.2,
       "position": [
-        680,
+        720,
         300
       ],
-      "webhookId": "c3d4e5f6-a7b8-4c9d-8e0f-000000000def",
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "webhookId": "REPLACED_ON_IMPORT"
     },
     {
       "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
         "chatId": "REEMPLAZA_CON_TU_CHAT_ID",
         "text": "={{ $('Clasificar lead').item.json.telegramText }}",
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
-      "id": "a1b2c3d4-0005-4a05-8a05-000000000005",
+      "id": "node-telegram",
       "name": "Alerta interna (Telegram)",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        920,
+        960,
         300
       ],
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "webhookId": "REPLACED_ON_IMPORT"
     }
   ],
   "connections": {
@@ -150,6 +361,17 @@
       ]
     },
     "Clasificar lead": {
+      "main": [
+        [
+          {
+            "node": "Preparar fila",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar fila": {
       "main": [
         [
           {
@@ -186,6 +408,9 @@
   "active": false,
   "settings": {
     "executionOrder": "v1"
+  },
+  "meta": {
+    "note": "Reto 04 — Nido. Importar en n8n, seleccionar credenciales de Google Sheets/Gmail/Telegram, reemplazar YOUR_GOOGLE_SHEET_ID y REEMPLAZA_CON_TU_CHAT_ID."
   },
   "tags": []
 }
