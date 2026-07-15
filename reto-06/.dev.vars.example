@@ -1,0 +1,7 @@
+CF_ANALYTICS_TOKEN=cf_analytics_readonly_token
+SUPABASE_URL=https://TU-PROYECTO.supabase.co
+SUPABASE_SECRET_KEY=sb_secret_xxx
+GMAIL_CLIENT_ID=xxxx.apps.googleusercontent.com
+GMAIL_CLIENT_SECRET=xxxx
+GMAIL_REFRESH_TOKEN=1//xxxx
+TRIGGER_TOKEN=cadena-larga-al-azar

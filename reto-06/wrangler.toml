@@ -1,0 +1,14 @@
+name = "pulso"
+main = "src/index.ts"
+compatibility_date = "2025-05-21"
+compatibility_flags = ["nodejs_compat"]
+
+[ai]
+binding = "AI"
+
+[vars]
+CF_ACCOUNT_ID = "51932bfebff61c30c7a32b96834796c1"
+REPORT_TO = "robertzu43@gmail.com"
+
+[triggers]
+crons = ["0 22 * * 5"]
