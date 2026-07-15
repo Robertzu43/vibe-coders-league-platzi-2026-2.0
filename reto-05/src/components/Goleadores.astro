@@ -1,0 +1,42 @@
+---
+import { scorers } from '../data/worldcup';
+import { scaleLinear } from '../lib/chart';
+
+const maxGoals = Math.max(...scorers.map((s) => s.goals));
+const widthScale = scaleLinear([0, maxGoals], [0, 100]);
+---
+<div class="viz-block">
+  <h3>Máximos goleadores históricos</h3>
+  <p class="viz-note">Los 8 jugadores con más goles acumulados en Mundiales, 1930–2022.</p>
+  <ul class="bars" role="list">
+    {scorers.map((s) => (
+      <li class="bar-row">
+        <span class="bar-label">{s.flag} {s.name}</span>
+        <span class="bar-track">
+          <span class="bar-fill" style={`width:${widthScale(s.goals)}%`}></span>
+        </span>
+        <span class="bar-value">{s.goals}</span>
+      </li>
+    ))}
+  </ul>
+  <details>
+    <summary>Ver datos en tabla</summary>
+    <table>
+      <thead><tr><th>Jugador</th><th>País</th><th>Goles</th></tr></thead>
+      <tbody>
+        {scorers.map((s) => (<tr><td>{s.name}</td><td>{s.country}</td><td>{s.goals}</td></tr>))}
+      </tbody>
+    </table>
+  </details>
+</div>
+<style>
+  .viz-note { max-width: 42ch; color: var(--ink-soft); margin: 0 0 12px; font-size: 14px; }
+  .bars { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+  .bar-row { display: grid; grid-template-columns: minmax(90px, 40%) 1fr 24px; align-items: center; gap: 8px; }
+  .bar-label { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { display: block; background: var(--line); border-radius: 6px; height: 18px; min-width: 0; }
+  .bar-fill { display: block; height: 100%; border-radius: 4px; background: var(--red); transition: width .5s; }
+  .bar-value { font-weight: 700; text-align: right; font-size: 13px; }
+  table { border-collapse: collapse; margin-top: 10px; }
+  td, th { border: 1px solid var(--line); padding: 4px 10px; text-align: left; }
+</style>
