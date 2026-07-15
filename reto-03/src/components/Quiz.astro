@@ -1,0 +1,171 @@
+---
+import { PREGUNTA_TIPO, PREGUNTAS } from '../data/quiz';
+import GateForm from './GateForm.astro';
+
+const total = PREGUNTAS.length + 1; // tipo + preguntas que puntúan
+---
+
+<section id="diagnostico" class="quiz seccion" data-quiz>
+  <div class="contenedor">
+    <div class="quiz__head">
+      <span class="eyebrow">El diagnóstico · 2 min</span>
+      <h2>Responde con honestidad. El valor está en verte tal como estás hoy.</h2>
+    </div>
+
+    <div class="quiz__panel" data-panel>
+      <div class="quiz__progress" data-progress>
+        <div class="quiz__progress-meta">
+          Pregunta <b data-step-num>1</b> <span>de</span> <b>{total}</b>
+        </div>
+        <div class="quiz__bar" role="progressbar" aria-valuemin="0" aria-valuemax={total} aria-valuenow="1">
+          <span class="quiz__bar-fill" data-bar style="width: 0%"></span>
+        </div>
+      </div>
+
+      <div class="quiz__stage" data-stage>
+        <fieldset class="quiz__step" data-step data-qid="tipo">
+          <legend class="quiz__q">{PREGUNTA_TIPO.texto}</legend>
+          <div class="quiz__opts">
+            {PREGUNTA_TIPO.opciones.map((o) => (
+              <button type="button" class="opcion" data-qid="tipo" data-opt={o.id}>
+                <span>{o.label}</span>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+
+        {PREGUNTAS.map((p) => (
+          <fieldset class="quiz__step" data-step data-qid={p.id}>
+            <legend class="quiz__q">{p.texto}</legend>
+            <div class="quiz__opts">
+              {p.opciones.map((o) => (
+                <button type="button" class="opcion" data-qid={p.id} data-opt={o.id}>
+                  <span>{o.label}</span>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </div>
+
+      <div class="quiz__nav" data-nav>
+        <button type="button" class="btn btn--ghost" data-back hidden>← Atrás</button>
+        <span class="quiz__hint">Toca una opción para continuar</span>
+      </div>
+
+      <div class="resultado" data-resultado hidden>
+        <div class="resultado__card">
+          <div class="resultado__badge" data-arq-emoji aria-hidden="true"></div>
+          <div>
+            <span class="eyebrow">Tu arquetipo</span>
+            <h3 class="resultado__label" data-arq-label></h3>
+            <p class="resultado__resumen" data-arq-resumen></p>
+          </div>
+        </div>
+
+        <div class="resultado__scores">
+          <div class="score">
+            <div class="score__top"><span>Presencia web</span><b><span data-web-val>0</span>/100</b></div>
+            <div class="score__track"><span class="score__fill" data-web-bar style="width:0%"></span></div>
+          </div>
+          <div class="score">
+            <div class="score__top"><span>Automatización</span><b><span data-auto-val>0</span>/100</b></div>
+            <div class="score__track"><span class="score__fill score__fill--coral" data-auto-bar style="width:0%"></span></div>
+          </div>
+        </div>
+
+        <div class="resultado__cta">
+          <p>Tu informe personalizado con las acciones prioritarias para <b>tu</b> caso está listo.</p>
+          <button type="button" class="btn" data-ver-informe>Ver mi informe →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="gate" id="gate" data-gate hidden>
+      <GateForm />
+    </div>
+
+    <div class="informe" id="informe" data-informe hidden aria-live="polite"></div>
+  </div>
+
+  <script>
+    import '../scripts/quiz.ts';
+  </script>
+</section>
+
+<style>
+  .quiz { position: relative; }
+  .quiz__head { max-width: 40ch; margin-bottom: 2.2rem; }
+  .quiz__head h2 { margin-top: 0.7rem; }
+
+  .quiz__panel {
+    background: var(--paper); border: 1.5px solid var(--line-strong); border-radius: var(--r-lg);
+    padding: clamp(1.4rem, 1rem + 2vw, 2.6rem); box-shadow: var(--shadow);
+    position: relative;
+  }
+
+  /* Progress */
+  .quiz__progress { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.8rem; }
+  .quiz__progress-meta { font-size: 0.85rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .quiz__progress-meta b { color: var(--ink); }
+  .quiz__progress-meta span { font-weight: 500; }
+  .quiz__bar { flex: 1; height: 8px; background: rgba(23, 21, 59, 0.1); border-radius: var(--r-pill); overflow: hidden; }
+  .quiz__bar-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--violet), var(--lime-deep)); border-radius: inherit; transition: width 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+
+  /* Steps */
+  .quiz__stage { position: relative; }
+  .quiz__step { border: 0; margin: 0; padding: 0; min-inline-size: 0; }
+  .quiz__step:not(.is-active) { display: none; }
+  .quiz__step.is-active { animation: stepIn 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .quiz__q { font-family: var(--font-display); font-size: clamp(1.35rem, 1.1rem + 1.2vw, 1.9rem); font-weight: 560; line-height: 1.12; padding: 0; margin-bottom: 1.3rem; }
+
+  .quiz__opts { display: grid; gap: 0.7rem; }
+  .opcion {
+    display: flex; align-items: center; gap: 0.9rem;
+    text-align: left; font: inherit; font-weight: 600; color: var(--ink);
+    padding: 1rem 1.15rem; border: 1.5px solid var(--line-strong); border-radius: var(--r);
+    background: var(--canvas); cursor: pointer;
+    transition: border-color 0.14s ease, transform 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+  }
+  .opcion::before {
+    content: ""; flex: 0 0 auto; width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--line-strong); transition: border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+  }
+  .opcion:hover { border-color: var(--violet); transform: translateX(3px); }
+  .opcion:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+  .opcion.is-selected { border-color: var(--ink); background: var(--lime); box-shadow: 3px 3px 0 var(--ink); }
+  .opcion.is-selected::before { border-color: var(--ink); background: var(--ink); box-shadow: inset 0 0 0 3px var(--lime); }
+
+  .quiz__nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.6rem; min-height: 2.5rem; }
+  .quiz__hint { font-size: 0.85rem; color: var(--muted); margin-left: auto; }
+
+  /* Resultado */
+  .resultado { display: grid; gap: 1.6rem; animation: stepIn 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .resultado__card { display: flex; gap: 1.3rem; align-items: center; padding: 1.4rem; background: var(--ink); color: var(--canvas); border-radius: var(--r-lg); }
+  .resultado__card .eyebrow { color: var(--lime); }
+  .resultado__badge { flex: 0 0 auto; font-size: 2.8rem; line-height: 1; width: 76px; height: 76px; display: grid; place-items: center; background: rgba(242, 238, 226, 0.08); border-radius: 50%; border: 1.5px solid rgba(242, 238, 226, 0.18); }
+  .resultado__label { color: var(--canvas); margin: 0.35rem 0 0.4rem; }
+  .resultado__resumen { color: rgba(242, 238, 226, 0.82); margin: 0; }
+
+  .resultado__scores { display: grid; gap: 1.1rem; }
+  .score__top { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+  .score__track { height: 12px; background: rgba(23, 21, 59, 0.1); border-radius: var(--r-pill); overflow: hidden; }
+  .score__fill { display: block; height: 100%; width: 0; background: var(--violet); border-radius: inherit; transition: width 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .score__fill--coral { background: var(--coral); }
+
+  .resultado__cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 0.4rem; }
+  .resultado__cta p { margin: 0; max-width: 40ch; color: var(--muted); }
+  .resultado__cta p b { color: var(--ink); }
+
+  /* Gate + Informe */
+  .gate, .informe { margin-top: 1.4rem; background: var(--paper); border: 1.5px solid var(--line-strong); border-radius: var(--r-lg); padding: clamp(1.4rem, 1rem + 2vw, 2.6rem); box-shadow: var(--shadow); }
+  .gate[hidden], .informe[hidden] { display: none; }
+
+  @keyframes stepIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 560px) {
+    .resultado__card { flex-direction: column; text-align: center; align-items: center; }
+    .resultado__cta { flex-direction: column; align-items: stretch; }
+    .resultado__cta .btn { width: 100%; }
+  }
+</style>

@@ -1,0 +1,87 @@
+---
+// Hero — propuesta de valor + CTA al diagnóstico. Motivo "radar".
+---
+
+<header class="hero">
+  <div class="contenedor hero__grid">
+    <div class="hero__copy">
+      <span class="eyebrow">Órbita · Estudio de web &amp; automatización</span>
+      <h1>¿Tu negocio necesita <em>web</em> y <em>automatización</em>?</h1>
+      <p class="hero__lead">
+        Descúbrelo en 2 minutos. <strong>Radar Digital</strong> analiza cómo operas hoy
+        y te dice, sin rodeos, dónde estás parado y qué mover primero.
+      </p>
+      <div class="hero__cta">
+        <a href="#diagnostico" class="btn">Hacer el diagnóstico →</a>
+        <span class="hero__meta">Gratis · sin cuenta · 6 preguntas</span>
+      </div>
+    </div>
+
+    <div class="hero__radar" aria-hidden="true">
+      <svg viewBox="0 0 240 240" class="radar" role="img">
+        <defs>
+          <radialGradient id="sweep" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="var(--lime)" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="var(--lime)" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <g class="radar__rings">
+          <circle cx="120" cy="120" r="30" />
+          <circle cx="120" cy="120" r="60" />
+          <circle cx="120" cy="120" r="90" />
+          <circle cx="120" cy="120" r="116" />
+        </g>
+        <line x1="120" y1="4" x2="120" y2="236" class="radar__axis" />
+        <line x1="4" y1="120" x2="236" y2="120" class="radar__axis" />
+        <g class="radar__sweep">
+          <path d="M120 120 L120 6 A114 114 0 0 1 218 74 Z" fill="url(#sweep)" />
+        </g>
+        <circle cx="176" cy="78" r="5" class="radar__blip radar__blip--1" />
+        <circle cx="86" cy="150" r="5" class="radar__blip radar__blip--2" />
+        <circle cx="150" cy="168" r="5" class="radar__blip radar__blip--3" />
+        <circle cx="120" cy="120" r="6" class="radar__core" />
+      </svg>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hero { position: relative; padding-block: clamp(3rem, 2rem + 6vw, 6.5rem) clamp(2rem, 1rem + 3vw, 3.5rem); overflow: hidden; }
+  .hero__grid {
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(2rem, 1rem + 4vw, 4rem);
+    align-items: center;
+  }
+  .hero__copy { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  h1 { margin-top: 0.8rem; }
+  h1 em { font-style: italic; color: var(--violet); }
+  .hero__lead { font-size: clamp(1.08rem, 1rem + 0.5vw, 1.3rem); color: var(--muted); max-width: 30ch; }
+  .hero__lead strong { color: var(--ink); }
+  .hero__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.4rem; margin-top: 2rem; }
+  .hero__meta { font-size: 0.9rem; color: var(--muted); font-weight: 600; }
+
+  .hero__radar { display: grid; place-items: center; animation: rise 0.7s 0.12s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .radar { width: min(100%, 380px); height: auto; filter: drop-shadow(0 20px 40px rgba(23, 21, 59, 0.15)); }
+  .radar__rings circle { fill: none; stroke: var(--line-strong); stroke-width: 1.2; }
+  .radar__axis { stroke: var(--line); stroke-width: 1; }
+  .radar__core { fill: var(--ink); }
+  .radar__sweep { transform-origin: 120px 120px; animation: spin 4.5s linear infinite; }
+  .radar__blip { fill: var(--coral); opacity: 0; }
+  .radar__blip--1 { animation: ping 4.5s 0.6s ease-out infinite; }
+  .radar__blip--2 { animation: ping 4.5s 2.1s ease-out infinite; }
+  .radar__blip--3 { animation: ping 4.5s 3.3s ease-out infinite; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes ping { 0%, 100% { opacity: 0; } 8% { opacity: 1; } 40% { opacity: 0.15; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 760px) {
+    .hero__grid { grid-template-columns: 1fr; }
+    .hero__radar { order: -1; }
+    .radar { width: min(62%, 260px); }
+    .hero__lead { max-width: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .radar__sweep { animation: none; }
+    .radar__blip { opacity: 0.5; }
+  }
+</style>
