@@ -761,7 +761,7 @@ git commit -m "feat(reto-05): add interactive team explorer"
 
 ## Task 9: Comparte — shareable card (section 5)
 
-Reads the active selection from `#explora[data-seleccion]` (default `ARG` if unset). A button builds a "carnet" card from `teams` and highlights it. No real sharing (YAGNI) — an on-screen presumible card + a "copiar resumen" that writes text to the clipboard.
+Reads the active selection from `#explora[data-seleccion]` (default `ARG` if unset). A button builds a "carnet" card from `teams` and highlights it. No real sharing (YAGNI) — just an on-screen presumible card (no clipboard/image export; the given `comparte.ts` intentionally has no clipboard logic, so no unwired button is added).
 
 **Files:**
 - Create: `src/components/Comparte.astro`, `src/scripts/comparte.ts`
