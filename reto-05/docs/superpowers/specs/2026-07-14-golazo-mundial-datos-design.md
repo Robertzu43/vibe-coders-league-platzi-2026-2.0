@@ -97,6 +97,8 @@ reto-05/
 
 **Interacción / estado:** cada script es un módulo pequeño con una responsabilidad. El estado vive en el DOM (clase activa, atributo seleccionado); no hay store global. El selector del paso 4 cambia qué objeto-selección se muestra leyendo del JSON embebido.
 
+**Puente paso 4 → paso 5:** la selección elegida en "Explora tú" es la **única fuente de estado interactivo**. `comparte.ts` lee la selección actualmente activa del DOM del paso 4 (p. ej. un atributo `data-seleccion` en un contenedor compartido); si el usuario aún no ha elegido, la tarjeta usa una selección por defecto (Argentina, campeón vigente). Así los pasos 4 y 5 no se construyen con supuestos distintos.
+
 **Accesibilidad:** navegación por teclado en el selector y en la nav de secciones; foco visible; gráficos con equivalente textual; contraste suficiente sobre el papel crema.
 
 ## 5. Datos (hardcodeados, históricos reales · verificar al implementar con TDD)
