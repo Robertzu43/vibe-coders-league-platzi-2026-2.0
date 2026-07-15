@@ -18,10 +18,9 @@ const labelYears = [1930, 1950, 1970, 1990, 2010, 2022];
 const peak = editions.reduce((a, b) => (avgOf(b) > avgOf(a) ? b : a));
 const peakAvg = avgOf(peak).toFixed(2);
 ---
-<section id="goles" aria-labelledby="goles-title">
-  <p class="label">Capítulo 2</p>
-  <h2 id="goles-title">La era de los goles</h2>
-  <p style="max-width:52ch">
+<div class="viz-block">
+  <h3>Goles por partido</h3>
+  <p class="viz-note">
     Goles por partido en cada edición, 1930–2022. El pico de <strong>{peakAvg}</strong> en
     <strong>{peak.year}</strong> ({peak.host}) sigue siendo récord.
   </p>
@@ -85,8 +84,9 @@ const peakAvg = avgOf(peak).toFixed(2);
       </tbody>
     </table>
   </details>
-</section>
+</div>
 <style>
+  .viz-note { max-width: 42ch; color: var(--ink-soft); margin: 0 0 12px; font-size: 14px; }
   .chart-wrap { position: relative; margin: 18px 0 10px; }
   svg { width: 100%; height: auto; overflow: visible; }
   .grid { stroke: var(--line-2); stroke-width: 1; }

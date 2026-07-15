@@ -1,14 +1,13 @@
 ---
-import { venues, cup2026 } from '../data/worldcup';
+import { venues } from '../data/worldcup';
 import { scaleLinear, formatInt } from '../lib/chart';
 
 const maxAttendance = Math.max(...venues.map((v) => v.attendance));
 const heightScale = scaleLinear([0, maxAttendance], [0, 220]);
 ---
-<section id="estadios" aria-labelledby="est-title">
-  <p class="label">Capítulo 3</p>
-  <h2 id="est-title">Estadios llenos</h2>
-  <p style="max-width:52ch">Las asistencias más grandes en la historia del Mundial. Elige una sede para ver el dato.</p>
+<div class="viz-block">
+  <h3>Asistencias históricas</h3>
+  <p class="viz-note">Las asistencias más grandes en la historia del Mundial. Elige una sede para ver el dato.</p>
 
   <ol id="estadios-bars" class="bars-v" role="list">
     {venues.map((v) => {
@@ -31,15 +30,6 @@ const heightScale = scaleLinear([0, maxAttendance], [0, 220]);
 
   <p id="estadios-note" aria-live="polite" class="note">Elige una sede para ver el dato.</p>
 
-  <div class="card callout" style="padding:22px;margin-top:24px">
-    <p class="label">Mundial 2026</p>
-    <p style="margin:0">
-      La edición <strong>{cup2026.edition}</strong> reunirá <strong>{cup2026.teams} selecciones</strong> y
-      <strong>{cup2026.matches} partidos</strong> en <strong>{cup2026.hosts.length} sedes</strong>:
-      {' '}{cup2026.hosts.join(', ')}.
-    </p>
-  </div>
-
   <details>
     <summary>Ver datos en tabla</summary>
     <table>
@@ -57,8 +47,9 @@ const heightScale = scaleLinear([0, maxAttendance], [0, 220]);
       </tbody>
     </table>
   </details>
-</section>
+</div>
 <style>
+  .viz-note { max-width: 42ch; color: var(--ink-soft); margin: 0 0 12px; font-size: 14px; }
   .bars-v { list-style: none; padding: 0; margin: 18px 0; display: flex; align-items: flex-end;
             gap: 18px; min-height: 260px; }
   .bar-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
