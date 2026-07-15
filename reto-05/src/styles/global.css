@@ -20,4 +20,25 @@ section { padding: 72px 20px; max-width: 960px; margin: 0 auto; scroll-margin-to
        border-radius: 99px; padding: 12px 22px; font: inherit; font-weight: 700; cursor: pointer; text-decoration: none; }
 .btn:focus-visible, [tabindex]:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.viz-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+  margin-top: 20px;
+}
+@media (min-width: 760px) {
+  .viz-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.viz-block {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  min-width: 0;
+}
+.viz-block h3 { font-size: 1.15rem; }
+.viz-block svg { max-width: 100%; height: auto; }
+.viz-block table { display: block; max-width: 100%; overflow-x: auto; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }

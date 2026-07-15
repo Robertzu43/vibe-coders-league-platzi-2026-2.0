@@ -3,11 +3,15 @@ import '../styles/global.css';
 import SectionNav from '../components/SectionNav.astro';
 import Hero from '../components/Hero.astro';
 import Dinastias from '../components/Dinastias.astro';
+import Confederacion from '../components/Confederacion.astro';
 import EraGoles from '../components/EraGoles.astro';
+import Goleadores from '../components/Goleadores.astro';
 import Estadios from '../components/Estadios.astro';
+import Crecimiento from '../components/Crecimiento.astro';
 import Explora from '../components/Explora.astro';
 import Comparte from '../components/Comparte.astro';
 import Footer from '../components/Footer.astro';
+import { cup2026 } from '../data/worldcup';
 ---
 <html lang="es">
   <head>
@@ -19,8 +23,51 @@ import Footer from '../components/Footer.astro';
   <body>
     <SectionNav />
     <main>
-      <Hero /><Dinastias /><EraGoles /><Estadios /><Explora /><Comparte />
+      <Hero />
+
+      <section id="dinastias" aria-labelledby="din-title">
+        <p class="label">Capítulo 1</p>
+        <h2 id="din-title">Dinastías · quién manda</h2>
+        <p class="section-intro">Ocho países se han repartido las 22 copas, y dos confederaciones se las han quedado casi todas.</p>
+        <div class="viz-grid">
+          <Dinastias />
+          <Confederacion />
+        </div>
+      </section>
+
+      <section id="goles" aria-labelledby="goles-title">
+        <p class="label">Capítulo 2</p>
+        <h2 id="goles-title">La era de los goles</h2>
+        <p class="section-intro">Cómo ha cambiado el ritmo goleador del torneo, y quiénes son sus máximos artilleros de siempre.</p>
+        <div class="viz-grid">
+          <EraGoles />
+          <Goleadores />
+        </div>
+      </section>
+
+      <section id="estadios" aria-labelledby="est-title">
+        <p class="label">Capítulo 3</p>
+        <h2 id="est-title">Estadios llenos</h2>
+        <p class="section-intro">Las multitudes más grandes de la historia mundialista, y cómo ha crecido el torneo desde 1930.</p>
+        <div class="viz-grid">
+          <Estadios />
+          <Crecimiento />
+        </div>
+        <div class="card callout" style="padding:22px;margin-top:24px">
+          <p class="label">Mundial 2026</p>
+          <p style="margin:0">
+            La edición <strong>{cup2026.edition}</strong> reunirá <strong>{cup2026.teams} selecciones</strong> y
+            <strong>{cup2026.matches} partidos</strong> en <strong>{cup2026.hosts.length} sedes</strong>:
+            {' '}{cup2026.hosts.join(', ')}.
+          </p>
+        </div>
+      </section>
+
+      <Explora /><Comparte />
     </main>
     <Footer />
   </body>
 </html>
+<style>
+  .section-intro { max-width: 60ch; color: var(--ink-soft); }
+</style>
