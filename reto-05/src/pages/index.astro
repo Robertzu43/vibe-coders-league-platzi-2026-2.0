@@ -1,0 +1,26 @@
+---
+import '../styles/global.css';
+import SectionNav from '../components/SectionNav.astro';
+import Hero from '../components/Hero.astro';
+import Dinastias from '../components/Dinastias.astro';
+import EraGoles from '../components/EraGoles.astro';
+import Estadios from '../components/Estadios.astro';
+import Explora from '../components/Explora.astro';
+import Comparte from '../components/Comparte.astro';
+import Footer from '../components/Footer.astro';
+---
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GOLAZO · el Mundial en datos</title>
+    <meta name="description" content="Especial interactivo de datos del Mundial: dinastías, goles, estadios y tu selección." />
+  </head>
+  <body>
+    <SectionNav />
+    <main>
+      <Hero /><Dinastias /><EraGoles /><Estadios /><Explora /><Comparte />
+    </main>
+    <Footer />
+  </body>
+</html>
