@@ -1,0 +1,44 @@
+---
+import { teams } from '../data/worldcup';
+const teamsJson = JSON.stringify(teams);
+---
+<section id="comparte" aria-labelledby="comp-title">
+  <p class="label">Capítulo 5 · Comparte</p>
+  <h2 id="comp-title">Arma tu tarjeta</h2>
+  <p style="max-width:52ch">
+    Toma la selección que elegiste en «Explora tú» y conviértela en una figurita para presumir.
+  </p>
+  <button id="share-btn" class="btn" type="button">Arma mi tarjeta</button>
+  <div id="share-card" class="card share-card" aria-live="polite">
+    <p class="share-placeholder">Elige una selección arriba y pulsa el botón para ver tu tarjeta aquí.</p>
+  </div>
+  <script type="application/json" id="share-data" set:html={teamsJson}></script>
+</section>
+<style>
+  .share-card {
+    margin-top: 20px;
+    padding: 32px;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    opacity: .55;
+    filter: grayscale(.5);
+    transition: opacity .25s, filter .25s, border-color .25s;
+  }
+  .share-card.on { opacity: 1; filter: none; border-color: var(--red); }
+  .share-placeholder { margin: 0; color: var(--ink-soft); max-width: 40ch; }
+</style>
+<style is:global>
+  /* Markup below is injected by scripts/comparte.ts via innerHTML, so it needs
+     global (unscoped) styles — Astro's scoped-style hash never reaches it. */
+  #share-card .sticker { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  #share-card .sticker .big { font-size: 3.2rem; line-height: 1; }
+  #share-card .sticker strong { font-family: var(--serif); font-size: 1.4rem; }
+  #share-card .sticker span { color: var(--ink-soft); }
+</style>
+<script>
+  import { initComparte } from '../scripts/comparte';
+  initComparte();
+</script>
