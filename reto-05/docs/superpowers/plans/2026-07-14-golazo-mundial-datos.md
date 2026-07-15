@@ -28,7 +28,7 @@ reto-05/
   src/
     data/worldcup.ts            # source of truth: champions, editions(goals), teams, venues, cup2026
     data/worldcup.test.ts       # data-integrity tests
-    lib/chart.ts                # pure helpers: scaleLinear, barGeom, linePath, formatInt
+    lib/chart.ts                # pure helpers: scaleLinear, formatInt, linePath
     lib/chart.test.ts           # helper tests
     styles/global.css           # Panini theme tokens + base
     components/
@@ -167,7 +167,7 @@ describe('champions', () => {
 describe('editions', () => {
   it('covers 22 editions', () => expect(editions.length).toBe(22));
   it('1954 has the highest goals-per-match (~5.38)', () => {
-    const avg = (e) => e.goals / e.matches;
+    const avg = (e: Edition) => e.goals / e.matches;
     const max = editions.reduce((a, b) => (avg(b) > avg(a) ? b : a));
     expect(max.year).toBe(1954);
     expect(avg(max)).toBeCloseTo(5.38, 1);
