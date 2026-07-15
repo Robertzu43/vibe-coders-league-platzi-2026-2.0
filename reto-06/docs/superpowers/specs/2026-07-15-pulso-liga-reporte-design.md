@@ -3,6 +3,8 @@
 **Reto 06 · Vibe Coders League (Edición 2.0)**
 Fecha: 2026-07-15 · Estado: aprobado en brainstorming, pendiente de spec review
 
+> **Addendum (durante implementación):** el acceso a Supabase cambió de la **service_role/secret key** (leyendo tablas directo) a la **misma publishable/anon key** de reto-02/03 llamando una función `SECURITY DEFINER` `pulso.weekly_counts(win_start, win_end)` en un schema nuevo `pulso` (ver `db/schema.sql`). Motivo: instrucción del usuario de reutilizar las mismas credenciales sin exponer la service_role. `supabase.ts` pasó de `countRows` (select por tabla) a `fetchConversions` (RPC). El resto del diseño se mantiene. El secreto correspondiente es `SUPABASE_PUBLISHABLE_KEY` (reemplaza a `SUPABASE_SECRET_KEY` en las secciones §5.2 y §8).
+
 ---
 
 ## 1. Contexto

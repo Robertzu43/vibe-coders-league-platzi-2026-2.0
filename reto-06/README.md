@@ -52,7 +52,7 @@ Un **Cloudflare Worker sin UI**, disparado por **Cron Trigger** (`0 22 * * 5` UT
 - **Cloudflare Workers** + **Cron Triggers** (agendado) — desplegado con Wrangler.
 - **TypeScript** puro (sin framework). Gate de tipos: `tsc --noEmit`.
 - **Workers AI** (`@cf/meta/llama-3.3-70b-instruct-fp8-fast`) — resumen ejecutivo.
-- **Cloudflare GraphQL Analytics API** y **Supabase PostgREST** — fuentes de datos (vía `fetch`, sin SDK).
+- **Cloudflare GraphQL Analytics API** y **Supabase PostgREST** (RPC en un schema `pulso`) — fuentes de datos (vía `fetch`, sin SDK).
 - **Gmail API** (OAuth 2.0 sobre HTTPS) — envío (Workers no soporta SMTP).
 - **Vitest** — 28 tests unitarios.
 
@@ -66,6 +66,8 @@ reto-06/
 ├── wrangler.toml            # name, main, [ai], [vars], [triggers] crons
 ├── package.json  tsconfig.json  vitest.config.ts
 ├── .dev.vars.example        # secretos con placeholders
+├── db/
+│   └── schema.sql           # schema `pulso` + función weekly_counts (correr en Supabase)
 ├── src/
 │   ├── index.ts             # Env, runReport(), scheduled(), fetch() (/__run), checkTrigger()
 │   ├── config.ts            # LANDINGS, TABLES, ALERTS, TIMEZONE (no-secreto)
@@ -85,10 +87,10 @@ reto-06/
 
 ## Seguridad
 
-- Todos los secretos van por `wrangler secret put`, **nunca en el repo**: `CF_ANALYTICS_TOKEN`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`, `TRIGGER_TOKEN`.
+- Todos los secretos van por `wrangler secret put`, **nunca en el repo**: `CF_ANALYTICS_TOKEN`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`, `TRIGGER_TOKEN`.
 - Config no-secreta en `wrangler.toml [vars]`: `CF_ACCOUNT_ID` (un identificador, no un secreto) y `REPORT_TO`.
 - El disparo manual `/__run` está protegido por `TRIGGER_TOKEN` (falla cerrado si el token no coincide).
-- La **secret key (service_role) de Supabase** se usa server-side porque la RLS de las tablas es *insert-only* y bloquea lecturas anónimas. Nunca llega al cliente (es un Worker backend).
+- **Supabase sin service_role:** la RLS de `leads`/`preorders` es *insert-only* y bloquea lecturas anónimas. En vez de exponer la service_role key, se crea un schema `pulso` con la función `weekly_counts` (`SECURITY DEFINER`) que devuelve **solo agregados** (conteos) y es ejecutable por el rol `anon`. El Worker la llama con la **misma publishable key** de reto-02/03 (`SUPABASE_PUBLISHABLE_KEY`). Ver [`db/schema.sql`](./db/schema.sql).
 - El scope de Gmail es el mínimo: `gmail.send` (solo envía, no lee tu correo).
 - `.dev.vars` está en `.gitignore`; solo se commitea `.dev.vars.example` con placeholders.
 
@@ -96,7 +98,7 @@ reto-06/
 
 > **Requisitos previos (una sola vez):**
 > 1. **Cloudflare API token** con permiso *Account · Account Analytics · Read* → `CF_ANALYTICS_TOKEN`.
-> 2. **Supabase service_role / secret key** del proyecto de reto-02/03 → `SUPABASE_SECRET_KEY` (+ `SUPABASE_URL`). Las tablas `leads` y `preorders` deben tener columna `created_at`.
+> 2. **Supabase** (proyecto de reto-02/03): la **misma publishable key** → `SUPABASE_PUBLISHABLE_KEY` (+ `SUPABASE_URL`). Corre [`db/schema.sql`](./db/schema.sql) en el SQL Editor y luego expón el schema `pulso` en *Settings → API → Exposed schemas*. Las tablas `leads` y `preorders` deben tener columna `created_at`.
 > 3. **OAuth de Gmail** (ver abajo) → `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`.
 > 4. Un **`TRIGGER_TOKEN`** al azar para proteger el disparo manual.
 
@@ -113,7 +115,7 @@ reto-06/
 cd reto-06
 npx wrangler secret put CF_ANALYTICS_TOKEN
 npx wrangler secret put SUPABASE_URL
-npx wrangler secret put SUPABASE_SECRET_KEY
+npx wrangler secret put SUPABASE_PUBLISHABLE_KEY
 npx wrangler secret put GMAIL_CLIENT_ID
 npx wrangler secret put GMAIL_CLIENT_SECRET
 npx wrangler secret put GMAIL_REFRESH_TOKEN
