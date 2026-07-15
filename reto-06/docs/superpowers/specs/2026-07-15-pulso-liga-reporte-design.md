@@ -97,9 +97,9 @@ reto-06/
 ### 5.1 Tráfico — Cloudflare GraphQL Analytics API
 - Endpoint: `POST https://api.cloudflare.com/client/v4/graphql`.
 - Auth: **API token de solo lectura de Analytics** (Account Analytics: Read), secreto del Worker `CF_ANALYTICS_TOKEN`.
-- Dataset: `viewer.accounts.workersInvocationsAdaptiveGroups`, filtrado por `accountTag` (`CF_ACCOUNT_ID`, valor conocido `51932bfebff61c30c7a32b96834796c1`), rango `datetime_geq`/`datetime_leq`, y `scriptName_in: [parla, altura, radar-digital, golazo]`.
+- Dataset: `viewer.accounts.workersInvocationsAdaptiveGroups`, filtrado por `accountTag` (config `CF_ACCOUNT_ID`, valor conocido `51932bfebff61c30c7a32b96834796c1`), rango `datetime_geq`/`datetime_leq`, y `scriptName_in: [parla, altura, radar-digital, golazo]`.
 - Campos: `dimensions { scriptName }`, `sum { requests, errors, subrequests }`, `quantiles { cpuTimeP50, cpuTimeP99 }`.
-- Se consulta **dos veces** (ventana actual y ventana previa) para el delta WoW, o en una sola query agrupando por fecha y particionando en código.
+- **Decisión (determinismo):** se consulta **dos veces** — ventana actual y ventana previa — para el delta WoW. Fija el contrato de `cloudflare.ts` y sus fixtures de test (dos llamadas, no partición en código).
 
 ### 5.2 Conversiones — Supabase (PostgREST)
 - Reutiliza el proyecto Supabase de reto-02/03 (misma instancia). Tablas: `preorders` (reto-02) y `leads` (reto-03).
@@ -132,8 +132,8 @@ reto-06/
 
 - **wrangler.toml:** `name` (p. ej. `pulso`), `main = "src/index.ts"`, `compatibility_date`, `[ai] binding = "AI"`, `[triggers] crons = ["0 22 * * 5"]`.
 - **Secretos** (`wrangler secret put`, nunca en el repo):
-  `CF_ACCOUNT_ID`, `CF_ANALYTICS_TOKEN`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`, `REPORT_TO`, `TRIGGER_TOKEN`.
-- **Config no-secreta** (`config.ts`): `scriptNames` de las landings, umbrales de alerta, zona horaria para el texto del correo.
+  `CF_ANALYTICS_TOKEN`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`, `TRIGGER_TOKEN`.
+- **Config no-secreta** (`config.ts` / `[vars]`): `CF_ACCOUNT_ID` (no es secreto: es un identificador), `REPORT_TO` (**fuente de verdad** del destinatario; default `robertzu43@gmail.com`), `scriptNames` de las landings, umbrales de alerta, zona horaria para el texto del correo.
 - **`.dev.vars.example`** committeado con todas las claves y placeholders (patrón reto-02/03). El `.dev.vars` real nunca se commitea.
 
 ## 9. Manejo de errores (clave para "que funcione solo")
