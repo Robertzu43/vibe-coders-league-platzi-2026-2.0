@@ -22,7 +22,7 @@ export interface Env {
 }
 
 export function checkTrigger(url: URL, headers: Headers, expected: string): boolean {
-  const token = url.searchParams.get('token') ?? headers.get('x-trigger-token');
+  const token = url.searchParams.get('token') || headers.get('x-trigger-token');
   return !!expected && token === expected;
 }
 
@@ -35,8 +35,10 @@ export async function runReport(env: Env, now: number): Promise<{ subject: strin
   let degradedTraffic = false;
   try {
     const base = { accountId: env.CF_ACCOUNT_ID, token: env.CF_ANALYTICS_TOKEN, scripts: LANDINGS };
-    currentTraffic = await fetchTraffic({ ...base, window: windows.current });
-    previousTraffic = await fetchTraffic({ ...base, window: windows.previous });
+    [currentTraffic, previousTraffic] = await Promise.all([
+      fetchTraffic({ ...base, window: windows.current }),
+      fetchTraffic({ ...base, window: windows.previous }),
+    ]);
   } catch (e) {
     console.error('traffic error', e);
     degradedTraffic = true;
@@ -48,14 +50,14 @@ export async function runReport(env: Env, now: number): Promise<{ subject: strin
   let degradedConversions = false;
   try {
     const base = { url: env.SUPABASE_URL, secretKey: env.SUPABASE_SECRET_KEY };
-    currentConversions = {
-      leads: await countRows({ ...base, table: TABLES.leads, window: windows.current }),
-      preorders: await countRows({ ...base, table: TABLES.preorders, window: windows.current }),
-    };
-    previousConversions = {
-      leads: await countRows({ ...base, table: TABLES.leads, window: windows.previous }),
-      preorders: await countRows({ ...base, table: TABLES.preorders, window: windows.previous }),
-    };
+    const [cLeads, cPre, pLeads, pPre] = await Promise.all([
+      countRows({ ...base, table: TABLES.leads, window: windows.current }),
+      countRows({ ...base, table: TABLES.preorders, window: windows.current }),
+      countRows({ ...base, table: TABLES.leads, window: windows.previous }),
+      countRows({ ...base, table: TABLES.preorders, window: windows.previous }),
+    ]);
+    currentConversions = { leads: cLeads, preorders: cPre };
+    previousConversions = { leads: pLeads, preorders: pPre };
   } catch (e) {
     console.error('conversions error', e);
     degradedConversions = true;
