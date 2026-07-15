@@ -1,11 +1,11 @@
 import { computeWindows, formatRange } from './lib/dates';
 import { fetchTraffic } from './lib/cloudflare';
-import { countRows } from './lib/supabase';
+import { fetchConversions } from './lib/supabase';
 import { buildReport } from './lib/report';
 import { summarize } from './lib/summarize';
 import { renderHtml, renderText, buildMime, base64UrlEncode } from './lib/render';
 import { sendEmail } from './lib/gmail';
-import { LANDINGS, TABLES, ALERTS } from './config';
+import { LANDINGS, ALERTS } from './config';
 import type { Conversions, LandingTraffic } from './types';
 
 export interface Env {
@@ -14,7 +14,7 @@ export interface Env {
   REPORT_TO: string;
   CF_ANALYTICS_TOKEN: string;
   SUPABASE_URL: string;
-  SUPABASE_SECRET_KEY: string;
+  SUPABASE_PUBLISHABLE_KEY: string;
   GMAIL_CLIENT_ID: string;
   GMAIL_CLIENT_SECRET: string;
   GMAIL_REFRESH_TOKEN: string;
@@ -49,15 +49,11 @@ export async function runReport(env: Env, now: number): Promise<{ subject: strin
   let previousConversions: Conversions = { leads: 0, preorders: 0 };
   let degradedConversions = false;
   try {
-    const base = { url: env.SUPABASE_URL, secretKey: env.SUPABASE_SECRET_KEY };
-    const [cLeads, cPre, pLeads, pPre] = await Promise.all([
-      countRows({ ...base, table: TABLES.leads, window: windows.current }),
-      countRows({ ...base, table: TABLES.preorders, window: windows.current }),
-      countRows({ ...base, table: TABLES.leads, window: windows.previous }),
-      countRows({ ...base, table: TABLES.preorders, window: windows.previous }),
+    const base = { url: env.SUPABASE_URL, key: env.SUPABASE_PUBLISHABLE_KEY };
+    [currentConversions, previousConversions] = await Promise.all([
+      fetchConversions({ ...base, window: windows.current }),
+      fetchConversions({ ...base, window: windows.previous }),
     ]);
-    currentConversions = { leads: cLeads, preorders: cPre };
-    previousConversions = { leads: pLeads, preorders: pPre };
   } catch (e) {
     console.error('conversions error', e);
     degradedConversions = true;

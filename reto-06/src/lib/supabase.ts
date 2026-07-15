@@ -1,31 +1,31 @@
-import type { Window } from '../types';
+import type { Conversions, Window } from '../types';
 
-// Usa la SECRET KEY (service_role) server-side: la RLS de las tablas es insert-only
-// y bloquea lecturas anónimas. Cuenta filas creadas dentro de la ventana.
-export async function countRows(opts: {
+// Lee los conteos vía una función SECURITY DEFINER en el schema `pulso`
+// (ver db/schema.sql), usando la publishable/anon key. La RLS de las tablas
+// es insert-only; la función corre como su owner y devuelve solo agregados.
+export async function fetchConversions(opts: {
   url: string;
-  secretKey: string;
-  table: string;
+  key: string;
   window: Window;
-  createdColumn?: string; // default 'created_at'
+  schema?: string; // default 'pulso'
   fetchImpl?: typeof fetch;
-}): Promise<number> {
+}): Promise<Conversions> {
   const f = opts.fetchImpl ?? fetch;
-  const col = opts.createdColumn ?? 'created_at';
-  const q = `${opts.url}/rest/v1/${opts.table}` +
-    `?select=id&${col}=gte.${encodeURIComponent(opts.window.startISO)}` +
-    `&${col}=lt.${encodeURIComponent(opts.window.endISO)}`;
-  const res = await f(q, {
-    method: 'GET',
+  const schema = opts.schema ?? 'pulso';
+  const res = await f(`${opts.url}/rest/v1/rpc/weekly_counts`, {
+    method: 'POST',
     headers: {
-      apikey: opts.secretKey,
-      Authorization: `Bearer ${opts.secretKey}`,
-      Prefer: 'count=exact',
-      Range: '0-0',
+      apikey: opts.key,
+      Authorization: `Bearer ${opts.key}`,
+      'Content-Type': 'application/json',
+      'Content-Profile': schema,
+      'Accept-Profile': schema,
     },
+    body: JSON.stringify({ win_start: opts.window.startISO, win_end: opts.window.endISO }),
   });
-  if (!res.ok && res.status !== 206) throw new Error(`Supabase HTTP ${res.status}`);
-  const cr = res.headers.get('content-range'); // "0-6/7" o "*/0"
-  const total = cr?.split('/')?.[1];
-  return total ? parseInt(total, 10) : 0;
+  if (!res.ok) throw new Error(`Supabase RPC HTTP ${res.status}`);
+  const json = (await res.json()) as unknown;
+  const row = Array.isArray(json) ? json[0] : json;
+  const r = (row ?? {}) as { leads?: number; preorders?: number };
+  return { leads: Number(r.leads ?? 0), preorders: Number(r.preorders ?? 0) };
 }

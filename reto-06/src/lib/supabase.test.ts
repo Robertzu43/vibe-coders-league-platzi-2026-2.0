@@ -1,31 +1,28 @@
-import { countRows } from './supabase';
+import { fetchConversions } from './supabase';
 
-function mockFetch(contentRange: string | null, ok = true, status = 206): typeof fetch {
-  return (async () => ({
-    ok, status,
-    headers: { get: (h: string) => (h.toLowerCase() === 'content-range' ? contentRange : null) },
-  } as unknown as Response)) as unknown as typeof fetch;
+function mockFetch(body: unknown, ok = true, status = 200): typeof fetch {
+  return (async () => ({ ok, status, json: async () => body } as unknown as Response)) as unknown as typeof fetch;
 }
 
-test('countRows parsea el total del header content-range', async () => {
-  const n = await countRows({
-    url: 'https://x.supabase.co', secretKey: 'k', table: 'leads',
-    window: { startISO: 'a', endISO: 'b' }, fetchImpl: mockFetch('0-6/7'),
+test('fetchConversions parsea leads/preorders del RPC', async () => {
+  const c = await fetchConversions({
+    url: 'https://x.supabase.co', key: 'k',
+    window: { startISO: 'a', endISO: 'b' }, fetchImpl: mockFetch([{ leads: 4, preorders: 2 }]),
   });
-  expect(n).toBe(7);
+  expect(c).toEqual({ leads: 4, preorders: 2 });
 });
 
-test('countRows devuelve 0 cuando no hay filas', async () => {
-  const n = await countRows({
-    url: 'https://x.supabase.co', secretKey: 'k', table: 'leads',
-    window: { startISO: 'a', endISO: 'b' }, fetchImpl: mockFetch('*/0'),
+test('fetchConversions maneja respuesta vacía como ceros', async () => {
+  const c = await fetchConversions({
+    url: 'https://x.supabase.co', key: 'k',
+    window: { startISO: 'a', endISO: 'b' }, fetchImpl: mockFetch([]),
   });
-  expect(n).toBe(0);
+  expect(c).toEqual({ leads: 0, preorders: 0 });
 });
 
-test('countRows lanza en HTTP de error', async () => {
-  await expect(countRows({
-    url: 'https://x.supabase.co', secretKey: 'k', table: 'leads',
+test('fetchConversions lanza en HTTP de error', async () => {
+  await expect(fetchConversions({
+    url: 'https://x.supabase.co', key: 'k',
     window: { startISO: 'a', endISO: 'b' }, fetchImpl: mockFetch(null, false, 401),
   })).rejects.toThrow('401');
 });
