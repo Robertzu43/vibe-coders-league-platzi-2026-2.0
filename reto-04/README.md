@@ -21,6 +21,9 @@ Todo vive en un único **workflow de n8n**: n8n **hospeda el formulario** (nodo 
 [1. Clasificar lead]         Code node — regla determinista por tamaño de equipo
         │                     → segmento, plan_sugerido, prioridad + copy de email/Telegram
         ▼
+[  Preparar fila ]           Set node — recorta a las 11 columnas del lead (hoja limpia)
+        │
+        ▼
 [2. Guardar en Google Sheets]   Append row — el registro real del lead
         │
         ▼
@@ -33,7 +36,7 @@ Todo vive en un único **workflow de n8n**: n8n **hospeda el formulario** (nodo 
 [Pantalla: "¡Listo! Revisa tu correo"]
 ```
 
-**4 acciones automáticas encadenadas** tras el trigger (clasificar → guardar → correo → notificar): supera el mínimo de 3 e incluye un paso real de **decisión**, no solo relays.
+**4 acciones automáticas encadenadas** tras el trigger (clasificar → guardar → correo → notificar): supera el mínimo de 3 e incluye un paso real de **decisión**, no solo relays. (El nodo *Preparar fila* es un helper que deja exactamente las 11 columnas del lead en la hoja; el correo y Telegram leen el texto completo desde *Clasificar lead*.)
 
 ### El paso de clasificación (la "inteligencia")
 
@@ -84,8 +87,8 @@ reto-04/
 > 3. Un **bot de Telegram** (via [@BotFather](https://t.me/botfather)) añadido a tu grupo/canal, y su **chat ID**, guardados como credencial de Telegram en n8n.
 
 1. **Importar el workflow:** en n8n → *Workflows* → *Import from File* → `workflow/nido-tour.json`.
-2. **Conectar credenciales:** abre cada nodo y selecciona la credencial correspondiente:
-   - *Guardar en Google Sheets* → credencial de Google Sheets. La hoja destino ya existe: **"Nido — Tours"** (`1zCasISyvhFcVWZJUazQnAtcDB1AWy1mGBOEEsaTlLvI`), pestaña con los 11 encabezados. Confirma que el documento y la pestaña quedaron seleccionados en los dropdowns.
+2. **Conectar credenciales y destinos:** abre cada nodo y selecciona la credencial correspondiente:
+   - *Guardar en Google Sheets* → credencial de Google Sheets; reemplaza `YOUR_GOOGLE_SHEET_ID` por el ID de tu hoja (una hoja vacía sirve — el nodo *Preparar fila* + el mapeo explícito crean la fila de encabezados de 11 columnas en el primer envío) y confirma la pestaña en el dropdown.
    - *Email de confirmación* → credencial de Gmail.
    - *Alerta interna (Telegram)* → credencial de Telegram; reemplaza `REEMPLAZA_CON_TU_CHAT_ID` por tu chat ID real.
 3. **Activar** el workflow y abrir la **URL del Form Trigger** (n8n la muestra en el nodo).
@@ -97,7 +100,7 @@ El JSON usa versiones recientes de nodos (`formTrigger` 2.2, `code` 2, `googleSh
 
 ## Estado de la corrida real
 
-El workflow está **construido y listo para importar**, con la hoja de Google ya creada. La **corrida end-to-end con evidencia** (`docs/evidence/`) queda pendiente de conectar las credenciales de Google/Telegram dentro de n8n y crear el bot de Telegram — pasos que requieren acceso a esas cuentas. Una vez conectadas, la verificación es directa (paso 4 de arriba).
+✅ **Verificado end-to-end el 2026-07-14.** El workflow se construyó y ejecutó de verdad en n8n Cloud (`robertzu43.app.n8n.cloud`) vía el MCP oficial de n8n. Se corrieron los **3 arquetipos** (equipos de 1, 5 y 20) y los tres completaron la cadena de 4 acciones sin intervención: fila escrita en Google Sheets, correo enviado por Gmail y alerta recibida en Telegram (🔥 en el enterprise). La evidencia (registros de ejecución + contenido real de la hoja) está en [`docs/evidence/`](./docs/evidence/README.md).
 
 ## Cómo cumple el reto
 
@@ -106,4 +109,4 @@ El workflow está **construido y listo para importar**, con la hoja de Google ya
 | Formulario/landing/herramienta donde el cliente deja datos | ✓ (Form Trigger de n8n) |
 | ≥3 acciones automáticas encadenadas | ✓ (4: clasificar → Sheets → Gmail → Telegram) |
 | Va más allá de notificar (enriquecer/clasificar/asignar) | ✓ (paso de clasificación + plan sugerido por segmento) |
-| El flujo se ejecuta de verdad, end-to-end, con datos reales | ⧗ Listo para correr; evidencia pendiente de credenciales (ver arriba) |
+| El flujo se ejecuta de verdad, end-to-end, con datos reales | ✓ 3 corridas verdes (equipos 1/5/20); evidencia en `docs/evidence/` |
