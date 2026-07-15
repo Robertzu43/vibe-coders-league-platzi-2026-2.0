@@ -1,0 +1,32 @@
+---
+import { teams } from '../data/worldcup';
+const teamsJson = JSON.stringify(teams);
+const def = teams.find(t => t.code === 'ARG')!;
+---
+<section id="explora" aria-labelledby="exp-title" data-seleccion="ARG">
+  <p class="label">Capítulo 4 · Explora tú</p>
+  <h2 id="exp-title">Elige una selección</h2>
+  <label class="visually-hidden" for="exp-select">Selección</label>
+  <select id="exp-select" class="btn">
+    {teams.map(t => (<option value={t.code} selected={t.code === 'ARG'}>{t.flag} {t.name}</option>))}
+  </select>
+  <article id="exp-card" class="card" style="padding:22px;margin-top:16px" aria-live="polite">
+    <h3 id="exp-name">{def.flag} {def.name}</h3>
+    <dl class="stats">
+      <div><dt>Títulos</dt><dd id="exp-titles">{def.titles}</dd></div>
+      <div><dt>Mejor resultado</dt><dd id="exp-best">{def.bestResult}</dd></div>
+      <div><dt>Participaciones</dt><dd id="exp-apps">{def.appearances}</dd></div>
+      <div><dt>Goleador histórico</dt><dd id="exp-scorer">{def.topScorer} ({def.topScorerGoals})</dd></div>
+    </dl>
+  </article>
+  <script type="application/json" id="exp-data" set:html={teamsJson}></script>
+</section>
+<style>
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 0; }
+  .stats dt { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); }
+  .stats dd { margin: 2px 0 0; font-size: 1.5rem; font-weight: 700; font-family: var(--serif); }
+</style>
+<script>
+  import { initExplora } from '../scripts/explora';
+  initExplora();
+</script>

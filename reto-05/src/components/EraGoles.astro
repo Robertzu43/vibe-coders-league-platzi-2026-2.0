@@ -1,0 +1,108 @@
+---
+import { editions } from '../data/worldcup';
+import { scaleLinear, linePath } from '../lib/chart';
+
+const W = 720, H = 300, M = 40;
+const xScale = scaleLinear([0, editions.length - 1], [M, W - M]);
+const yScale = scaleLinear([2, 5.5], [H - M, M]);
+
+const avgOf = (e: (typeof editions)[number]) => e.goals / e.matches;
+const points: Array<[number, number]> = editions.map((e, i) => [xScale(i), yScale(avgOf(e))]);
+const path = linePath(points);
+const baseline = H - M;
+const areaPath = `${path} L${points[points.length - 1][0]},${baseline} L${points[0][0]},${baseline} Z`;
+
+const yTicks = [2, 3, 4, 5];
+const labelYears = [1930, 1950, 1970, 1990, 2010, 2022];
+
+const peak = editions.reduce((a, b) => (avgOf(b) > avgOf(a) ? b : a));
+const peakAvg = avgOf(peak).toFixed(2);
+---
+<div class="viz-block">
+  <h3>Goles por partido</h3>
+  <p class="viz-note">
+    Goles por partido en cada edición, 1930–2022. El pico de <strong>{peakAvg}</strong> en
+    <strong>{peak.year}</strong> ({peak.host}) sigue siendo récord.
+  </p>
+  <div class="chart-wrap">
+    <svg
+      id="goles-svg"
+      viewBox={`0 0 ${W} ${H}`}
+      role="img"
+      aria-label="Goles por partido por edición del Mundial, 1930 a 2022"
+    >
+      {yTicks.map((t) => (
+        <g>
+          <line x1={M} x2={W - M} y1={yScale(t)} y2={yScale(t)} class="grid" />
+          <text x={M - 8} y={yScale(t) + 4} class="tick" text-anchor="end">{t}</text>
+        </g>
+      ))}
+      <line x1={M} x2={W - M} y1={baseline} y2={baseline} class="grid grid-base" />
+      <path d={areaPath} class="area" />
+      <path d={path} class="line" />
+      {editions.map((e, i) => {
+        const avg = avgOf(e).toFixed(2);
+        const [x, y] = points[i];
+        return (
+          <circle
+            cx={x}
+            cy={y}
+            r="5"
+            class="dot"
+            data-year={e.year}
+            data-goals={e.goals}
+            data-matches={e.matches}
+            data-avg={avg}
+            tabindex="0"
+            aria-label={`Mundial ${e.year}: ${avg} goles por partido, ${e.goals} goles en ${e.matches} partidos`}
+          ></circle>
+        );
+      })}
+      {editions.map((e, i) => {
+        if (!labelYears.includes(e.year)) return null;
+        return (
+          <text x={points[i][0]} y={baseline + 20} class="xlabel" text-anchor="middle">{e.year}</text>
+        );
+      })}
+    </svg>
+    <div id="goles-tip" role="status" class="tip">Pasa el cursor o navega con Tab sobre un punto para ver el detalle.</div>
+  </div>
+  <details>
+    <summary>Ver datos en tabla</summary>
+    <table>
+      <thead><tr><th>Edición</th><th>Sede</th><th>Partidos</th><th>Goles</th><th>Goles/partido</th></tr></thead>
+      <tbody>
+        {editions.map((e) => (
+          <tr>
+            <td>{e.year}</td>
+            <td>{e.host}</td>
+            <td>{e.matches}</td>
+            <td>{e.goals}</td>
+            <td>{avgOf(e).toFixed(2)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </details>
+</div>
+<style>
+  .viz-note { max-width: 42ch; color: var(--ink-soft); margin: 0 0 12px; font-size: 14px; }
+  .chart-wrap { position: relative; margin: 18px 0 10px; }
+  svg { width: 100%; height: auto; overflow: visible; }
+  .grid { stroke: var(--line-2); stroke-width: 1; }
+  .grid-base { stroke: var(--line); }
+  .tick, .xlabel { fill: var(--ink-soft); font-size: 11px; font-family: var(--sans); }
+  .area { fill: var(--red); fill-opacity: .12; stroke: none; }
+  .line { fill: none; stroke: var(--red); stroke-width: 2; }
+  .dot { fill: var(--paper-2); stroke: var(--red); stroke-width: 2; cursor: pointer; }
+  .dot.active { fill: var(--red); stroke-width: 3; }
+  .tip { margin-top: 10px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--paper-2);
+         border: 1px solid var(--line); font-size: 14px; min-height: 20px; }
+  .tip.on { border-color: var(--red); }
+  table { border-collapse: collapse; margin-top: 10px; }
+  td, th { border: 1px solid var(--line); padding: 4px 10px; text-align: left; }
+</style>
+<script>
+  import { initEraGoles } from '../scripts/era-goles';
+  initEraGoles();
+</script>

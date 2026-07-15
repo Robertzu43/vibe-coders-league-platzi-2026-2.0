@@ -1,0 +1,19 @@
+---
+import { champions, editions } from '../data/worldcup';
+const unique = champions.length;      // 8
+const years = 2022 - 1930;            // 92
+const cups = editions.length;         // 22
+---
+<section id="hero" aria-labelledby="hero-title">
+  <p class="label">Especial interactivo · Mundial 2026</p>
+  <h1 id="hero-title" style="font-size:clamp(2.2rem,6vw,4rem)">GOLAZO</h1>
+  <p style="font-size:clamp(1.1rem,3vw,1.6rem);max-width:34ch">
+    <strong>{years} años</strong>, <strong data-count={cups}>{cups}</strong> Mundiales,
+    y solo <strong data-count={unique}>{unique}</strong> países han levantado la copa.
+  </p>
+  <a class="btn" href="#dinastias">Explora los datos ↓</a>
+</section>
+<script>
+  import { initCounters } from '../scripts/counter';
+  initCounters();
+</script>

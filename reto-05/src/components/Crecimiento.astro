@@ -1,0 +1,63 @@
+---
+import { editions, cup2026 } from '../data/worldcup';
+import { scaleLinear, linePath } from '../lib/chart';
+
+const W = 320, H = 220, M = 32;
+
+const rows = [
+  ...editions.map((e) => ({ year: e.year, teams: e.teams, projected: false })),
+  { year: 2026, teams: cup2026.teams, projected: true },
+];
+
+const xScale = scaleLinear([0, rows.length - 1], [M, W - M]);
+const yScale = scaleLinear([0, 50], [H - M, M]);
+const points: Array<[number, number]> = rows.map((r, i) => [xScale(i), yScale(r.teams)]);
+
+const historicalPath = linePath(points.slice(0, points.length - 1));
+const projectedPath = linePath(points.slice(points.length - 2));
+
+const first = rows[0];
+const last = rows[rows.length - 1];
+const [firstX, firstY] = points[0];
+const [lastX, lastY] = points[points.length - 1];
+const baseline = H - M;
+---
+<div class="viz-block">
+  <h3>El Mundial crece</h3>
+  <p class="viz-note">Selecciones participantes por edición: de {first.teams} en {first.year} a {last.teams} en {last.year}.</p>
+  <svg
+    viewBox={`0 0 ${W} ${H}`}
+    role="img"
+    aria-label={`Crecimiento de selecciones participantes: ${first.teams} en ${first.year}, ${last.teams} proyectadas en ${last.year}`}
+  >
+    <line x1={M} x2={W - M} y1={baseline} y2={baseline} class="grid grid-base" />
+    <path d={historicalPath} class="line" />
+    <path d={projectedPath} class="line line-projected" />
+    {points.slice(0, points.length - 1).map(([x, y]) => (<circle cx={x} cy={y} r="2.5" class="dot" />))}
+    <circle cx={lastX} cy={lastY} r="4.5" class="dot dot-2026" />
+    <text x={firstX} y={firstY - 12} text-anchor="start" class="endpoint">{first.year} · {first.teams}</text>
+    <text x={lastX} y={lastY - 12} text-anchor="end" class="endpoint endpoint-2026">{last.year} · {last.teams}</text>
+  </svg>
+  <details>
+    <summary>Ver datos en tabla</summary>
+    <table>
+      <thead><tr><th>Edición</th><th>Selecciones</th></tr></thead>
+      <tbody>
+        {rows.map((r) => (<tr><td>{r.year}{r.projected ? ' (proyectado)' : ''}</td><td>{r.teams}</td></tr>))}
+      </tbody>
+    </table>
+  </details>
+</div>
+<style>
+  .viz-note { max-width: 42ch; color: var(--ink-soft); margin: 0 0 12px; font-size: 14px; }
+  svg { width: 100%; height: auto; overflow: visible; }
+  .grid-base { stroke: var(--line); stroke-width: 1; }
+  .line { fill: none; stroke: var(--red); stroke-width: 2; }
+  .line-projected { stroke-dasharray: 5 4; stroke: var(--gold); }
+  .dot { fill: var(--red); }
+  .dot-2026 { fill: var(--gold); }
+  .endpoint { font-size: 11px; fill: var(--ink-soft); font-family: var(--sans); }
+  .endpoint-2026 { fill: var(--gold); font-weight: 700; }
+  table { border-collapse: collapse; margin-top: 10px; }
+  td, th { border: 1px solid var(--line); padding: 4px 10px; text-align: left; }
+</style>

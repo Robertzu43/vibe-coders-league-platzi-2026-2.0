@@ -1,0 +1,93 @@
+---
+const steps = [
+  { href: '#hero', label: 'Inicio' },
+  { href: '#dinastias', label: 'Dinastías' },
+  { href: '#goles', label: 'Goles' },
+  { href: '#estadios', label: 'Estadios' },
+  { href: '#explora', label: 'Explora' },
+  { href: '#comparte', label: 'Comparte' },
+];
+---
+<nav class="section-nav" aria-label="Recorrido del especial">
+  <ol>
+    {steps.map((step) => (
+      <li>
+        <a href={step.href} data-target={step.href.slice(1)}>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="chip-label">{step.label}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+<style>
+  .section-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .section-nav ol {
+    list-style: none;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 10px 16px;
+  }
+  .section-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 99px;
+    text-decoration: none;
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: color .2s, background .2s;
+  }
+  .section-nav a:hover { color: var(--ink); }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--line-2);
+    transition: background .2s;
+  }
+  .section-nav a.active {
+    color: var(--red);
+    background: var(--paper);
+  }
+  .section-nav a.active .dot { background: var(--red); }
+</style>
+<script>
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.section-nav a[data-target]'));
+  const sections = links
+    .map((link) => document.getElementById(link.dataset.target ?? ''))
+    .filter((el): el is HTMLElement => el !== null);
+
+  if (sections.length && 'IntersectionObserver' in window) {
+    const setActive = (id: string) => {
+      links.forEach((link) => link.classList.toggle('active', link.dataset.target === id));
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible.length > 0) {
+          setActive(visible[0].target.id);
+        }
+      },
+      { rootMargin: '-40% 0px -50% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  }
+</script>

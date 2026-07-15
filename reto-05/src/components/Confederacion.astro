@@ -1,0 +1,61 @@
+---
+import { byConfederation, totalTitles } from '../data/worldcup';
+import { donutSlice } from '../lib/chart';
+
+const split = byConfederation();
+const total = totalTitles();
+const cx = 110, cy = 110, rOuter = 90, rInner = 54;
+
+const order: Array<{ key: 'UEFA' | 'CONMEBOL'; label: string; color: string }> = [
+  { key: 'UEFA', label: 'UEFA (Europa)', color: 'var(--uefa)' },
+  { key: 'CONMEBOL', label: 'CONMEBOL (Sudamérica)', color: 'var(--conmebol)' },
+];
+
+let cursor = 0;
+const slices = order.map((o) => {
+  const count = split[o.key];
+  const sweep = (count / total) * 360;
+  const start = cursor;
+  const end = cursor + sweep;
+  cursor = end;
+  return { ...o, count, start, end };
+});
+---
+<div class="viz-block">
+  <h3>Títulos por confederación</h3>
+  <p class="viz-note">Los 22 títulos del Mundial se los han repartido solo dos confederaciones.</p>
+  <div class="donut-wrap">
+    <svg viewBox={`0 0 ${cx * 2} ${cy * 2}`} role="img" aria-label="Títulos mundiales por confederación: UEFA 12, CONMEBOL 10">
+      {slices.map((s) => (
+        <path d={donutSlice(cx, cy, rOuter, rInner, s.start, s.end)} fill={s.color} />
+      ))}
+      <text x={cx} y={cy - 4} text-anchor="middle" class="donut-total">{total}</text>
+      <text x={cx} y={cy + 16} text-anchor="middle" class="donut-caption">títulos</text>
+    </svg>
+    <ul class="legend-list">
+      {slices.map((s) => (
+        <li class="chip" style={`--c:${s.color}`}>{s.label} · {s.count}</li>
+      ))}
+    </ul>
+  </div>
+  <details>
+    <summary>Ver datos en tabla</summary>
+    <table>
+      <thead><tr><th>Confederación</th><th>Títulos</th></tr></thead>
+      <tbody>
+        {slices.map((s) => (<tr><td>{s.label}</td><td>{s.count}</td></tr>))}
+      </tbody>
+    </table>
+  </details>
+</div>
+<style>
+  .viz-note { max-width: 42ch; color: var(--ink-soft); margin: 0 0 12px; font-size: 14px; }
+  .donut-wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin: 12px 0; }
+  .donut-wrap svg { width: 160px; height: 160px; flex-shrink: 0; }
+  .donut-total { font-family: var(--serif); font-size: 34px; font-weight: 700; fill: var(--ink); }
+  .donut-caption { font-size: 12px; fill: var(--ink-soft); font-family: var(--sans); }
+  .legend-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .chip { border-left: 12px solid var(--c); padding-left: 8px; font-size: 13px; }
+  table { border-collapse: collapse; margin-top: 10px; }
+  td, th { border: 1px solid var(--line); padding: 4px 10px; text-align: left; }
+</style>
