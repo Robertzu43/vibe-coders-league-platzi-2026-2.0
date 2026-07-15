@@ -1,4 +1,4 @@
-import { champions, editions, teams, cup2026, totalTitles, byConfederation, teamByCode } from './worldcup';
+import { champions, editions, teams, scorers, cup2026, totalTitles, byConfederation, teamByCode } from './worldcup';
 import type { Edition } from './worldcup';
 
 describe('champions', () => {
@@ -13,6 +13,11 @@ describe('champions', () => {
     expect(c.UEFA).toBe(12);
     expect(c.CONMEBOL).toBe(10);
   });
+  it("England's flag is the St George's cross, not the bare black flag", () => {
+    const eng = champions.find(c => c.code === 'ENG');
+    expect(eng?.flag).toBe('🏴󠁧󠁢󠁥󠁮󠁧󠁿');
+    expect(eng?.flag).not.toBe('🏴');
+  });
 });
 
 describe('editions', () => {
@@ -26,11 +31,22 @@ describe('editions', () => {
   it('every edition has positive goals and matches', () => {
     for (const e of editions) { expect(e.goals).toBeGreaterThan(0); expect(e.matches).toBeGreaterThan(0); }
   });
+  it('1930 had 13 participating teams', () => {
+    const e = editions.find(e => e.year === 1930);
+    expect(e?.teams).toBe(13);
+  });
+  it('2022 had 32 participating teams', () => {
+    const e = editions.find(e => e.year === 2022);
+    expect(e?.teams).toBe(32);
+  });
+  it('every edition has a positive team count', () => {
+    for (const e of editions) { expect(e.teams).toBeGreaterThan(0); }
+  });
 });
 
 describe('teams (explorer)', () => {
-  it('has 8 curated teams each with required fields', () => {
-    expect(teams.length).toBe(8);
+  it('has 16 curated teams each with required fields', () => {
+    expect(teams.length).toBe(16);
     for (const t of teams) {
       expect(t.code).toMatch(/^[A-Z]{3}$/);
       expect(t.name).toBeTruthy();
@@ -46,6 +62,26 @@ describe('teams (explorer)', () => {
     const codes = teams.map(t => t.code);
     expect(codes).toContain('COL');
     expect(codes).toContain('ARG');
+  });
+  it('includes England and Mexico', () => {
+    const codes = teams.map(t => t.code);
+    expect(codes).toContain('ENG');
+    expect(codes).toContain('MEX');
+  });
+});
+
+describe('scorers', () => {
+  it('has 8 top scorers', () => {
+    expect(scorers.length).toBe(8);
+  });
+  it('is sorted descending by goals', () => {
+    for (let i = 1; i < scorers.length; i++) {
+      expect(scorers[i].goals).toBeLessThanOrEqual(scorers[i - 1].goals);
+    }
+  });
+  it('top scorer is Klose with 16 goals', () => {
+    expect(scorers[0].name).toBe('Miroslav Klose');
+    expect(scorers[0].goals).toBe(16);
   });
 });
 
