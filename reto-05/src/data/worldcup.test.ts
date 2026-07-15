@@ -1,4 +1,5 @@
-import { champions, editions, teams, cup2026, totalTitles, byConfederation } from './worldcup';
+import { champions, editions, teams, cup2026, totalTitles, byConfederation, teamByCode } from './worldcup';
+import type { Edition } from './worldcup';
 
 describe('champions', () => {
   it('titles sum to 22 finals (1930–2022)', () => {
@@ -17,7 +18,7 @@ describe('champions', () => {
 describe('editions', () => {
   it('covers 22 editions', () => expect(editions.length).toBe(22));
   it('1954 has the highest goals-per-match (~5.38)', () => {
-    const avg = (e) => e.goals / e.matches;
+    const avg = (e: Edition) => e.goals / e.matches;
     const max = editions.reduce((a, b) => (avg(b) > avg(a) ? b : a));
     expect(max.year).toBe(1954);
     expect(avg(max)).toBeCloseTo(5.38, 1);
@@ -45,6 +46,17 @@ describe('teams (explorer)', () => {
     const codes = teams.map(t => t.code);
     expect(codes).toContain('COL');
     expect(codes).toContain('ARG');
+  });
+});
+
+describe('teamByCode', () => {
+  it('returns the matching team for a known code', () => {
+    const col = teamByCode('COL');
+    expect(col?.code).toBe('COL');
+    expect(col?.name).toBe('Colombia');
+  });
+  it('returns undefined for an unknown code', () => {
+    expect(teamByCode('XXX')).toBeUndefined();
   });
 });
 
