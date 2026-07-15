@@ -2,6 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **REVISIÓN v2 (2026-07-14, tras ver el prototipo en vivo).** Feedback del usuario: condensar la data (≈2 gráficas por sección, más impacto, menos regado), más datos, y corregir la bandera de Inglaterra. Cambios (ejecutados como Tasks R1–R3 al final de este plan, misma disciplina TDD + review):
+> - **Bandera ENG:** `🏴` → `🏴󠁧󠁢󠁥󠁮󠁧󠁿` (cruz de San Jorge) en `champions` y en `teams`.
+> - **Datos nuevos:** goleadores históricos (`scorers`), campo `teams` por edición para el crecimiento del torneo (1930: 13 → 2026: 48), y explorador ampliado de 8 a 16 selecciones.
+> - **Helper nuevo:** `donutSlice`/arco en `lib/chart.ts` (+ tests) para la dona de títulos por confederación.
+> - **Layout condensado:** de 6 secciones a **3 densas de 2 gráficas c/u + Explora + Comparte**: Dinastías = palmarés + dona confederación · Goles = línea de goles + goleadores · Estadios&2026 = asistencias + crecimiento del torneo. Los componentes de chart existentes se refactorizan a bloques embebibles (`<figure>`/card) y `index.astro` los agrupa en `<section>` de 2 columnas responsivas (los ids de sección `dinastias`/`goles`/`estadios` se conservan para el SectionNav).
+> - README `recorrido` se actualiza al layout de 3 secciones densas en Task R3.
+
 **Goal:** Build GOLAZO, a static, no-backend interactive landing that visualizes historical FIFA World Cup data across 6 connected sections, in the "Álbum Panini" aesthetic, deployed to Cloudflare Workers.
 
 **Architecture:** Astro 6 static-content site (mirrors reto-02's proven config: `@astrojs/cloudflare` adapter, `nodejs_compat`). A single typed data module (`worldcup.ts`) is the source of truth; Astro renders each section's HTML + SVG at build; small vanilla-TS client scripts read data embedded as JSON/`data-*` and mutate the DOM for interactions (zero network at runtime). Charts are hand-rolled accessible SVG — no charting libraries.
