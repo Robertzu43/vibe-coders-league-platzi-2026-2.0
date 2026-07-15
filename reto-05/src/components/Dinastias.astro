@@ -3,9 +3,8 @@ import { champions } from '../data/worldcup';
 const max = Math.max(...champions.map(c => c.titles));
 const sorted = [...champions].sort((a, b) => b.titles - a.titles);
 ---
-<section id="dinastias" aria-labelledby="din-title">
-  <p class="label">Capítulo 1</p>
-  <h2 id="din-title">Dinastías · quién manda</h2>
+<div class="viz-block">
+  <h3>Palmarés por país</h3>
   <div role="group" aria-label="Modo de color" class="toggle">
     <button type="button" data-mode="pais" class="btn" aria-pressed="true">Por país</button>
     <button type="button" data-mode="conf" class="btn" aria-pressed="false">Por confederación</button>
@@ -31,7 +30,7 @@ const sorted = [...champions].sort((a, b) => b.titles - a.titles);
       <tbody>{sorted.map(c => (<tr><td>{c.name}</td><td>{c.titles}</td><td>{c.confederation}</td></tr>))}</tbody>
     </table>
   </details>
-</section>
+</div>
 <style>
   .bars { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin: 18px 0; }
   .bar-row { display: grid; grid-template-columns: 140px 1fr 32px; align-items: center; gap: 10px; }
