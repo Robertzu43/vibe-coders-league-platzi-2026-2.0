@@ -1,0 +1,51 @@
+---
+import { champions } from '../data/worldcup';
+const max = Math.max(...champions.map(c => c.titles));
+const sorted = [...champions].sort((a, b) => b.titles - a.titles);
+---
+<div class="viz-block">
+  <h3>Palmarés por país</h3>
+  <div role="group" aria-label="Modo de color" class="toggle">
+    <button type="button" data-mode="pais" class="btn" aria-pressed="true">Por país</button>
+    <button type="button" data-mode="conf" class="btn" aria-pressed="false">Por confederación</button>
+  </div>
+  <ul id="din-bars" class="bars" data-mode="pais" role="list">
+    {sorted.map(c => (
+      <li class="bar-row">
+        <span class="bar-label">{c.flag} {c.name}</span>
+        <span class="bar-track">
+          <span class="bar-fill" data-conf={c.confederation}
+                style={`width:${(c.titles / max) * 100}%`}></span>
+        </span>
+        <span class="bar-value">{c.titles}</span>
+      </li>
+    ))}
+  </ul>
+  <p class="legend" hidden id="din-legend">
+    <span class="chip" style="--c:var(--uefa)">UEFA · 12</span>
+    <span class="chip" style="--c:var(--conmebol)">CONMEBOL · 10</span>
+  </p>
+  <details><summary>Ver datos en tabla</summary>
+    <table><thead><tr><th>País</th><th>Títulos</th><th>Confederación</th></tr></thead>
+      <tbody>{sorted.map(c => (<tr><td>{c.name}</td><td>{c.titles}</td><td>{c.confederation}</td></tr>))}</tbody>
+    </table>
+  </details>
+</div>
+<style>
+  .bars { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin: 18px 0; }
+  .bar-row { display: grid; grid-template-columns: 140px 1fr 32px; align-items: center; gap: 10px; }
+  .bar-track { background: var(--line); border-radius: 6px; height: 22px; }
+  .bar-fill { display: block; height: 100%; border-radius: 4px; background: var(--red); transition: background .3s, width .5s; }
+  .bars[data-mode="conf"] .bar-fill[data-conf="UEFA"] { background: var(--uefa); }
+  .bars[data-mode="conf"] .bar-fill[data-conf="CONMEBOL"] { background: var(--conmebol); }
+  .bar-value { font-weight: 700; text-align: right; }
+  .legend { display: flex; gap: 12px; }
+  .chip { border-left: 12px solid var(--c); padding-left: 8px; font-size: 13px; }
+  .toggle { display: flex; gap: 8px; }
+  .toggle .btn[aria-pressed="false"] { background: transparent; color: var(--ink); border: 1px solid var(--line-2); }
+  table { border-collapse: collapse; margin-top: 10px; } td, th { border: 1px solid var(--line); padding: 4px 10px; text-align: left; }
+</style>
+<script>
+  import { initDinastias } from '../scripts/dinastias';
+  initDinastias();
+</script>

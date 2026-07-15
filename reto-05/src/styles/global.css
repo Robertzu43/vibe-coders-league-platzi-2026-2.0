@@ -1,0 +1,44 @@
+:root {
+  --paper: #fbf3e4;        --paper-2: #fff;
+  --ink: #1b2a4a;          --ink-soft: #5b6b8a;
+  --line: #ecdfc7;         --line-2: #e6d8bd;
+  --red: #e63946;          --teal: #2a9d8f;   --blue: #1f6fb8;  --gold: #e08a1e;
+  --uefa: #1f6fb8;         --conmebol: #e63946;
+  --radius: 16px;          --radius-sm: 10px;
+  --shadow: 0 6px 20px rgba(27,42,74,.08);
+  --serif: Georgia, 'Times New Roman', serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.5; }
+h1, h2, h3 { font-family: var(--serif); line-height: 1.1; margin: 0 0 .4em; }
+section { padding: 72px 20px; max-width: 960px; margin: 0 auto; scroll-margin-top: 64px; }
+.card { background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--red); font-weight: 700; }
+.btn { display: inline-flex; align-items: center; gap: 8px; background: var(--red); color: #fff; border: 0;
+       border-radius: 99px; padding: 12px 22px; font: inherit; font-weight: 700; cursor: pointer; text-decoration: none; }
+.btn:focus-visible, [tabindex]:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.viz-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+  margin-top: 20px;
+}
+@media (min-width: 760px) {
+  .viz-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.viz-block {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  min-width: 0;
+}
+.viz-block h3 { font-size: 1.15rem; }
+.viz-block svg { max-width: 100%; height: auto; }
+.viz-block table { display: block; max-width: 100%; overflow-x: auto; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
