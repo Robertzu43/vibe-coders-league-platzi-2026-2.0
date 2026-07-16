@@ -170,5 +170,5 @@ Dos rutas claramente distintas según la decisión, cada una a un destino real y
 
 - **Salida estructurada de Workers AI:** Llama a veces envuelve el JSON en prosa; el parser extrae el primer bloque `{...}` balanceado y valida, con fallback por reglas. Cubierto por tests.
 - **Scope de Sheets en el refresh token:** regenerar el refresh token con `spreadsheets` (el de reto-06 era solo `gmail.send`); mismo cliente OAuth Desktop.
-- **Formato de `values.append`:** requiere `valueInputOption` y `range` (p. ej. `Hoja1!A1`); confirmar el nombre de la pestaña al crear la hoja.
+- **Formato de `values.append`:** requiere `valueInputOption=USER_ENTERED` y `range=Backlog!A:I` (pestaña `Backlog`, fijada en §9/§11); crear la hoja con esa pestaña.
 - **Diseño de la página de demo:** badges de decisión + tabla de casos; se hará un pase visual cuidado.
