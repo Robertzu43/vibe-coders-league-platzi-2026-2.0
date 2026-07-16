@@ -126,7 +126,7 @@ npx wrangler deploy
 ### Disparo manual (para probar sin esperar al viernes)
 
 ```bash
-curl -s "https://pulso.<tu-subdominio>.workers.dev/__run?token=<TRIGGER_TOKEN>"
+curl -s "https://pulso.robertzu43.workers.dev/__run?token=<TRIGGER_TOKEN>"
 # → {"ok":true,"subject":"Pulso de la liga · ...","summary":"..."} y el correo llega a tu bandeja
 ```
 
@@ -144,7 +144,7 @@ npm run dev         # wrangler dev (local)
 
 ## Estado
 
-Código completo y verificado localmente: **28/28 tests en verde**, `tsc --noEmit` limpio, y el Worker empaqueta con `wrangler deploy --dry-run` (binding `AI` presente). El **despliegue y la verificación end-to-end del correo real** quedan pendientes de cargar las credenciales (OAuth de Gmail + tokens de Cloudflare/Supabase); la evidencia se agregará a [`docs/evidence/`](./docs/evidence/) tras la primera corrida real.
+✅ **Desplegado y verificado end-to-end el 2026-07-15** en `https://pulso.robertzu43.workers.dev` (cron `0 22 * * 5`). Una corrida real (`/__run`) recolectó tráfico real de las 4 landings (264 requests), conteos reales de Supabase (6 leads), generó el resumen con Workers AI y **envió el reporte por Gmail** — todo sin intervención. 28/28 tests en verde, `tsc --noEmit` limpio. Evidencia en [`docs/evidence/`](./docs/evidence/README.md).
 
 ## Cómo cumple el reto
 
@@ -153,4 +153,4 @@ Código completo y verificado localmente: **28/28 tests en verde**, `tsc --noEmi
 | Al menos una fuente de datos real | ✓ dos: Cloudflare Analytics API + Supabase (datos de retos previos) |
 | Transformación con criterio (no datos crudos) | ✓ totales, deltas WoW, alertas + resumen ejecutivo con IA |
 | Envío automático y programado a un destino real | ✓ email vía Gmail API, cron viernes 17:00 Bogotá |
-| El sistema funciona solo | ✓ cron + secretos + degradación elegante (pendiente corrida real) |
+| El sistema funciona solo | ✓ verificado end-to-end (cron + secretos + degradación elegante) |
