@@ -40,16 +40,17 @@ export function renderDemoPage(cases: ExampleCase[]): string {
 
 <script>
 const CASES = ${casesJson};
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function badgesFor(d){
   const p = d.prioridad === 'P0'
     ? '<span class="badge b-p0">P0 · urgente → Slack</span>'
     : '<span class="badge b-bk">backlog → Sheet</span>';
   return p
-    + '<span class="badge b-n">sev: '+d.severidad+'</span>'
+    + '<span class="badge b-n">sev: '+esc(d.severidad)+'</span>'
     + '<span class="badge b-n">prod: '+(d.enProduccion?'sí':'no')+'</span>'
     + '<span class="badge b-n">núcleo: '+(d.afectaNucleo?'sí':'no')+'</span>'
     + '<span class="badge b-n">datos: '+(d.perdidaDatos?'sí':'no')+'</span>'
-    + '<span class="badge b-n">'+d.fuente+'</span>';
+    + '<span class="badge b-n">'+esc(d.fuente)+'</span>';
 }
 async function triage(text){
   const r = await fetch('/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,dryRun:true})});
@@ -63,9 +64,9 @@ async function analizar(){
   try{
     const res = await triage(t); const d = res.decision;
     out.innerHTML = '<div style="margin-top:14px">'+badgesFor(d)
-      +'<p style="margin:10px 0 0"><b>'+d.titulo+'</b></p>'
-      +'<p class="muted" style="margin:4px 0 0">'+d.razon+'</p>'
-      +'<p class="muted" style="margin:4px 0 0">Acción: '+d.accionSugerida+'</p></div>';
+      +'<p style="margin:10px 0 0"><b>'+esc(d.titulo)+'</b></p>'
+      +'<p class="muted" style="margin:4px 0 0">'+esc(d.razon)+'</p>'
+      +'<p class="muted" style="margin:4px 0 0">Acción: '+esc(d.accionSugerida)+'</p></div>';
   }catch(e){ out.innerHTML='<p class="muted">Error: '+e+'</p>'; }
 }
 async function correrCasos(){
@@ -75,7 +76,7 @@ async function correrCasos(){
   for(const c of CASES){
     const res = await triage(c.text); const d = res.decision;
     const dot = d.prioridad==='P0' ? '<span class="pill dot-p0">P0 → Slack</span>' : '<span class="pill dot-bk">backlog → Sheet</span>';
-    rows += '<tr><td>'+c.text+'</td><td>'+dot+'<div class="muted" style="font-size:12px">'+d.severidad+' · '+d.fuente+'</div></td></tr>';
+    rows += '<tr><td>'+esc(c.text)+'</td><td>'+dot+'<div class="muted" style="font-size:12px">'+esc(d.severidad)+' · '+esc(d.fuente)+'</div></td></tr>';
   }
   out.innerHTML = '<table style="margin-top:14px"><thead><tr><th>Bug</th><th>Decisión → ruta</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
