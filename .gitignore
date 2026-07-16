@@ -32,3 +32,6 @@ out/
 *.log
 npm-debug.log*
 .vercel
+
+# Codex CLI local config
+.codex/
