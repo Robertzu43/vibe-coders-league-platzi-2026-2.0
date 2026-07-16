@@ -38,7 +38,7 @@ Un **Cloudflare Worker + Workers AI** que recibe un bug (por la página de demo 
 | Crash solo en entorno local (Node 18) | | | | backlog → Sheet |
 | Sería genial exportar a PDF | | | | backlog → Sheet |
 
-La demo (`GET /`) tiene un botón **"Correr 5 casos"** que muestra al agente decidiendo en vivo. Ver [`docs/evidence/`](./docs/evidence/README.md).
+La página (`GET /`) es el **intake**: escribes un bug y **"Reportar bug"** lo clasifica y lo envía de verdad (P0 → Slack, backlog → Google Sheet), mostrando a dónde fue. El botón **"Correr 5 casos"** muestra al agente decidiendo en vivo (preview, sin enviar). Ver [`docs/evidence/`](./docs/evidence/README.md).
 
 ## Tech stack
 
@@ -76,9 +76,9 @@ reto-07/
 
 ## Seguridad
 
-- Secretos vía `wrangler secret put`, **nunca en el repo**: `SLACK_WEBHOOK_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`, `SHEETS_ID`, `DEMO_TOKEN`.
-- **Demo pública segura:** `GET /` y el análisis corren en **dry-run** (clasifican y muestran la ruta, sin tocar Slack/Sheet). El **envío real** exige `DEMO_TOKEN` (falla cerrado si no coincide) — evita que la demo pública haga spam.
-- Google OAuth con scope mínimo `spreadsheets`; el HTML de la demo escapa el texto del usuario (anti-XSS).
+- Secretos vía `wrangler secret put`, **nunca en el repo**: `SLACK_WEBHOOK_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`, `SHEETS_ID`.
+- **Intake real:** "Reportar bug" envía de verdad (P0 → Slack, backlog → Sheet); el endpoint es abierto (no requiere token) — el acceso se controla no compartiendo la URL. "Correr 5 casos" queda en dry-run para no spamear. `POST /triage` acepta `{ "dryRun": true }` si solo se quiere clasificar sin enviar.
+- Google OAuth con scope mínimo `spreadsheets`; el HTML de la página escapa el texto del usuario (anti-XSS).
 
 ## Configuración y despliegue
 
@@ -86,7 +86,6 @@ reto-07/
 > 1. **Slack Incoming Webhook** → `SLACK_WEBHOOK_URL`.
 > 2. **Google Cloud:** habilitar **Google Sheets API**; cliente OAuth Desktop → `GOOGLE_CLIENT_ID/SECRET`; refresh token con scope `spreadsheets` → `GOOGLE_REFRESH_TOKEN`.
 > 3. **Google Sheet** con pestaña `Backlog` y encabezados en `A1:J1` → `SHEETS_ID`.
-> 4. Un **`DEMO_TOKEN`** al azar.
 
 ```bash
 cd reto-07
@@ -95,20 +94,24 @@ npx wrangler secret put GOOGLE_CLIENT_ID
 npx wrangler secret put GOOGLE_CLIENT_SECRET
 npx wrangler secret put GOOGLE_REFRESH_TOKEN
 npx wrangler secret put SHEETS_ID
-npx wrangler secret put DEMO_TOKEN
 npx wrangler deploy
 ```
 
 ## Cómo probar
 
 ```bash
-# Demo pública (dry-run, sin efectos):
+# Intake: abre la página y usa "Reportar bug" (envía de verdad) o "Correr 5 casos" (preview)
 open https://centinela.robertzu43.workers.dev/
 
-# Envío real (requiere el token):
+# Reporte real por API (envía a Slack/Sheet según la decisión):
 curl -s https://centinela.robertzu43.workers.dev/triage \
   -H 'content-type: application/json' \
-  -d '{"text":"login devuelve 500 en producción","dryRun":false,"token":"<DEMO_TOKEN>"}'
+  -d '{"text":"login devuelve 500 en producción","dryRun":false}'
+
+# Solo clasificar sin enviar (preview):
+curl -s https://centinela.robertzu43.workers.dev/triage \
+  -H 'content-type: application/json' \
+  -d '{"text":"el botón se ve gris"}'
 ```
 
 ## Desarrollo

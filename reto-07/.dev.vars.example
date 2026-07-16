@@ -3,4 +3,3 @@ GOOGLE_CLIENT_ID=xxxx.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=xxxx
 GOOGLE_REFRESH_TOKEN=1//xxxx
 SHEETS_ID=id-de-tu-google-sheet
-DEMO_TOKEN=cadena-larga-al-azar

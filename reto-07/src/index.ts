@@ -12,12 +12,11 @@ export interface Env {
   GOOGLE_CLIENT_SECRET: string;
   GOOGLE_REFRESH_TOKEN: string;
   SHEETS_ID: string;
-  DEMO_TOKEN: string;
 }
 
 export async function handleTriage(
   env: Env,
-  body: { text?: string; dryRun?: boolean; token?: string },
+  body: { text?: string; dryRun?: boolean },
   now: string,
 ): Promise<{ status: number; json: any }> {
   const text = (body.text ?? '').trim();
@@ -27,12 +26,9 @@ export async function handleTriage(
   const decision = await triage(text, aiRunner);
   const route = routeFor(decision.prioridad);
 
+  // dryRun=true → solo clasifica (preview, sin efectos). dryRun=false → reporta de verdad.
   const dryRun = body.dryRun !== false;
   if (dryRun) return { status: 200, json: { ok: true, dryRun: true, decision, route } };
-
-  if (!env.DEMO_TOKEN || body.token !== env.DEMO_TOKEN) {
-    return { status: 403, json: { ok: false, error: 'forbidden' } };
-  }
 
   try {
     if (route === 'urgente') {

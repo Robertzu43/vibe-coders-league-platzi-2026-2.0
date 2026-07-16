@@ -28,14 +28,14 @@ export function renderDemoPage(cases: ExampleCase[]): string {
   <div class="card">
     <textarea id="bug" placeholder="Describe un bug… p. ej. 'el checkout tira 500 al pagar en producción'"></textarea>
     <div class="row">
-      <button onclick="analizar()">Analizar</button>
-      <button class="ghost" onclick="correrCasos()">Correr 5 casos</button>
+      <button onclick="analizar()">Reportar bug</button>
+      <button class="ghost" onclick="correrCasos()">Correr 5 casos (preview)</button>
     </div>
     <div id="out"></div>
   </div>
 
   <div class="card">
-    <div class="muted" style="font-size:13px">Rúbrica: <b>P0</b> = pérdida de datos, o (en producción y afecta el núcleo). El resto va al <b>backlog</b>. La demo corre en modo dry-run (no envía a Slack/Sheet).</div>
+    <div class="muted" style="font-size:13px">Rúbrica: <b>P0</b> = pérdida de datos, o (en producción y afecta el núcleo). El resto va al <b>backlog</b>. <b>Reportar bug</b> envía de verdad (P0 → Slack, backlog → Google Sheet); <b>Correr 5 casos</b> es solo preview.</div>
   </div>
 
 <script>
@@ -52,21 +52,25 @@ function badgesFor(d){
     + '<span class="badge b-n">datos: '+(d.perdidaDatos?'sí':'no')+'</span>'
     + '<span class="badge b-n">'+esc(d.fuente)+'</span>';
 }
-async function triage(text){
-  const r = await fetch('/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,dryRun:true})});
+async function triage(text, dryRun){
+  const r = await fetch('/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,dryRun})});
   return r.json();
 }
 async function analizar(){
   const t = document.getElementById('bug').value.trim();
   const out = document.getElementById('out');
   if(!t){ out.innerHTML='<p class="muted">Escribe un bug primero.</p>'; return; }
-  out.innerHTML='<p class="muted">Analizando…</p>';
+  out.innerHTML='<p class="muted">Reportando…</p>';
   try{
-    const res = await triage(t); const d = res.decision;
+    const res = await triage(t, false); const d = res.decision;
+    let conf = '';
+    if(res.ok && res.destino==='slack') conf = '<p style="margin:10px 0 0;color:#dc2626;font-weight:600">✅ Reportado como P0 → alerta enviada a Slack</p>';
+    else if(res.ok && res.destino==='sheet') conf = '<p style="margin:10px 0 0;color:#2563eb;font-weight:600">✅ Registrado en el backlog (Google Sheet)</p>';
+    else conf = '<p style="margin:10px 0 0;color:#b45309">⚠️ Clasificado, pero el envío falló: '+esc(res.error||'')+'</p>';
     out.innerHTML = '<div style="margin-top:14px">'+badgesFor(d)
       +'<p style="margin:10px 0 0"><b>'+esc(d.titulo)+'</b></p>'
       +'<p class="muted" style="margin:4px 0 0">'+esc(d.razon)+'</p>'
-      +'<p class="muted" style="margin:4px 0 0">Acción: '+esc(d.accionSugerida)+'</p></div>';
+      +'<p class="muted" style="margin:4px 0 0">Acción: '+esc(d.accionSugerida)+'</p>'+conf+'</div>';
   }catch(e){ out.innerHTML='<p class="muted">Error: '+e+'</p>'; }
 }
 async function correrCasos(){
@@ -74,7 +78,7 @@ async function correrCasos(){
   out.innerHTML='<p class="muted">Corriendo los 5 casos…</p>';
   let rows='';
   for(const c of CASES){
-    const res = await triage(c.text); const d = res.decision;
+    const res = await triage(c.text, true); const d = res.decision;
     const dot = d.prioridad==='P0' ? '<span class="pill dot-p0">P0 → Slack</span>' : '<span class="pill dot-bk">backlog → Sheet</span>';
     rows += '<tr><td>'+esc(c.text)+'</td><td>'+dot+'<div class="muted" style="font-size:12px">'+esc(d.severidad)+' · '+esc(d.fuente)+'</div></td></tr>';
   }
