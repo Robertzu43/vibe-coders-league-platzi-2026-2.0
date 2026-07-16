@@ -36,6 +36,7 @@ Cada reto explora una dimensión distinta de la IA aplicada al desarrollo. **Tod
 | 04 | [Nido — La automatización que responde después de capturar el lead](./reto-04) | Automatización / n8n (Form + Sheets + Gmail + Telegram) |
 | 05 | [GOLAZO — El Mundial en datos](./reto-05) | Landing interactiva / Data storytelling con Astro + Cloudflare Workers |
 | 06 | [Pulso — El reporte que se arma y se envía solo](./reto-06) | Automatización / Reporte programado (Cloudflare Worker Cron + Workers AI + Gmail API) |
+| 07 | [Centinela — El agente que decide por ti](./reto-07) | Agente IA / Triage de bugs con decisión y ruteo (Cloudflare Worker + Workers AI → Slack / Google Sheet) |
 
 _Esta tabla se irá completando conforme avancen los retos de esta edición._
 
@@ -51,6 +52,7 @@ vibe-coders-league-platzi-2026-2.0/
   reto-04/     Nido — automatización post-captura de leads (n8n: Form + Google Sheets + Gmail + Telegram)
   reto-05/     GOLAZO — especial interactivo de datos del Mundial (Astro + Cloudflare Workers, sin backend)
   reto-06/     Pulso — reporte automático de resultados de la liga (Cloudflare Worker Cron + Workers AI + Gmail API)
+  reto-07/     Centinela — agente de triage de bugs con IA (Cloudflare Worker + Workers AI → Slack / Google Sheet)
 ```
 
 Cada carpeta es un proyecto independiente con su propio README, stack y documentación.
