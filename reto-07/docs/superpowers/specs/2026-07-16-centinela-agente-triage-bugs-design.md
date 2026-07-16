@@ -139,7 +139,7 @@ Dos rutas claramente distintas según la decisión, cada una a un destino real y
 ## 9. Destinos: setup (una vez)
 
 - **Slack:** crear un **Incoming Webhook** en un workspace propio → `SLACK_WEBHOOK_URL` (secreto). Centinela postea Block Kit para P0.
-- **Google Sheet:** crear hoja "Centinela — Backlog" con una **pestaña llamada `Backlog`** y fila de encabezados; su ID → `SHEETS_ID`. El Worker hace `spreadsheets.values.append` con `range=Backlog!A:I` y `valueInputOption=USER_ENTERED`, vía **Google OAuth** — se reutiliza el **cliente OAuth del reto-06** (misma cuenta), con un **refresh token nuevo** que incluya el scope `https://www.googleapis.com/auth/spreadsheets`. El nombre de la pestaña vive en `config.ts` (`SHEET_TAB = "Backlog"`).
+- **Google Sheet:** crear hoja "Centinela — Backlog" con una **pestaña llamada `Backlog`** y fila de encabezados; su ID → `SHEETS_ID`. El Worker hace `spreadsheets.values.append` con `range=Backlog!A:J` y `valueInputOption=USER_ENTERED`, vía **Google OAuth** — se reutiliza el **cliente OAuth del reto-06** (misma cuenta), con un **refresh token nuevo** que incluya el scope `https://www.googleapis.com/auth/spreadsheets`. El nombre de la pestaña vive en `config.ts` (`SHEET_TAB = "Backlog"`).
 
 ## 10. Configuración y secretos
 
@@ -170,5 +170,5 @@ Dos rutas claramente distintas según la decisión, cada una a un destino real y
 
 - **Salida estructurada de Workers AI:** Llama a veces envuelve el JSON en prosa; el parser extrae el primer bloque `{...}` balanceado y valida, con fallback por reglas. Cubierto por tests.
 - **Scope de Sheets en el refresh token:** regenerar el refresh token con `spreadsheets` (el de reto-06 era solo `gmail.send`); mismo cliente OAuth Desktop.
-- **Formato de `values.append`:** requiere `valueInputOption=USER_ENTERED` y `range=Backlog!A:I` (pestaña `Backlog`, fijada en §9/§11); crear la hoja con esa pestaña.
+- **Formato de `values.append`:** requiere `valueInputOption=USER_ENTERED` y `range=Backlog!A:J` (pestaña `Backlog`, fijada en §9/§11); crear la hoja con esa pestaña.
 - **Diseño de la página de demo:** badges de decisión + tabla de casos; se hará un pase visual cuidado.
