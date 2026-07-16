@@ -3,7 +3,25 @@ import { classifyByRules } from './rules';
 import { priorityFromFlags } from './route';
 import { MODEL } from '../config';
 
-export type AiRunner = (model: string, inputs: unknown) => Promise<{ response?: string }>;
+// Workers AI puede devolver `response` como string (texto) o como objeto ya
+// parseado (cuando se usa response_format json_schema). Aceptamos ambos.
+export type AiRunner = (model: string, inputs: unknown) => Promise<{ response?: unknown }>;
+
+// Esquema que fuerza a Workers AI a devolver exactamente estas claves.
+const JSON_SCHEMA = {
+  type: 'object',
+  properties: {
+    titulo: { type: 'string' },
+    enProduccion: { type: 'boolean' },
+    afectaNucleo: { type: 'boolean' },
+    perdidaDatos: { type: 'boolean' },
+    severidad: { type: 'string', enum: ['crítica', 'alta', 'media', 'baja'] },
+    area: { type: 'string' },
+    razon: { type: 'string' },
+    accionSugerida: { type: 'string' },
+  },
+  required: ['titulo', 'enProduccion', 'afectaNucleo', 'perdidaDatos', 'severidad', 'area', 'razon', 'accionSugerida'],
+};
 
 const SYSTEM = `Eres un ingeniero de guardia que triadea reportes de bugs. Analiza el reporte y responde SOLO con un objeto JSON válido, sin texto adicional, con estas claves exactas:
 {"titulo":string,"enProduccion":boolean,"afectaNucleo":boolean,"perdidaDatos":boolean,"severidad":"crítica"|"alta"|"media"|"baja","area":string,"razon":string,"accionSugerida":string}
@@ -54,8 +72,11 @@ export async function triage(text: string, ai?: AiRunner): Promise<Decision> {
       const out = await ai(MODEL, {
         messages: [{ role: 'system', content: SYSTEM }, { role: 'user', content: text }],
         temperature: 0.1,
+        response_format: { type: 'json_schema', json_schema: JSON_SCHEMA },
       });
-      const parsed = extractJson(out?.response ?? '');
+      const raw: unknown = out?.response;
+      // Workers AI devuelve `response` como objeto (con json_schema) o string.
+      const parsed = typeof raw === 'string' ? extractJson(raw) : (raw ?? null);
       const title = text.trim().split('\n')[0].slice(0, 80) || 'Bug';
       const d = buildFromParsed(parsed, title);
       if (d) return d;

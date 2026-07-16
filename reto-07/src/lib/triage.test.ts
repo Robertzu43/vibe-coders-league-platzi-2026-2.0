@@ -30,3 +30,11 @@ test('triage cae a reglas si la IA devuelve basura', async () => {
   expect(d.fuente).toBe('reglas');
   expect(d.prioridad).toBe('backlog');
 });
+test('triage acepta response como OBJETO (structured output json_schema)', async () => {
+  // Workers AI con response_format devuelve `response` ya parseado como objeto.
+  const ai = async () => ({ response: { titulo: 'X', enProduccion: true, afectaNucleo: true, perdidaDatos: false, severidad: 'crítica', area: 'pagos', razon: 'r', accionSugerida: 'a' } });
+  const d = await triage('checkout roto en producción', ai);
+  expect(d.fuente).toBe('ia');
+  expect(d.prioridad).toBe('P0');
+  expect(d.severidad).toBe('crítica');
+});
