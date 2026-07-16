@@ -95,6 +95,7 @@ Contenido variable real: "el checkout tira 500 en producción al pagar" vs "el b
   "titulo": "Checkout falla al pagar",
   "enProduccion": true,
   "afectaNucleo": true,
+  "perdidaDatos": false,
   "severidad": "crítica",
   "area": "pagos",
   "prioridad": "P0",
@@ -103,10 +104,11 @@ Contenido variable real: "el checkout tira 500 en producción al pagar" vs "el b
 }
 ```
 
+- `enProduccion`, `afectaNucleo`, `perdidaDatos`: `boolean`
 - `severidad`: `crítica | alta | media | baja`
 - `prioridad`: `P0 | backlog`
-- **Rúbrica:** `P0` ⇔ `enProduccion` **y** (`afectaNucleo` **o** pérdida de datos/caída). En caso contrario `backlog`.
-- **Robustez:** se extrae el bloque `{...}` de la salida, se **valida** (campos y enums), y si falla → **fallback por reglas** (`rules.ts`): heurística por palabras clave (`producción`, `500`, `caída`, `no puedo pagar/entrar`, `pérdida de datos`, `cosmético`, `local/dev`, etc.). El agente **siempre** decide; el resultado marca `fuente: "ia" | "reglas"`.
+- **Rúbrica (única fuente de verdad del enrutado):** `P0` ⇔ `perdidaDatos` **o** (`enProduccion` **y** `afectaNucleo`). En caso contrario `backlog`. Es decir: la **pérdida de datos** (o corrupción/borrado) es P0 por sí sola, sin importar el entorno; y un bug **en producción que afecta el núcleo** también es P0. La `prioridad` que devuelve la IA se **recalcula/valida** contra esta rúbrica a partir de los tres booleanos (los booleanos mandan; la `prioridad` del modelo es solo sugerencia y se corrige si no coincide).
+- **Robustez:** se extrae el bloque `{...}` de la salida, se **valida** (campos y enums), se **deriva `prioridad` de la rúbrica** sobre los booleanos, y si el parseo/validación falla → **fallback por reglas** (`rules.ts`): heurística por palabras clave que setea los mismos booleanos (`producción`/`prod`, `500`/`error`, `caída`/`down`, `no puedo pagar/entrar`, `se borran/pierden datos` → `perdidaDatos`, `cosmético`/`UI`, `local`/`dev`/`staging`, etc.) y aplica la misma rúbrica. El agente **siempre** decide; el resultado marca `fuente: "ia" | "reglas"`.
 
 ## 7. Las 2 rutas (destinos reales)
 
@@ -126,9 +128,9 @@ Dos rutas claramente distintas según la decisión, cada una a un destino real y
 - **"Correr 5 casos de ejemplo"** → corre los 5 bugs de `cases.ts` (dry-run) y muestra una tabla `bug → decisión → ruta`. Aquí **se ve al agente decidiendo** (cumple ≥5 casos).
 
 **Los 5 casos** (cubren el espacio de decisión):
-1. Prod + núcleo, crítico ("checkout tira 500 al pagar en prod") → **P0 → Slack**
-2. Pérdida de datos ("se borran registros al editar") → **P0 → Slack**
-3. Cosmético móvil ("botón gris desalineado") → **backlog → Sheet**
+1. Prod + núcleo, crítico ("checkout tira 500 al pagar en prod") → `enProduccion:true, afectaNucleo:true` → **P0 → Slack**
+2. Pérdida de datos ("se borran registros al editar") → `perdidaDatos:true` → **P0 → Slack** (P0 por la cláusula de pérdida de datos, sin importar el entorno)
+3. Cosmético móvil ("botón gris desalineado") → todos los booleanos `false` → **backlog → Sheet**
 4. Entorno local/no-prod ("falla solo en mi dev con Node 18") → **backlog → Sheet**
 5. Mejora/feature ("estaría bueno exportar a CSV") → **backlog → Sheet**
 
@@ -137,7 +139,7 @@ Dos rutas claramente distintas según la decisión, cada una a un destino real y
 ## 9. Destinos: setup (una vez)
 
 - **Slack:** crear un **Incoming Webhook** en un workspace propio → `SLACK_WEBHOOK_URL` (secreto). Centinela postea Block Kit para P0.
-- **Google Sheet:** crear hoja "Centinela — Backlog" con fila de encabezados; su ID → `SHEETS_ID`. El Worker hace `spreadsheets.values.append` vía **Google OAuth** — se reutiliza el **cliente OAuth del reto-06** (misma cuenta), con un **refresh token nuevo** que incluya el scope `https://www.googleapis.com/auth/spreadsheets`.
+- **Google Sheet:** crear hoja "Centinela — Backlog" con una **pestaña llamada `Backlog`** y fila de encabezados; su ID → `SHEETS_ID`. El Worker hace `spreadsheets.values.append` con `range=Backlog!A:I` y `valueInputOption=USER_ENTERED`, vía **Google OAuth** — se reutiliza el **cliente OAuth del reto-06** (misma cuenta), con un **refresh token nuevo** que incluya el scope `https://www.googleapis.com/auth/spreadsheets`. El nombre de la pestaña vive en `config.ts` (`SHEET_TAB = "Backlog"`).
 
 ## 10. Configuración y secretos
 
@@ -155,8 +157,8 @@ Dos rutas claramente distintas según la decisión, cada una a un destino real y
 ## 12. Testing y verificación
 
 - **Vitest** sobre funciones puras (con `fetch`/AI inyectables):
-  - `rules`: heurística → prioridad correcta por caso (incluye los 5 ejemplos).
-  - `route`: decisión → ruta correcta.
+  - `rules`: heurística → booleanos + prioridad correcta por caso (incluye los 5 ejemplos; en particular caso 2 `perdidaDatos:true`→P0 y caso 1 prod+núcleo→P0).
+  - `route`: decisión (booleanos → rúbrica) → ruta correcta; verifica que `perdidaDatos` sola da P0 aunque `enProduccion:false`.
   - `triage`: parseo/validación del JSON de la IA; **fallback** cuando la IA "falla" (mock que lanza / devuelve basura).
   - `slack`: payload Block Kit bien formado.
   - `sheets`: fila construida correctamente (orden de columnas).
