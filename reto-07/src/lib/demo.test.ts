@@ -8,4 +8,5 @@ test('la página incluye el formulario, el botón de 5 casos y llama a /triage',
   expect(html).toContain('Correr 5 casos');
   expect(html).toContain('Centinela');
   expect(html).toContain('checkout');
+  expect(html).toContain('function esc(');
 });
