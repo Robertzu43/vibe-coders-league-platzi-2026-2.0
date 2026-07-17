@@ -704,6 +704,9 @@ const rows = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
       <div><dt>Máxima</dt><dd id="st-max">0</dd></div>
     </dl>
 
+    <p class="dist-title">Distribución de intentos</p>
+    <div id="dist" class="dist"></div>
+
     <div class="result-actions">
       <button id="btn-share" class="btn">Compartir</button>
       <button id="btn-again" class="btn btn-ghost">Jugar otra (práctica)</button>
@@ -788,7 +791,10 @@ import { evaluateGuess, isWin, type TileState } from '../lib/game';
 import { puzzleNumber, dailyIndex, seededShuffle, pickPractice } from '../lib/daily';
 import { buildShareText } from '../lib/share';
 
-const SHUFFLE_SEED = 20260720;   // semilla fija: no cambiar (define el orden del diario)
+// Semilla fija: NO cambiar. Define el orden del diario. Nota: Fisher–Yates depende
+// del largo del array, así que AGREGAR términos a words.ts rebaraja todo y cambiaría
+// los puzzles pasados. Para v1 lo aceptamos (añade términos antes de publicar).
+const SHUFFLE_SEED = 20260720;
 const MAX_ATTEMPTS = 6;
 const ORDER: Term[] = seededShuffle(terms, SHUFFLE_SEED);
 
@@ -895,7 +901,13 @@ function onKey(key: string): void {
 
 function submit(): void {
   const len = state.term.word.length;
-  if (state.current.length !== len) return toast('Faltan letras');
+  if (state.current.length !== len) {
+    toast('Faltan letras');
+    const rowEl = document.querySelectorAll('.board-row')[state.guesses.length];
+    rowEl?.classList.add('shake');
+    setTimeout(() => rowEl?.classList.remove('shake'), 300);
+    return;
+  }
   state.guesses.push(state.current);
   const won = isWin(evaluateGuess(state.term.word, state.current));
   state.current = '';
@@ -921,7 +933,19 @@ function endGame(won: boolean): void {
   $('#st-winrate').textContent = stats.played ? String(Math.round((stats.wins / stats.played) * 100)) : '0';
   $('#st-streak').textContent = String(stats.currentStreak);
   $('#st-max').textContent = String(stats.maxStreak);
+  renderDistribution(stats, won && state.mode === 'daily' ? state.guesses.length : -1);
   openModal('#result-modal');
+}
+
+/** Histograma de intentos (1–6); resalta la fila del resultado actual. */
+function renderDistribution(s: Stats, highlight: number): void {
+  const max = Math.max(1, ...s.distribution);
+  $('#dist').innerHTML = s.distribution.map((count, i) => {
+    const pct = Math.max(Math.round((count / max) * 100), 8);
+    const hot = i + 1 === highlight ? ' hot' : '';
+    return `<div class="dist-row"><span class="dist-n">${i + 1}</span>` +
+           `<div class="dist-bar${hot}" style="width:${pct}%">${count}</div></div>`;
+  }).join('');
 }
 
 function recordStats(won: boolean): void {
@@ -988,6 +1012,7 @@ function endGamePeek(): void {
   $('#st-winrate').textContent = stats.played ? String(Math.round((stats.wins / stats.played) * 100)) : '0';
   $('#st-streak').textContent = String(stats.currentStreak);
   $('#st-max').textContent = String(stats.maxStreak);
+  renderDistribution(stats, -1);
   openModal('#result-modal');
 }
 ```
@@ -1060,6 +1085,9 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--s
 
 .toast { position: absolute; top: 8px; background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 8px; font-weight: 600; }
 
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.board-row.shake { animation: shake .3s; }
+
 .keyboard { display: flex; flex-direction: column; gap: 6px; padding: 8px 0 14px; }
 .kb-row { display: flex; gap: 5px; justify-content: center; }
 .key { flex: 1; min-width: 26px; height: 52px; background: var(--panel); color: var(--ink); border: none; border-radius: 6px; font-size: .95rem; font-weight: 600; cursor: pointer; text-transform: uppercase; }
@@ -1086,6 +1114,13 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--s
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 18px 0; }
 .stats-grid dt { font-size: 11px; color: var(--ink-soft); text-transform: uppercase; }
 .stats-grid dd { margin: 2px 0 0; font-size: 1.5rem; font-weight: 700; font-family: var(--serif); }
+
+.dist-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); margin: 4px 0; }
+.dist { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 16px; }
+.dist-row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.dist-n { width: 12px; color: var(--ink-soft); }
+.dist-bar { background: var(--absent); color: #fff; text-align: right; padding: 2px 8px; border-radius: 4px; min-width: 24px; font-weight: 600; }
+.dist-bar.hot { background: var(--correct); }
 
 .result-actions { display: flex; gap: 10px; }
 .btn { flex: 1; background: var(--green); color: var(--green-ink); border: none; border-radius: 8px; padding: 12px; font-weight: 700; cursor: pointer; }
