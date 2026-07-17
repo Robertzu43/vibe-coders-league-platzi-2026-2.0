@@ -1,4 +1,4 @@
-import { buildShareText } from './share';
+import { buildShareText, GAME_URL } from './share';
 
 describe('buildShareText', () => {
   it('renders a daily win with score and emoji grid', () => {
@@ -13,6 +13,14 @@ describe('buildShareText', () => {
     expect(text).toContain('⬛🟨⬛⬛⬛');
     expect(text).toContain('🟩🟩🟩🟩🟩');
     expect(text).toContain('Platzi');
+  });
+
+  it('includes the game URL so shares drive engagement', () => {
+    const text = buildShareText({
+      puzzleNumber: 3, won: true, maxAttempts: 6, mode: 'daily',
+      rows: [['correct', 'correct', 'correct']],
+    });
+    expect(text).toContain(GAME_URL);
   });
 
   it('renders a loss as X/6', () => {
