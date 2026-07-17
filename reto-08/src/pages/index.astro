@@ -1,0 +1,31 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Board from '../components/Board.astro';
+import Keyboard from '../components/Keyboard.astro';
+import HowToPlay from '../components/HowToPlay.astro';
+import ResultCard from '../components/ResultCard.astro';
+import Footer from '../components/Footer.astro';
+---
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Platzidle · Wordle tech</title>
+    <meta name="description" content="Adivina el término tech del día y aprende con Platzi. Un clon de Wordle con temática de programación." />
+  </head>
+  <body>
+    <div class="app">
+      <Header />
+      <Board />
+      <Keyboard />
+      <Footer />
+    </div>
+    <HowToPlay />
+    <ResultCard />
+    <script>
+      import { initGame } from '../scripts/game-ui';
+      initGame();
+    </script>
+  </body>
+</html>

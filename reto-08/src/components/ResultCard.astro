@@ -1,0 +1,28 @@
+---
+---
+<div id="result-modal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="result-title">
+    <button id="result-close" class="modal-close" aria-label="Cerrar">×</button>
+    <p id="result-outcome" class="result-outcome"></p>
+    <h2 id="result-title" class="result-term"></h2>
+    <p id="result-cat" class="chip"></p>
+    <p id="result-def" class="result-def"></p>
+    <a id="result-course" class="course-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+
+    <dl class="stats-grid">
+      <div><dt>Jugadas</dt><dd id="st-played">0</dd></div>
+      <div><dt>% Victorias</dt><dd id="st-winrate">0</dd></div>
+      <div><dt>Racha</dt><dd id="st-streak">0</dd></div>
+      <div><dt>Máxima</dt><dd id="st-max">0</dd></div>
+    </dl>
+
+    <p class="dist-title">Distribución de intentos</p>
+    <div id="dist" class="dist"></div>
+
+    <div class="result-actions">
+      <button id="btn-share" class="btn">Compartir</button>
+      <button id="btn-again" class="btn btn-ghost">Jugar otra (práctica)</button>
+    </div>
+    <p id="share-fallback" class="share-fallback" hidden></p>
+  </div>
+</div>
