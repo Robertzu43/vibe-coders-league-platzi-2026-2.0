@@ -2,7 +2,7 @@
 
 ## Pruebas unitarias
 
-**23/23 tests pasando** en 4 suites, cubriendo toda la lógica pura del juego:
+**25/25 tests pasando** en 4 suites, cubriendo toda la lógica pura del juego:
 
 ```bash
 cd reto-08 && npm test
@@ -12,7 +12,7 @@ cd reto-08 && npm test
 |-------|:-----:|-----------|
 | `src/data/words.test.ts` | 5 | Integridad de datos: A–Z sin `Ñ`/acentos, sin duplicados, `definition`/`category`/`course` no vacíos, largo mínimo de lista |
 | `src/lib/game.test.ts` | 8 | `evaluateGuess` (incluye los casos difíciles de **letras repetidas** en respuesta y/o intento) + `isWin` |
-| `src/lib/daily.test.ts` | 7 | `puzzleNumber` correcto según el epoch (2026-07-20, América/Bogotá), `dailyIndex` dentro de rango, determinismo de `mulberry32`/`seededShuffle` |
+| `src/lib/daily.test.ts` | 9 | `puzzleNumber` correcto según el epoch (2026-07-20, América/Bogotá), `dailyIndex` dentro de rango, determinismo de `mulberry32`/`seededShuffle`, y **estabilidad del orden diario** (golden test: reordenar `words.ts` cambiaría los puzzles ya publicados) |
 | `src/lib/share.test.ts` | 3 | Texto de compartir: grilla de emojis, puntaje de victoria/derrota, etiqueta de modo práctica |
 
 ## Type check
@@ -35,9 +35,17 @@ Resultado: build exitoso, `dist/` generado vía el adaptador `@astrojs/cloudflar
 
 Los 30 términos de `src/data/words.ts` tienen un campo `course.url`. Cada URL fue verificada con WebFetch para confirmar que resuelve a una página real de curso en platzi.com. De la lista inicial (seed), **9 URLs adivinadas** no correspondían a un curso real y fueron **reemplazadas por cursos verificados** antes de dar por cerrada esta tarea (ver commit de la tarea "Verificar y arreglar URLs de cursos Platzi").
 
+## Smoke test del servidor
+
+Se levantó `npm run dev` y la home respondió **HTTP 200** sirviendo el shell completo del juego (contenedores `#board`, `#keyboard`, tecla `ENTER`, `#result-modal`, `#category-chip`, branding Platzi).
+
+## Revisión de código
+
+Una revisión final de código detectó y **corrigió** un bug real: las estadísticas del reto diario se recontaban en cada recarga de una partida ya terminada. Se separó "terminar la partida" (registra estadísticas) de "restaurar una partida terminada" (solo muestra el resultado). Ver commit `fix(reto-08): review fixes`.
+
 ## Qué falta confirmar manualmente
 
-La jugabilidad interactiva (tablero, teclado, colores, tarjeta de resultado con el curso de Platzi, compartir, persistencia del diario tras recargar) debe confirmarse corriendo el servidor de desarrollo:
+La jugabilidad interactiva completa (colores, tarjeta de resultado con el curso de Platzi, compartir, persistencia del diario tras recargar) conviene confirmarla en navegador corriendo el servidor de desarrollo:
 
 ```bash
 cd reto-08 && npm run dev

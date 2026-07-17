@@ -1,7 +1,7 @@
 import { puzzleNumber, dailyIndex, seededShuffle, mulberry32 } from './daily';
+import { terms } from '../data/words';
 
 // Epoch = 2026-07-20 00:00 America/Bogotá (UTC-5) = 2026-07-20 05:00 UTC.
-const atBogota = (iso: string) => new Date(iso); // pass explicit UTC instants below
 
 describe('puzzleNumber', () => {
   it('is 1 at midday on the epoch day (Bogotá)', () => {
@@ -42,5 +42,29 @@ describe('mulberry32 / seededShuffle', () => {
     const input = [1, 2, 3];
     seededShuffle(input, 7);
     expect(input).toEqual([1, 2, 3]);
+  });
+});
+
+// Golden test (spec §8): el orden barajado de words.ts con la semilla fija debe ser
+// estable. Si este test falla, alguien reordenó/añadió términos en words.ts y con eso
+// cambió qué palabra cae en cada puzzle ya publicado. La semilla debe coincidir con
+// SHUFFLE_SEED en scripts/game-ui.ts.
+describe('daily puzzle order stability', () => {
+  const PUZZLE_SEED = 20260720;
+  const EXPECTED_ORDER = [
+    'QUERY', 'PROMPT', 'ASTRO', 'FIGMA', 'HTML', 'SEGURIDAD', 'API', 'DATOS',
+    'SERVIDOR', 'NUBES', 'CACHE', 'LINUX', 'REACT', 'NODEJS', 'PYTHON', 'CSS',
+    'KUBERNETES', 'GITHUB', 'TYPESCRIPT', 'MODELO', 'BACKEND', 'TOKEN', 'ARRAY',
+    'CLASE', 'DEBUG', 'FRONTEND', 'FUNCION', 'DOCKER', 'VARIABLE', 'ALGORITMO',
+  ];
+
+  it('keeps a stable shuffled order for the fixed seed', () => {
+    const order = seededShuffle(terms, PUZZLE_SEED).map((t) => t.word);
+    expect(order).toEqual(EXPECTED_ORDER);
+  });
+
+  it('maps puzzle #1 (epoch day) to index 0 of the shuffled order', () => {
+    const epoch = new Date('2026-07-20T17:00:00Z'); // 2026-07-20 Bogotá = puzzle #1
+    expect(dailyIndex(epoch, terms.length)).toBe(0);
   });
 });

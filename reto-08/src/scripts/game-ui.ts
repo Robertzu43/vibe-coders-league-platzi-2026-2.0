@@ -127,13 +127,17 @@ function submit(): void {
   else if (state.guesses.length >= MAX_ATTEMPTS) state.status = 'lost';
   if (state.mode === 'daily') writeJSON(dailyKey(state.puzzleNo), { guesses: state.guesses, status: state.status });
   renderBoard(); renderKeyboard();
-  if (state.status !== 'playing') endGame(won);
+  if (state.status !== 'playing') endGame(won, true);
 }
 
 // ---- fin de partida ----
-function endGame(won: boolean): void {
-  if (state.mode === 'daily') recordStats(won);
+// `record` es true solo en la transición real a fin de partida (desde submit);
+// false al restaurar una partida diaria ya terminada, para no recontar estadísticas.
+function endGame(won: boolean, record: boolean): void {
+  if (record && state.mode === 'daily') recordStats(won);
   const stats = loadStats();
+  $('#btn-share').hidden = false;
+  $('#btn-again').hidden = false;
   $('#result-outcome').textContent = won ? '¡Correcto! 🎉' : 'Fin del juego';
   $('#result-title').textContent = state.term.word;
   $('#result-cat').textContent = `Categoría: ${state.term.category}`;
@@ -188,7 +192,7 @@ async function share(): Promise<void> {
 export function initGame(): void {
   state = startDaily();
   renderCategory(); renderBoard(); renderKeyboard();
-  if (state.status !== 'playing') endGame(state.status === 'won');
+  if (state.status !== 'playing') endGame(state.status === 'won', false);
 
   document.addEventListener('keydown', (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -220,6 +224,8 @@ function endGamePeek(): void {
   $('#result-cat').textContent = '';
   $('#result-def').textContent = '';
   const link = $<HTMLAnchorElement>('#result-course'); link.textContent = ''; link.removeAttribute('href');
+  $('#btn-share').hidden = true;   // en modo lectura no se comparte una partida en curso
+  $('#btn-again').hidden = true;
   $('#st-played').textContent = String(stats.played);
   $('#st-winrate').textContent = stats.played ? String(Math.round((stats.wins / stats.played) * 100)) : '0';
   $('#st-streak').textContent = String(stats.currentStreak);

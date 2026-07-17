@@ -19,17 +19,17 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--s
 .chip { display: inline-block; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 13px; color: var(--green); }
 
 .board-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; position: relative; padding: 16px 0; }
-.board { display: grid; grid-template-rows: repeat(6, 1fr); gap: 6px; }
-.board-row { display: grid; grid-template-columns: repeat(var(--cols, 5), 1fr); gap: 6px; }
-.tile { width: 52px; height: 52px; display: grid; place-items: center; border: 2px solid var(--line); border-radius: 6px; font-size: 1.6rem; font-weight: 700; text-transform: uppercase; color: var(--ink); }
+/* El ancho del tablero escala con el nº de columnas pero nunca supera el contenedor,
+   así las palabras largas (KUBERNETES, TYPESCRIPT = 10 letras) se encogen sin desbordar. */
+.board { display: grid; grid-template-rows: repeat(6, 1fr); gap: 6px; width: min(100%, calc(var(--cols, 5) * 58px)); }
+.board-row { display: grid; grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); gap: 6px; }
+.tile { width: 100%; aspect-ratio: 1 / 1; display: grid; place-items: center; border: 2px solid var(--line); border-radius: 6px; font-size: clamp(1rem, 6vw, 1.6rem); font-weight: 700; text-transform: uppercase; color: var(--ink); }
 .tile.filled { border-color: var(--ink-soft); }
 .tile.revealed { color: #fff; border: none; }
 .tile.correct { background: var(--correct); }
 .tile.present { background: var(--present); }
 .tile.absent { background: var(--absent); }
-.tile.mini { width: 30px; height: 30px; font-size: 1rem; }
-
-@media (max-width: 400px) { .tile { width: 42px; height: 42px; font-size: 1.3rem; } }
+.tile.mini { width: 30px; height: 30px; aspect-ratio: auto; font-size: 1rem; }
 
 .toast { position: absolute; top: 8px; background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 8px; font-weight: 600; }
 
