@@ -125,8 +125,11 @@ export interface Term {
     por ocurrencia restante — maneja bien las letras repetidas).
   - `isWin(states): boolean` → todas `correct`.
 - **`daily.ts`**
-  - `puzzleNumber(date): number` → días transcurridos desde una fecha epoch fija (en America/Bogotá).
-  - `dailyIndex(date, listLen): number` → índice determinista y estable en rango.
+  - `puzzleNumber(date): number` → días transcurridos desde la fecha **epoch fija
+    `2026-07-20` (America/Bogotá)** = "Platzidle #1". `puzzleNumber` empieza en 1 ese día.
+  - `dailyIndex(date, listLen): number` → índice determinista y estable en rango, a partir del
+    `puzzleNumber` sobre la lista **ya barajada** (ver §4.1). Cada día puede tener un término de
+    largo distinto; el tablero se re-renderiza al `.length` del término activo en cada carga.
   - `pickPractice(listLen, excludeIndex?): number` → índice al azar para práctica.
 - **`share.ts`**
   - `buildShareText({ puzzleNumber, rows, won, mode }): string` → título "Platzidle #N" + grilla de
@@ -163,10 +166,11 @@ export interface Term {
 
 ## 6. Estado y persistencia (`localStorage`)
 
-- **Partida diaria** (clave = nº de puzzle): intentos hechos + estado (en curso / ganó / perdió) →
-  **sobrevive al refresh**; no deja repetir el diario de hoy.
-- **Estadísticas**: jugadas, % de victorias, racha actual, racha máxima, distribución de intentos
-  (1–6). Se muestran al terminar.
+- **Partida diaria** — clave `platzidle:daily:<puzzleNumber>`, valor JSON
+  `{ guesses: string[], status: "playing" | "won" | "lost" }` → **sobrevive al refresh**; no deja
+  repetir el diario de hoy.
+- **Estadísticas** — clave `platzidle:stats`, valor JSON
+  `{ played, wins, currentStreak, maxStreak, distribution: number[6] }`. Se muestran al terminar.
 - **Práctica**: no persiste (cada "jugar otra" empieza limpio).
 
 ## 7. Manejo de errores / casos borde
@@ -188,6 +192,9 @@ export interface Term {
 - `share.ts`: la grilla de emojis corresponde exactamente a los estados de las casillas.
 - `words.ts`: integridad de datos — todo A–Z sin Ñ/acentos, sin duplicados, cada término con
   `definition`, `category`, `course.name` y `course.url` no vacíos; tamaño mínimo de lista.
+- **Estabilidad del barajado**: el orden barajado de la lista es reproducible con la semilla fija
+  (un edit al orden de `words.ts` no debe cambiar en silencio los términos/números de puzzles
+  pasados).
 
 ## 9. Cómo cumple el reto
 
