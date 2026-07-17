@@ -35,9 +35,13 @@ Resultado: build exitoso, `dist/` generado vía el adaptador `@astrojs/cloudflar
 
 Los 30 términos de `src/data/words.ts` tienen un campo `course.url`. Cada URL fue verificada con WebFetch para confirmar que resuelve a una página real de curso en platzi.com. De la lista inicial (seed), **9 URLs adivinadas** no correspondían a un curso real y fueron **reemplazadas por cursos verificados** antes de dar por cerrada esta tarea (ver commit de la tarea "Verificar y arreglar URLs de cursos Platzi").
 
+## Desplegado en producción
+
+**https://platzidle.robertzu43.workers.dev** — desplegado a Cloudflare Workers con `npm run deploy`. La URL responde **HTTP 200** sirviendo el shell completo del juego (`#board`, `#keyboard`, tecla `ENTER`, `#result-modal`, `#category-chip`, branding Platzidle).
+
 ## Smoke test del servidor
 
-Se levantó `npm run dev` y la home respondió **HTTP 200** sirviendo el shell completo del juego (contenedores `#board`, `#keyboard`, tecla `ENTER`, `#result-modal`, `#category-chip`, branding Platzi).
+También se levantó `npm run dev` en local y la home respondió **HTTP 200** con el mismo shell.
 
 ## Revisión de código
 
