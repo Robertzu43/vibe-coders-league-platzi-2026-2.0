@@ -2,6 +2,8 @@
 
 *Vibe Coders League Platzi 2026 · Edición 2.0*
 
+▶️ **Jugar:** https://platzidle.robertzu43.workers.dev
+
 ## El reto (Platzi)
 
 **"Clona tu app favorita."** Recrear la funcionalidad esencial de una app de uso diario, **dirigiendo un agente de código** (el proceso es parte del reto). Requisitos:
