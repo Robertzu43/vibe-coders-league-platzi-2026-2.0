@@ -26,6 +26,8 @@ Y lo más interesante: lo construí **dirigiendo un agente de código** (Claude 
 
 Antes de publicarlo verifiqué que los 30 términos llevaran a cursos reales de Platzi. 😉
 
+Aprende tech jugando. Un término al día, un curso a un clic.
+
 👉 Juégalo: **https://platzidle.robertzu43.workers.dev**
 
 ¿Cuántos intentos te toma el término de hoy? Comparte tu resultado 👇

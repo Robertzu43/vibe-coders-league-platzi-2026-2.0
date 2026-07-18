@@ -43,9 +43,9 @@ Notes: This piece exists to hammer the differentiator. The arrow + two screens =
 
 ```
 [STYLE BLOCK]
-Scene: three small Platzidle boards arranged in a neat row (or 2+1 grid), each solving a different tech term in Platzi-green tiles: "PYTHON", "KUBERNETES", "TOKEN". Under each board, a small course label in DM Sans with a green arrow: "→ Curso de Python", "→ Curso de Kubernetes", "→ Curso de Node.js". A short bold headline across the top: "A new term every day." Consistent spacing, same tile style and glow on all three.
+Scene: three small Platzidle boards arranged in a neat row (or 2+1 grid), each solving a different tech term in Platzi-green tiles: "PYTHON", "KUBERNETES", "TOKEN". Under each board, a small course label in DM Sans with a green arrow: "→ Curso de Python", "→ Curso de Kubernetes", "→ Node.js (Auth)". A short bold headline across the top: "A new term every day." Consistent spacing, same tile style and glow on all three.
 ```
-Notes: Real term→course mappings (from reto-08): PYTHON→Curso de Python · KUBERNETES→Curso de Kubernetes · TOKEN→Curso de Node.js: Autenticación, Microservicios y Redis (shorten to "Curso de Node.js" on the image for space).
+Notes: Real term→course mappings (from reto-08): PYTHON→Curso de Python · KUBERNETES→Curso de Kubernetes · TOKEN→Curso de Node.js: Autenticación, Microservicios y Redis. On the image, label TOKEN as **"Node.js (Auth)"** — a clear short form that won't be confused with the separate "Curso de Fundamentos de Node.js".
 
 ---
 
