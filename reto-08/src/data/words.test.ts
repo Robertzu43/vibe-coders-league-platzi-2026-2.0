@@ -1,4 +1,9 @@
-import { terms, type Term } from './words';
+import { terms } from './words';
+
+// Nombres de archivo realmente empaquetados en public/courses (resuelto por Vite en build time).
+const bundledCourseImages = new Set(
+  Object.keys(import.meta.glob('../../public/courses/*')).map((p) => p.split('/').pop()),
+);
 
 describe('terms data integrity', () => {
   it('has a healthy number of terms', () => {
@@ -30,6 +35,14 @@ describe('terms data integrity', () => {
     for (const t of terms) {
       expect(t.word.length).toBeGreaterThanOrEqual(3);
       expect(t.word.length).toBeLessThanOrEqual(10);
+    }
+  });
+
+  it('every term has a bundled share image that exists in /public', () => {
+    for (const t of terms) {
+      expect(t.share).toMatch(/^\/courses\/.+\.(jpg|png|webp)$/);
+      const file = t.share.split('/').pop();
+      expect(bundledCourseImages.has(file), `falta la imagen ${t.share} de ${t.word}`).toBe(true);
     }
   });
 });

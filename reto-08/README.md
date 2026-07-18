@@ -28,6 +28,7 @@
 ## Toque personal / mejoras sobre Wordle
 
 - **Temática tech + recomendación de Platzi.** La palabra nunca es genérica: es un término tech (lenguaje, herramienta, concepto). Al terminar, una tarjeta muestra su definición y enlaza a un curso real de Platzi para profundizar.
+- **Tarjeta de curso con la imagen real de Platzi.** La recomendación no es un simple link: es una tarjeta que muestra la misma imagen que Platzi renderiza al compartir el curso (su `og:image` — la portada del curso o el badge de la tecnología), empaquetada como estático en `public/courses/` para no depender de la red en runtime.
 - **Largo de palabra variable.** Cada término tiene su propio largo (5 a 6 letras en la lista actual) y el tablero se adapta al término activo, en vez de un ancho fijo de 5 columnas.
 - **Dos modos:** el reto **diario** clásico (mismo término para todos según la fecha) + un modo **práctica ilimitado** para seguir jugando sin esperar al día siguiente.
 - **Pista de categoría visible.** Desde el primer intento se muestra la categoría del término (Frontend, DevOps, IA, Cloud, Data...), a diferencia del Wordle original que no da ninguna pista.
@@ -62,7 +63,7 @@ reto-08/
   astro.config.mjs · wrangler.toml · tsconfig.json · vitest.config.ts · package.json
   src/
     data/
-      words.ts           # única fuente: términos + definición + categoría + curso Platzi
+      words.ts           # única fuente: términos + definición + categoría + curso + imagen (share)
       words.test.ts       # integridad de datos (A–Z, sin duplicados, cursos no vacíos...)
     lib/
       game.ts             # puro: evaluateGuess(answer, guess) → estados de casillas; isWin
@@ -76,6 +77,8 @@ reto-08/
       game-ui.ts          # une el DOM: input, render de tablero/teclado, estado, persistencia, compartir
     styles/global.css
     pages/index.astro
+  public/
+    courses/             # og:image de cada curso de Platzi (portada o badge), empaquetada
   docs/
     superpowers/{specs,plans}/
     evidence/
