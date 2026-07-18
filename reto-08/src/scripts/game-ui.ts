@@ -143,8 +143,13 @@ function endGame(won: boolean, record: boolean): void {
   $('#result-cat').textContent = `Categoría: ${state.term.category}`;
   $('#result-def').textContent = state.term.definition;
   const link = $<HTMLAnchorElement>('#result-course');
-  link.textContent = `🎓 Aprende más: ${state.term.course.name}`;
   link.href = state.term.course.url;
+  link.hidden = false;
+  const img = $<HTMLImageElement>('#course-img');
+  img.onerror = () => { img.onerror = null; img.src = '/courses/_PLATZI.webp'; };
+  img.src = state.term.share;
+  img.alt = state.term.course.name;
+  $('#course-name').textContent = state.term.course.name;
   $('#st-played').textContent = String(stats.played);
   $('#st-winrate').textContent = stats.played ? String(Math.round((stats.wins / stats.played) * 100)) : '0';
   $('#st-streak').textContent = String(stats.currentStreak);
@@ -223,7 +228,7 @@ function endGamePeek(): void {
   $('#result-title').textContent = 'Platzidle';
   $('#result-cat').textContent = '';
   $('#result-def').textContent = '';
-  const link = $<HTMLAnchorElement>('#result-course'); link.textContent = ''; link.removeAttribute('href');
+  $('#result-course').hidden = true;   // en modo lectura no mostramos la tarjeta de curso
   $('#btn-share').hidden = true;   // en modo lectura no se comparte una partida en curso
   $('#btn-again').hidden = true;
   $('#st-played').textContent = String(stats.played);
