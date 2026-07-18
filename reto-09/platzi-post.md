@@ -28,7 +28,7 @@ Dirigí todo con un agente de código (Claude Code): hicimos brainstorming del b
 Lo mejor: hasta el producto (Platzidle) lo construí igual, dirigiendo un agente. Del código al marketing, el mismo método.
 
 👉 Juega Platzidle: **https://platzidle.robertzu43.workers.dev**
-👀 Mira la campaña publicada en LinkedIn: [pega aquí el link de tu post de LinkedIn]
+👀 Mira la campaña publicada en LinkedIn: https://www.linkedin.com/posts/robertoa-zuniga_vibecoding-platzi-webdevelopment-ugcPost-7484276342688092160-TG6U/
 🛠️ La campaña completa (brief, prompts, copy) está en el repo del reto.
 
 Aprende tech jugando. Un término al día, un curso a un clic.
