@@ -1,6 +1,6 @@
-# LinkedIn Post — Platzidle Launch Campaign (English)
+# LinkedIn Post — Platzidle Launch (English) · THE CAMPAIGN
 
-**Format:** single LinkedIn post + a gallery of 3 images (order below). Publish the post; drop the play link in the **first comment** (LinkedIn tends to deprioritize posts with external links in the body).
+**This is the campaign itself** — the public-facing launch post that presents Platzidle: what I built in the reto, how it works, and an invite to play. Publish it with the campaign images; drop the play link in the **first comment** (LinkedIn deprioritizes posts with external links in the body).
 
 **Image order in the gallery:**
 1. `HERO` (Prompt 1)

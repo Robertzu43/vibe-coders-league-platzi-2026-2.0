@@ -31,15 +31,15 @@
 |---------|--------|--------|
 | [`brief.md`](./brief.md) | EN | El brief creativo completo (lo que más se evalúa) |
 | [`image-prompts.md`](./image-prompts.md) | EN | Los 3 prompts de imagen (hero · payoff · ejemplos) con el sistema visual embebido |
-| [`linkedin-post.md`](./linkedin-post.md) | EN | El copy del post de LinkedIn (campaña) + variante corta + primer comentario |
-| [`platzi-post.md`](./platzi-post.md) | ES | El post para la comunidad Platzi contando qué construiste |
+| [`linkedin-post.md`](./linkedin-post.md) | EN | **La campaña**: post de lanzamiento que presenta Platzidle al público (qué es, cómo se juega, a jugar) + variante corta + primer comentario |
+| [`platzi-post.md`](./platzi-post.md) | ES | **El making-of**: cómo se creó la campaña (brief, concepto, IA) para la comunidad Platzi |
 
 ## Cómo usar los entregables
 
 1. Genera las 3 imágenes con tu herramienta de IA usando los prompts de `image-prompts.md` (respeta el **STYLE BLOCK** en cada uno para que salgan consistentes; ver la nota sobre texto en imágenes).
 2. Revisa el **checklist de consistencia** al final de `image-prompts.md`.
-3. Publica en **LinkedIn** con `linkedin-post.md` (link en el primer comentario) y en la **comunidad Platzi** con `platzi-post.md`.
-4. Orden de galería: hero → payoff → ejemplos.
+3. Publica **la campaña** en LinkedIn con `linkedin-post.md` (presenta el producto; link en el primer comentario) y **el making-of** en la comunidad Platzi con `platzi-post.md` (cuenta cómo se creó la campaña).
+4. Orden de galería en ambos: hero → payoff → ejemplos.
 
 ## Nota de veracidad
 
