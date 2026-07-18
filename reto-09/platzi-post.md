@@ -1,35 +1,35 @@
-# Post para la comunidad Platzi (Español)
+# Post para la comunidad Platzi (Español) · EL MAKING-OF
 
-Para publicar en la comunidad / redes contando qué construiste en el reto. Deja el link del juego al final o en el primer comentario.
-
-**Imágenes sugeridas:** las mismas 3 de la campaña (hero, payoff, ejemplos).
+**Este post cuenta CÓMO creamos la campaña** de lanzamiento de Platzidle (el proceso, no el promo). Es de cara a la comunidad Platzi. Acompáñalo con las mismas imágenes de la campaña.
 
 ---
 
 ## Copy
 
-🎮 **Reto 09 · Convertí Wordle en una forma de aprender tech de verdad**
+🎬 **Reto 09 · Cómo armé la campaña de lanzamiento de Platzidle (con IA)**
 
-Les presento **Platzidle**: un Wordle diario donde la palabra secreta siempre es un término de programación (PYTHON, DOCKER, KUBERNETES, TOKEN…).
+El reto final no era construir otra app, sino ponerle **marketing**: crear la campaña de lanzamiento de uno de mis proyectos. Elegí **Platzidle** (mi Wordle de términos tech que, al resolver, te lleva al curso real de Platzi). Les cuento cómo la hice 👇
 
-El giro que lo hace especial: **adivinas el término → tocas el link → caes en el curso real de Platzi** para dominarlo. 🎓
+🎯 **Primero el brief (lo que de verdad se evalúa)**
+Antes de cualquier imagen, definí el criterio:
+· Público: estudiantes y devs junior de la comunidad Platzi + fans de Wordle.
+· Promesa: "Adivina la palabra. Aprende de verdad."
+· El gancho (el eje de todo): resuelves el término → tocas el link → caes en el curso real de Platzi.
+· Tono: motivador, cercano, nerd-friendly.
 
-Adivina la palabra. Aprende de verdad.
+🎨 **La gran idea: "El término del día"**
+Para que las piezas se vieran como UNA campaña y no generaciones sueltas, definí un motivo firma: el tablero de Platzidle con casillas **verde Platzi (#0bd982)**. Mismo fondo azul noche, misma tipografía, mismo remate en todas.
 
-Qué tiene:
-🟩 Un Wordle que se juega de verdad — 6 intentos, feedback de colores, teclado en pantalla.
-📅 Un término tech nuevo cada día (+ modo práctica ilimitado).
-🎓 Cada término enlaza a un curso real de Platzi.
-📊 Rachas, estadísticas y un resultado para compartir.
+🤖 **Cómo usé la IA (dirigiéndola, no soltándola)**
+Dirigí todo con un agente de código (Claude Code): hicimos brainstorming del brief, cerramos el concepto, y escribí un **"bloque de estilo" compartido** que va embebido en cada prompt de imagen — así los assets generados con IA salen consistentes. Después redacté el copy y los prompts. El criterio (a quién le hablo, qué prometo, qué es on-brand) **siguió siendo mío**. Esa es la habilidad del vibe-coding.
 
-Y lo más interesante: lo construí **dirigiendo un agente de código** (Claude Code) — yo decidía, especificaba, revisaba y corregía; el agente programaba. Idea → diseño → plan → build con pruebas, todo dentro de la **Vibe Coders League de Platzi**. Esa es la habilidad del vibe-coding: **el criterio sigue siendo tuyo.**
+🖼️ **Los assets:** una imagen principal (hero) + una galería (el juego → el payoff → ejemplos de términos con su curso real), todo generado con IA desde prompts consistentes.
 
-Antes de publicarlo verifiqué que los 30 términos llevaran a cursos reales de Platzi. 😉
+Lo mejor: hasta el producto (Platzidle) lo construí igual, dirigiendo un agente. Del código al marketing, el mismo método.
+
+👉 Juega Platzidle: **https://platzidle.robertzu43.workers.dev**
+🛠️ La campaña completa (brief, prompts, copy) está en el repo del reto.
 
 Aprende tech jugando. Un término al día, un curso a un clic.
 
-👉 Juégalo: **https://platzidle.robertzu43.workers.dev**
-
-¿Cuántos intentos te toma el término de hoy? Comparte tu resultado 👇
-
-#VibeCoders #Platzi #AprendeProgramando #IA
+#VibeCoders #Platzi #IA #Marketing
