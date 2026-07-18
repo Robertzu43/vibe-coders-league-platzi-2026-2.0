@@ -50,7 +50,9 @@ es el remate de todas las piezas.
 ### Pieza 1 — Imagen principal (hero)
 Poster 1:1 (con variante 4:5 opcional para feed). En una sola imagen: el tablero con `DOCKER`
 resuelto en casillas verdes + la tarjeta *"🎓 Aprende más: Curso de Docker"* con flecha a Platzi +
-wordmark **Platzidle** + el claim. Se entiende el juego y el payoff sin leer nada más.
+wordmark **Platzidle** + **la tagline de campaña** (*"Aprende tech jugando. Un término al día, un
+curso a un clic."*). La *promesa principal* ("Adivina el término, aprende de verdad.") se reserva
+para el copy del post, no va en el hero. Se entiende el juego y el payoff sin leer nada más.
 
 ### Pieza 2 — Post único de LinkedIn + galería de imágenes
 **No es un hilo largo:** un solo post de LinkedIn (copy conciso) acompañado de **3 imágenes** en
@@ -59,7 +61,8 @@ Platzi") → cómo lo construí (dirigiendo un agente de código, reto de la Vib
 el link. Imágenes de la galería:
 1. **Hero** (la imagen principal).
 2. **El payoff** — split "término resuelto → tarjeta del Curso de Docker en Platzi".
-3. **Ejemplos** — collage de 3 términos con su curso (PYTHON→Curso de Python, KUBERNETES→…, TOKEN→…).
+3. **Ejemplos** — collage de 3 términos con su curso (PYTHON→Curso de Python,
+   KUBERNETES→Curso de Kubernetes, TOKEN→Curso de Node.js: Autenticación, Microservicios y Redis).
 
 > Cuentan como las "2 piezas": la **imagen principal** + el **post de LinkedIn**. Las imágenes 2 y 3
 > refuerzan la consistencia y el mensaje del post.
@@ -86,7 +89,7 @@ familia:
   **mismo bloque de sistema visual embebido** (§5) + relación de aspecto, en inglés (mejor para
   generadores) con notas en español. Los términos y nombres de cursos deben ser reales (coinciden con
   `reto-08/src/data/words.ts`): DOCKER→Curso de Docker, PYTHON→Curso de Python,
-  KUBERNETES→Curso de Kubernetes, TOKEN→Curso de Node.js (autenticación).
+  KUBERNETES→Curso de Kubernetes, TOKEN→Curso de Node.js: Autenticación, Microservicios y Redis.
 - **`post-linkedin.md`** — el copy final del post (español), con una variante corta, los hashtags, y
   el orden sugerido de las 3 imágenes. Incluye el link https://platzidle.robertzu43.workers.dev.
 - **`README.md`** — qué es la campaña, cómo cumple el reto (tabla), y cómo usar los entregables.
