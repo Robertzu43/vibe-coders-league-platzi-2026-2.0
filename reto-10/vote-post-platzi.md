@@ -2,8 +2,6 @@
 
 Post para compartir en la comunidad y pedir el voto (top 16 se define hoy 7pm CDMX). Cada reto lleva su demo (▶️) y su publicación en la comunidad para votar (🗳️).
 
-> ⚠️ Pendiente: el link de voto de **Parla (reto 1)** — el que pasaste apunta a Altura. Pega el correcto donde dice `[FALTA]`.
-
 ---
 
 ## Copy
@@ -14,7 +12,7 @@ Aquí está todo junto — pruébalo y, si algo te gusta, apóyame con tu voto �
 
 1️⃣ **Parla** — Asistente de IA (Kiko 🦜) para una academia de idiomas: responde con su base de conocimiento, admite lo que no sabe y hace un diagnóstico de nivel.
 ▶️ Pruébalo: https://parla.robertzu43.workers.dev
-🗳️ Vota: [FALTA — pega aquí el link de Platzi de Parla]
+🗳️ Vota: https://platzi.com/discusiones/vibecoders-league-1782929927/5674509-parla-el-asistente-que-responde-por-tu-negocio-elegi-una-academia-de-idiomas-ficticia-llamada-parla-que-ensena-las-4-lenguas-mas-habladas-del-mundo-ingles-mandarin-hindi-y-espanol-su-eslogan-es-idiomas-sin-miedo-y-su-asistente-es-kiko-un-loro-con-un-tono/
 
 2️⃣ **Altura** — Landing de pre-orden de café de especialidad que **guarda datos reales** (Supabase).
 ▶️ Pruébalo: https://altura.robertzu43.workers.dev
