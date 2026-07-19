@@ -39,6 +39,7 @@ Cada reto explora una dimensión distinta de la IA aplicada al desarrollo. **Tod
 | 07 | [Centinela — El agente que decide por ti](./reto-07) | Agente IA / Triage de bugs con decisión y ruteo (Cloudflare Worker + Workers AI → Slack / Google Sheet) |
 | 08 | [Platzidle — Clona tu app favorita (Wordle tech)](./reto-08) | Clon funcional / Juego (Astro + Cloudflare, temática Platzi) |
 | 09 | [Platzidle — La campaña de lanzamiento](./reto-09) | Marketing / Campaña con IA (brief + prompts de imagen + post) |
+| 10 | [Comparte y vota](./reto-10) | Cierre / Post-portafolio de los 9 retos para votación de la comunidad |
 
 _Esta tabla se irá completando conforme avancen los retos de esta edición._
 
@@ -57,6 +58,7 @@ vibe-coders-league-platzi-2026-2.0/
   reto-07/     Centinela — agente de triage de bugs con IA (Cloudflare Worker + Workers AI → Slack / Google Sheet)
   reto-08/     Platzidle — clon de Wordle con términos tech + recomendación de curso Platzi (Astro + Cloudflare)
   reto-09/     Platzidle — campaña de lanzamiento con IA (brief + prompts de imagen + posts LinkedIn/Platzi)
+  reto-10/     Comparte y vota — post-portafolio de los 9 retos para la votación de la comunidad
 ```
 
 Cada carpeta es un proyecto independiente con su propio README, stack y documentación.
