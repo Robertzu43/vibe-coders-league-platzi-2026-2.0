@@ -45,6 +45,16 @@ _Esta tabla se irá completando conforme avancen los retos de esta edición._
 
 ---
 
+## Retos en Vivo
+
+Terminada la fase diaria, la liga entra en su **fase en vivo**: el tema se revela
+en el momento y se construye contra reloj para presentar ante la comunidad. Cada
+reto en vivo vive en [`live/`](./live) con su propia subcarpeta.
+
+Ver el índice en [`live/README.md`](./live/README.md).
+
+---
+
 ## Estructura del Repositorio
 
 ```

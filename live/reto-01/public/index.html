@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cariño — Ahorra por quien amas</title>
+<meta name="description" content="Cariño convierte tus finanzas en un acto de amor. Ahorra por una meta ligada a quien más quieres y escríbele una carta a tu yo futuro." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Instrument+Sans:wght@400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF3E7; --paper-2:#F4E9D6; --card:#FFF9EF;
+    --ink:#2B211A; --ink-soft:#6E5F51; --ink-faint:#9C8B79;
+    --amber:#C75B39; --amber-deep:#A8432A; --rose:#E39A9A; --gold:#C9A24B;
+    --line:rgba(43,33,26,.12); --line-2:rgba(43,33,26,.07);
+    --serif:"Newsreader",Georgia,serif; --sans:"Instrument Sans",system-ui,sans-serif; --hand:"Caveat",cursive;
+    --r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper); color:var(--ink); font-family:var(--sans);
+    font-size:18px; line-height:1.55; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    background-image:
+      radial-gradient(60% 45% at 82% 6%, rgba(227,154,154,.30), transparent 60%),
+      radial-gradient(55% 40% at 8% 30%, rgba(201,162,75,.20), transparent 60%),
+      radial-gradient(70% 50% at 50% 108%, rgba(199,91,57,.16), transparent 60%);
+    background-attachment:fixed;
+  }
+  /* paper grain */
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:1; opacity:.05; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{max-width:1120px; margin:0 auto; padding:0 26px; position:relative; z-index:2}
+  a{color:inherit}
+  h1,h2,h3{font-family:var(--serif); font-weight:400; line-height:1.04; letter-spacing:-.015em}
+  em{font-style:italic; color:var(--amber-deep)}
+  .em-rose{color:var(--amber-deep)}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky; top:0; z-index:20; backdrop-filter:blur(8px);
+      background:linear-gradient(var(--paper),rgba(250,243,231,.7)); border-bottom:1px solid var(--line-2)}
+  .nav-in{display:flex; align-items:center; justify-content:space-between; padding:16px 26px; max-width:1120px; margin:0 auto}
+  .brand{font-family:var(--serif); font-size:26px; letter-spacing:-.02em; display:flex; align-items:center; gap:9px}
+  .brand .mark{width:26px;height:26px;flex:none}
+  .brand b{font-weight:600}
+  .btn{
+    font-family:var(--sans); font-weight:600; font-size:15px; border:none; cursor:pointer;
+    background:var(--amber); color:#fff; padding:12px 20px; border-radius:999px;
+    box-shadow:0 6px 18px -6px rgba(168,67,42,.6); transition:transform .18s ease, box-shadow .18s ease;
+    text-decoration:none; display:inline-block;
+  }
+  .btn:hover{transform:translateY(-2px); box-shadow:0 12px 26px -8px rgba(168,67,42,.65)}
+  .btn.ghost{background:transparent; color:var(--ink); box-shadow:none; border:1.5px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--amber); color:var(--amber-deep)}
+
+  /* ---------- hero ---------- */
+  header{padding:78px 0 60px}
+  .kicker{font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--amber-deep); font-weight:600}
+  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:52px; align-items:center; margin-top:26px}
+  h1.hero{font-size:clamp(48px,7.4vw,92px)}
+  .hero .lede{font-size:20px; color:var(--ink-soft); max-width:30ch; margin-top:22px}
+  .hero-cta{display:flex; gap:14px; align-items:center; margin-top:32px; flex-wrap:wrap}
+  .microproof{font-size:14.5px; color:var(--ink-faint); margin-top:22px; display:flex; align-items:center; gap:9px}
+  .microproof .dot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+
+  .reveal{opacity:0; transform:translateY(16px); animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1; transform:none}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}.d4{animation-delay:.4s}.d5{animation-delay:.52s}
+
+  /* hero card */
+  .goalcard{
+    background:var(--card); border:1px solid var(--line); border-radius:24px; padding:26px;
+    box-shadow:0 30px 60px -30px rgba(43,33,26,.4), 0 2px 0 rgba(255,255,255,.6) inset;
+    transform:rotate(1.4deg); position:relative;
+  }
+  .goalcard::after{content:"por amor"; position:absolute; top:-13px; right:18px; background:var(--rose); color:#5c2020;
+    font-family:var(--hand); font-size:22px; padding:2px 14px; border-radius:999px; transform:rotate(-3deg); box-shadow:0 6px 14px -6px rgba(0,0,0,.3)}
+  .gc-top{display:flex; justify-content:space-between; align-items:baseline}
+  .gc-goal{font-family:var(--serif); font-size:23px}
+  .gc-for{font-size:13.5px; color:var(--ink-faint)}
+  .ring-wrap{display:flex; align-items:center; gap:20px; margin:20px 0 6px}
+  .ring{width:118px;height:118px;flex:none;transform:rotate(-90deg)}
+  .ring .track{fill:none; stroke:var(--line); stroke-width:12}
+  .ring .fill{fill:none; stroke:url(#grad); stroke-width:12; stroke-linecap:round;
+    stroke-dasharray:327; stroke-dashoffset:327; transition:stroke-dashoffset 1.2s cubic-bezier(.2,.7,.2,1)}
+  .hero-swap{transition:opacity .45s ease, transform .45s cubic-bezier(.2,.7,.2,1)}
+  .gc-bar i{transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .goalcard{animation:cardFloat 6s ease-in-out infinite}
+  @keyframes cardFloat{0%,100%{transform:rotate(1.4deg) translateY(0)}50%{transform:rotate(1.4deg) translateY(-7px)}}
+  .hc-dots{display:flex; gap:8px; justify-content:center; margin-top:18px}
+  .hc-dots b{width:7px; height:7px; border-radius:50%; background:var(--line); cursor:pointer; transition:all .3s ease; border:none; padding:0}
+  .hc-dots b.on{background:var(--amber); width:22px; border-radius:99px}
+  .ring-center{position:relative}
+  .ring-pct{position:absolute; inset:0; display:grid; place-items:center; transform:rotate(0)}
+  .ring-pct b{font-family:var(--serif); font-size:30px}
+  .gc-meta{font-size:14.5px; color:var(--ink-soft)}
+  .gc-meta strong{color:var(--ink)}
+  .gc-bar{height:8px; background:var(--line); border-radius:99px; overflow:hidden; margin-top:14px}
+  .gc-bar i{display:block; height:100%; width:65%; background:linear-gradient(90deg,var(--gold),var(--amber)); border-radius:99px}
+
+  /* ---------- section shell ---------- */
+  section{padding:66px 0}
+  .eyebrow{font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--amber-deep); font-weight:600; margin-bottom:14px}
+  h2{font-size:clamp(32px,4.6vw,52px); max-width:18ch}
+  .sec-lede{font-size:19px; color:var(--ink-soft); max-width:52ch; margin-top:16px}
+
+  /* problem */
+  .problem{border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2)}
+  .prob-grid{display:grid; grid-template-columns:1fr 1fr; gap:46px; align-items:center}
+  .prob-quote{font-family:var(--serif); font-size:clamp(26px,3.4vw,38px); line-height:1.22}
+  .prob-quote em{font-style:italic}
+  .cold{display:flex; flex-direction:column; gap:14px}
+  .cold .row{display:flex; gap:14px; align-items:flex-start; padding:16px 18px; background:var(--card); border:1px solid var(--line-2); border-radius:14px; position:relative; overflow:hidden; transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease}
+  .cold .row::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--amber); transform:scaleY(0); transform-origin:top; transition:transform .28s ease}
+  .cold .row:hover{transform:translateX(5px); border-color:var(--amber); box-shadow:0 14px 30px -20px rgba(168,67,42,.6)}
+  .cold .row:hover::before{transform:scaleY(1)}
+  .cold .n{font-family:var(--serif); font-size:22px; color:var(--amber); flex:none; width:26px; transition:transform .22s ease}
+  .cold .row:hover .n{transform:scale(1.25)}
+
+  /* steps */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:40px}
+  .step{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:26px; position:relative; overflow:hidden;
+    transition:transform .28s cubic-bezier(.2,.7,.2,1), box-shadow .28s ease, border-color .28s ease}
+  .step::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .34s ease;
+    background:radial-gradient(135% 105% at 100% 0%, rgba(199,91,57,.18), transparent 56%)}
+  .step:hover{transform:translateY(-8px); box-shadow:0 28px 50px -28px rgba(43,33,26,.55); border-color:var(--amber)}
+  .step:hover::before{opacity:1}
+  .step .ic{font-size:34px; line-height:1; display:inline-block; transition:transform .28s ease; animation:icoFloat 4.6s ease-in-out infinite}
+  .step:nth-child(2) .ic{animation-delay:.7s}
+  .step:nth-child(3) .ic{animation-delay:1.4s}
+  .step:hover .ic{animation:none; transform:scale(1.28) rotate(-9deg)}
+  @keyframes icoFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(4deg)}}
+  .step h3{font-size:23px; margin:16px 0 8px; position:relative}
+  .step p{font-size:16px; color:var(--ink-soft); position:relative}
+  .step .k{position:absolute; top:14px; right:18px; font-family:var(--serif); font-size:15px; color:var(--ink-faint); transition:color .28s ease, transform .28s ease}
+  .step:hover .k{color:var(--amber); transform:scale(1.15)}
+
+  /* ---------- builder (the moment) ---------- */
+  .builder{background:linear-gradient(180deg,var(--paper-2),var(--paper)); border-top:1px solid var(--line-2)}
+  .build-grid{display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start; margin-top:34px}
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:22px; padding:26px; box-shadow:0 24px 50px -34px rgba(43,33,26,.5)}
+  .fld{margin-bottom:20px}
+  .fld label{display:block; font-size:14px; font-weight:600; color:var(--ink-soft); margin-bottom:9px; letter-spacing:.01em}
+  .chips{display:flex; flex-wrap:wrap; gap:9px}
+  .chip{font-family:var(--sans); font-size:15px; cursor:pointer; border:1.5px solid var(--line); background:transparent;
+    padding:9px 15px; border-radius:999px; transition:all .16s ease; color:var(--ink)}
+  .chip:hover{border-color:var(--amber)}
+  .chip.on{background:var(--amber); color:#fff; border-color:var(--amber)}
+  input[type=text],input[type=number]{
+    width:100%; font-family:var(--sans); font-size:17px; color:var(--ink);
+    background:var(--paper); border:1.5px solid var(--line); border-radius:12px; padding:13px 15px; outline:none; transition:border .16s}
+  input:focus{border-color:var(--amber)}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .rng{width:100%; accent-color:var(--amber); margin-top:6px}
+  .rng-val{font-family:var(--serif); font-size:19px; color:var(--amber-deep)}
+  .build-btn{width:100%; margin-top:6px; font-size:16px; padding:15px}
+
+  /* letter output */
+  .letter{
+    background:
+      repeating-linear-gradient(transparent, transparent 37px, rgba(43,33,26,.06) 37px, rgba(43,33,26,.06) 38px),
+      var(--card);
+    border:1px solid var(--line); border-radius:22px; padding:30px 30px 26px; position:relative;
+    box-shadow:0 24px 50px -34px rgba(43,33,26,.5); min-height:420px; transform:rotate(-1deg);
+  }
+  .letter::before{content:""; position:absolute; top:16px; left:26px; right:26px; height:2px; background:var(--rose); opacity:.5}
+  .letter .stamp{position:absolute; top:-16px; right:22px; width:56px; height:56px; border-radius:10px; background:var(--rose);
+    display:grid; place-items:center; font-size:26px; transform:rotate(6deg); box-shadow:0 8px 16px -8px rgba(0,0,0,.35); border:3px solid #fff}
+  .letter h3{font-family:var(--hand); font-weight:600; font-size:30px; color:var(--amber-deep); margin-bottom:6px}
+  .letter .body{font-family:var(--hand); font-size:23px; line-height:34px; color:var(--ink)}
+  .letter .body b{color:var(--amber-deep)}
+  .lt-summary{margin-top:20px; padding-top:16px; border-top:1px dashed var(--line); display:flex; justify-content:space-between; align-items:baseline; font-family:var(--sans)}
+  .lt-summary .big{font-family:var(--serif); font-size:30px; color:var(--ink)}
+  .lt-summary .lbl{font-size:13px; color:var(--ink-faint)}
+  .placeholder{display:grid; place-items:center; text-align:center; height:100%; min-height:360px; color:var(--ink-faint); font-family:var(--serif); font-size:19px; padding:20px}
+  .placeholder .hb{font-size:40px; margin-bottom:10px; opacity:.6}
+  .fade-in{animation:soft .7s ease forwards}
+  @keyframes soft{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
+
+  /* stats */
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:30px}
+  .stat{text-align:center; padding:26px 16px; border-radius:var(--r); background:var(--card); border:1px solid var(--line-2)}
+  .stat .num{font-family:var(--serif); font-size:clamp(38px,5vw,56px); color:var(--amber-deep); line-height:1}
+  .stat .cap{font-size:15px; color:var(--ink-soft); margin-top:8px}
+
+  /* final cta */
+  .final{text-align:center; padding:84px 0}
+  .final h2{margin:0 auto; max-width:20ch}
+  .final .sec-lede{margin:16px auto 30px}
+
+  footer{border-top:1px solid var(--line-2); padding:34px 0; color:var(--ink-faint); font-size:14px}
+  .foot-in{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px}
+
+  /* sealed envelope */
+  .sealed{display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:center; height:100%; min-height:360px; padding:14px}
+  .wax{width:82px;height:82px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#E9736F,var(--amber-deep));
+    display:grid;place-items:center;font-size:36px;color:#fff;box-shadow:0 10px 22px -8px rgba(168,67,42,.7); margin-bottom:18px;
+    animation:beat 2.4s ease-in-out infinite}
+  @keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  .sealed h3{font-size:26px}
+  .sealed .lock{font-size:15px;color:var(--ink-soft);margin:10px 0 4px;max-width:34ch}
+  .sealed .when{font-family:var(--serif);font-size:20px;color:var(--amber-deep);margin:6px 0 20px}
+  .reminder{font-size:14.5px;color:var(--ink-soft);background:var(--paper);border:1px dashed var(--line);
+    border-radius:12px;padding:11px 15px;margin-bottom:20px;max-width:38ch;min-height:44px;display:flex;align-items:center;gap:8px;justify-content:center;transition:opacity .22s ease}
+  /* flying letter animation */
+  .fly{position:fixed; z-index:60; font-size:56px; pointer-events:none; will-change:transform,opacity;
+    filter:drop-shadow(0 12px 18px rgba(43,33,26,.35))}
+  @keyframes fly{
+    0%{transform:translate(-50%,-50%) scale(.5) rotate(-10deg); opacity:0}
+    14%{opacity:1; transform:translate(-50%,-65%) scale(1.15) rotate(-6deg)}
+    38%{transform:translate(-30%,-140%) scale(1.05) rotate(4deg); opacity:1}
+    100%{transform:translate(40vw,-88vh) scale(.28) rotate(24deg); opacity:0}
+  }
+  .fly.go{animation:fly 1.25s cubic-bezier(.36,.08,.24,1) forwards}
+  /* celebración: lluvia de amor + finanzas */
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:80; overflow:hidden}
+  .burst span{position:absolute; top:-8vh; will-change:transform,opacity; animation:drop linear forwards}
+  @keyframes drop{
+    0%{transform:translateY(-10vh) rotate(0) scale(var(--s)); opacity:0}
+    8%{opacity:1}
+    100%{transform:translateY(112vh) rotate(var(--r)) scale(var(--s)); opacity:.95}
+  }
+  @keyframes popIn{0%{transform:scale(.3); opacity:0}60%{transform:scale(1.18)}100%{transform:scale(1); opacity:1}}
+  .pop{animation:popIn .6s cubic-bezier(.2,.9,.3,1.4) both}
+  .to-email{display:inline-flex; align-items:center; gap:7px; font-size:13.5px; color:var(--ink-soft);
+    background:var(--paper); border:1px dashed var(--line); border-radius:999px; padding:6px 14px; margin-bottom:18px; max-width:100%; word-break:break-word}
+  .delivered{display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-size:14px; color:#3d6b3d;
+    background:rgba(120,170,110,.16); border:1px solid rgba(120,170,110,.4); border-radius:999px; padding:7px 15px; margin:0 auto 14px}
+  .achieved{font-family:var(--hand);font-size:30px;color:var(--amber-deep);text-align:center;margin-bottom:4px}
+  .saved-line{text-align:center;font-family:var(--serif);font-size:19px;color:var(--ink-soft);margin-bottom:16px}
+  .saved-line b{color:var(--ink)}
+  @media(max-width:860px){
+    .hero-grid,.prob-grid,.build-grid{grid-template-columns:1fr}
+    .steps,.stats{grid-template-columns:1fr}
+    .goalcard{transform:none; margin-top:6px}
+    header{padding:52px 0 40px}
+    .nav-in .btn{display:none}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#C9A24B"/><stop offset="1" stop-color="#C75B39"/>
+  </linearGradient>
+</defs></svg>
+
+<nav>
+  <div class="nav-in">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.5-4.7-7.5-10A4.2 4.2 0 0 1 12 8.2 4.2 4.2 0 0 1 19.5 11c0 5.3-7.5 10-7.5 10Z" fill="#C75B39"/><circle cx="12" cy="11" r="2.4" fill="#FAF3E7"/></svg>
+      <span>Cari<b>ño</b></span>
+    </div>
+    <a href="#crear" class="btn">Crea tu meta</a>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="kicker reveal d1">Finanzas con amor</div>
+    <div class="hero-grid">
+      <div>
+        <h1 class="hero reveal d2">Ahorra<br>por <em>quien&nbsp;amas.</em></h1>
+        <p class="lede reveal d3">Ahorrar por un número es fácil de abandonar. Ahorrar por <strong>alguien</strong> no lo es — tu pareja, tu familia, tu mascota, tu hermana, tú. Cariño convierte tus finanzas en un acto de amor: pon tu meta, cuánto puedes aportar, y él calcula el cuándo y el cómo… y te recuerda por qué vale la pena.</p>
+        <div class="hero-cta reveal d4">
+          <a href="#crear" class="btn">Crea tu meta gratis</a>
+          <a href="#como" class="btn ghost">Cómo funciona</a>
+        </div>
+        <div class="microproof reveal d5"><span class="dot"></span> Ahorrar por amor se sostiene 3× más que ahorrar “porque sí”.</div>
+      </div>
+      <div class="reveal d4">
+        <div class="goalcard">
+          <div class="gc-top">
+            <div><div class="gc-goal hero-swap" id="hcGoal">El viaje en familia ✈️</div><div class="gc-for hero-swap" id="hcFor">por mamá, papá &amp; tú</div></div>
+          </div>
+          <div class="ring-wrap">
+            <div class="ring-center">
+              <svg class="ring" viewBox="0 0 118 118"><circle class="track" cx="59" cy="59" r="52"/><circle class="fill" id="hcFill" cx="59" cy="59" r="52"/></svg>
+              <div class="ring-pct"><b class="hero-swap" id="hcPct">65%</b></div>
+            </div>
+            <div class="gc-meta hero-swap" id="hcMeta">Llevas <strong>$5.850.000</strong><br>de una meta de <strong>$9.000.000</strong><br><span style="color:var(--amber-deep)">Faltan 7 meses 💛</span></div>
+          </div>
+          <div class="gc-bar"><i id="hcBar" style="width:65%"></i></div>
+        </div>
+        <div class="hc-dots" id="hcDots"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="problem">
+  <div class="wrap prob-grid">
+    <div>
+      <div class="eyebrow">El problema</div>
+      <p class="prob-quote">El ahorro tradicional es <em>un número frío</em> en una app. Nadie se enamora de un saldo — y por eso lo abandonamos en febrero.</p>
+    </div>
+    <div class="cold">
+      <div class="row"><span class="n">01</span><div><strong>Sin rostro, sin razón.</strong> Un “fondo de emergencia” no te emociona a las 11 p.m. cuando quieres comprar algo.</div></div>
+      <div class="row"><span class="n">02</span><div><strong>El progreso invisible.</strong> Ver solo dígitos no se siente como avanzar hacia algo que amas.</div></div>
+      <div class="row"><span class="n">03</span><div><strong>El precio se mueve, tú no te enteras.</strong> El vuelo sube, el regalo se agota, la meta cambia — y tu app sigue mostrando la misma cifra de siempre.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="como">
+  <div class="wrap">
+    <div class="eyebrow">La idea</div>
+    <h2>Le pones <em>un rostro</em> a cada peso que guardas.</h2>
+    <p class="sec-lede">Cariño no empieza por el dinero. Empieza por quién amas y qué sueñan juntos. El monto viene después — y de repente ahorrar deja de ser sacrificio y se vuelve una carta de amor con fecha de entrega.</p>
+    <div class="steps">
+      <div class="step"><span class="k">01</span><div class="ic">💞</div><h3>Elige por quién</h3><p>Tu pareja, tus papás, tu futuro bebé, tu yo de mañana. Cada meta nace de un vínculo, no de una cifra.</p></div>
+      <div class="step"><span class="k">02</span><div class="ic">🎯</div><h3>Ponle una meta</h3><p>La boda, la casa, el viaje. Cariño calcula cuánto guardar al mes y te muestra el amor volviéndose progreso.</p></div>
+      <div class="step"><span class="k">03</span><div class="ic">💌</div><h3>Escríbele una carta</h3><p>Una nota a tu yo futuro que se abre el día que llegas a la meta. El recordatorio de por qué vale la pena.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="border-top:1px solid var(--line-2)">
+  <div class="wrap">
+    <div class="eyebrow">Lo que lo hace vivo</div>
+    <h2>No solo cuadra tus finanzas. <em>Vigila lo que amas por ti.</em></h2>
+    <p class="sec-lede">Cariño calcula el cuándo y el cómo con tu salario y tu aporte mensual — y no se queda ahí. Sigue el precio real de tu meta y te habla cada mes.</p>
+    <div class="steps">
+      <div class="step"><span class="k">◕</span><div class="ic">🔎</div><h3>Sigue el precio</h3><p>El vuelo, el modelo de la casa, ese juguete para tu perro, el regalo de tu hermana. Si sube o baja, ajusta tu meta y te avisa.</p></div>
+      <div class="step"><span class="k">◕</span><div class="ic">🔔</div><h3>Te recuerda con cariño</h3><p>“Vas 3 meses seguidos aportando — a este ritmo llegas en mayo.” Motivación real, en el momento justo, no un push más.</p></div>
+      <div class="step"><span class="k">◕</span><div class="ic">📅</div><h3>Te dice el cuándo</h3><p>Con tu salario y tu aporte, sabes la fecha exacta en que lo logras — y cuánto de tu sueldo estás dedicando al amor.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="builder" id="crear">
+  <div class="wrap">
+    <div class="eyebrow">Pruébalo ahora</div>
+    <h2>Crea tu meta en <em>20 segundos.</em></h2>
+    <p class="sec-lede">Sin registro, sin tarjeta. Solo tú y la razón por la que vas a ahorrar. Escríbela y mira nacer tu carta.</p>
+    <div class="build-grid">
+      <form class="panel" id="form" autocomplete="off">
+        <div class="fld">
+          <label>¿Qué quieres lograr?</label>
+          <div class="chips" id="goals">
+            <button type="button" class="chip on" data-g="El viaje" data-e="✈️">Un viaje ✈️</button>
+            <button type="button" class="chip" data-g="La casa" data-e="🏡">La casa 🏡</button>
+            <button type="button" class="chip" data-g="Algo para mi mascota" data-e="🐾">Mi mascota 🐾</button>
+            <button type="button" class="chip" data-g="Un regalo" data-e="🎁">Un regalo 🎁</button>
+            <button type="button" class="chip" data-g="La boda" data-e="💍">La boda 💍</button>
+            <button type="button" class="chip" data-g="Mi yo futuro" data-e="🌱">Mi yo futuro 🌱</button>
+          </div>
+        </div>
+        <div class="fld">
+          <label>¿Qué quieres que Cariño vigile?</label>
+          <input type="text" id="item" placeholder="la casa en Envigado, el vuelo a Japón, la cama de Toby…" value="el vuelo a Japón">
+          <div style="font-size:13px;color:var(--ink-faint);margin-top:8px">Pega el link del post o descríbelo. Cariño seguirá su precio y te avisa si cambia.</div>
+        </div>
+        <div class="fld">
+          <label>¿Por quién lo haces?</label>
+          <input type="text" id="who" placeholder="mi hermana, mi perro Toby, mi familia, mi pareja..." value="mi familia" maxlength="40">
+        </div>
+        <div class="two">
+          <div class="fld">
+            <label>Meta ($)</label>
+            <input type="number" id="amount" value="9000000" min="0" step="any" inputmode="numeric">
+          </div>
+          <div class="fld">
+            <label>Ya tienes ($)</label>
+            <input type="number" id="have" value="1500000" min="0" step="any" inputmode="numeric">
+          </div>
+        </div>
+        <div class="fld">
+          <label>Mi salario mensual ($)</label>
+          <input type="number" id="salary" value="2800000" min="0" step="any" inputmode="numeric">
+        </div>
+        <div class="fld">
+          <label>Puedo aportar al mes: <span class="rng-val" id="perLbl">$500.000</span></label>
+          <input class="rng" type="range" id="per" min="50000" max="3000000" step="50000" value="500000">
+          <div id="salaryHint" style="font-size:13.5px;color:var(--ink-faint);margin-top:8px"></div>
+        </div>
+        <div class="fld">
+          <label>¿A qué correo(s) llega el día que lo logres?</label>
+          <input type="text" id="emails" inputmode="email" placeholder="tú@correo.com, mamá@correo.com" value="yo@ejemplo.com">
+        </div>
+        <button type="submit" class="btn build-btn">Sellar y enviar mi carta 💌</button>
+      </form>
+
+      <div class="letter" id="letterBox">
+        <div class="placeholder" id="ph">
+          <div><div class="hb">💌</div>Aquí sellarás tu carta.<br>Llénala y ábrela el día que llegues a tu meta.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap" style="text-align:center">
+    <div class="eyebrow">Por qué funciona</div>
+    <h2 style="margin:0 auto">El amor es <em>el mejor plan de ahorro.</em></h2>
+    <div class="stats">
+      <div class="stat"><div class="num">3×</div><div class="cap">más constancia cuando el ahorro tiene un porqué emocional*</div></div>
+      <div class="stat"><div class="num">7 de 10</div><div class="cap">metas importantes son compartidas, no individuales</div></div>
+      <div class="stat"><div class="num">0</div><div class="cap">sacrificio que se sienta sacrificio cuando ahorras por quien amas</div></div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-faint);margin-top:18px">*Cifras ilustrativas para este prototipo de la Vibe Coders League.</p>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <div class="eyebrow" style="text-align:center">Empieza hoy</div>
+    <h2>Tus finanzas ya tienen un motivo.<br><em>Dale un nombre.</em></h2>
+    <p class="sec-lede">Cariño es gratis para tu primera meta. Porque lo que amas no debería esperar a que “te organices”.</p>
+    <a href="#crear" class="btn" style="font-size:17px;padding:15px 30px">Crea tu meta por amor</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <div class="brand" style="font-size:20px">Cari<b>ño</b></div>
+    <div>Finanzas con amor · Prototipo — Vibe Coders League Platzi 2026 · Edición 2.0</div>
+  </div>
+</footer>
+
+<script>
+  const money = n => "$" + Math.round(n).toLocaleString("es-CO");
+  const $ = s => document.querySelector(s);
+  let goal = "La boda", emoji = "💍";
+
+  document.querySelectorAll("#goals .chip").forEach(c => c.addEventListener("click", () => {
+    document.querySelectorAll("#goals .chip").forEach(x => x.classList.remove("on"));
+    c.classList.add("on"); goal = c.dataset.g; emoji = c.dataset.e;
+  }));
+
+  const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  const per = $("#per"), perLbl = $("#perLbl"), salaryHint = $("#salaryHint");
+
+  function salaryPct(){
+    const sal = +$("#salary").value || 0, p = +per.value || 0;
+    if(!sal) return null;
+    return Math.round(p / sal * 100);
+  }
+  function refreshHint(){
+    perLbl.textContent = money(+per.value);
+    const pc = salaryPct();
+    if(pc === null){ salaryHint.textContent = ""; return; }
+    let tag = pc <= 12 ? "muy sostenible 🌿" : pc <= 25 ? "sostenible y sano 💪" : pc <= 40 ? "ambicioso, pero posible 🔥" : "intenso — cuídate 💛";
+    salaryHint.textContent = `Es el ${pc}% de tu salario · ${tag}`;
+  }
+  per.addEventListener("input", refreshHint);
+  $("#salary").addEventListener("input", refreshHint);
+  refreshHint();
+
+  let reminderTimer = null;
+
+  function flyLetter(fromEl, cb){
+    const r = fromEl.getBoundingClientRect();
+    const el = document.createElement("div");
+    el.className = "fly"; el.textContent = "💌";
+    el.style.left = (r.left + r.width/2) + "px";
+    el.style.top  = (r.top + r.height/2) + "px";
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("go"));
+    el.addEventListener("animationend", () => { el.remove(); cb && cb(); });
+    setTimeout(() => { if(document.body.contains(el)){ el.remove(); cb && cb(); } }, 1400);
+  }
+  function celebrate(){
+    const EMO = ["💛","🪙","💛","💰","🧡","💌","💫","🪙","❤️","💛"];
+    const b = document.createElement("div");
+    b.className = "burst";
+    for(let i=0;i<34;i++){
+      const s = document.createElement("span");
+      s.textContent = EMO[Math.floor(Math.random()*EMO.length)];
+      const scale = 0.7 + Math.random()*1.1;
+      s.style.left = Math.random()*100 + "vw";
+      s.style.fontSize = "28px";
+      s.style.setProperty("--s", scale.toFixed(2));
+      s.style.setProperty("--r", (Math.random()*720-360).toFixed(0) + "deg");
+      s.style.animationDuration = (2.2 + Math.random()*1.8).toFixed(2) + "s";
+      s.style.animationDelay = (Math.random()*0.6).toFixed(2) + "s";
+      b.appendChild(s);
+    }
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 4600);
+  }
+
+  function fmtEmails(raw){
+    const list = raw.split(",").map(s => s.trim()).filter(Boolean);
+    if(!list.length) return "tu correo";
+    if(list.length === 1) return list[0];
+    if(list.length === 2) return list[0] + " y " + list[1];
+    return `${list[0]} y ${list.length-1} más`;
+  }
+
+  $("#form").addEventListener("submit", e => {
+    e.preventDefault();
+    const who = ($("#who").value || "quien amas").trim();
+    const emails = fmtEmails($("#emails").value || "");
+    const rawItem = ($("#item").value || "").trim();
+    const amount = Math.max(1, +$("#amount").value || 0);
+    const have = Math.min(+$("#have").value || 0, amount);
+    const perMonth = Math.max(1, +per.value || 0);
+    const pct = Math.min(100, Math.round(have / amount * 100));
+    const remaining = Math.max(0, amount - have);
+    const months = Math.max(0, Math.ceil(remaining / perMonth));
+    const goalLc = goal.toLowerCase();
+    const item = rawItem || goalLc;
+    const isLink = /^https?:\/\//i.test(rawItem);
+    const itemShort = item.length > 42 ? item.slice(0,42) + "…" : item;
+    const pc = salaryPct();
+    // "precio vigilado" simulado (teatro del prototipo): pequeño movimiento estable
+    const trend = ["se mantiene estable esta semana", "bajó ~3% — buen momento 🎉", "subió ~2%, ya ajusté tu meta"][item.length % 3];
+
+    // fecha objetivo (mes de llegada) — offset determinista para el prototipo
+    const baseMonth = 6; // julio (0-index) — mes del reto en vivo
+    const arrive = MESES[(baseMonth + months) % 12];
+    const whenTxt = months <= 0 ? "¡ya llegaste!" : months === 1 ? "el próximo mes" : `en ${months} meses (por ${arrive})`;
+
+    // recordatorios dinámicos que rotan (la parte "viva")
+    const reminders = [
+      `📈 Vas ${pct}% de camino a ${goalLc} por ${who}.`,
+      `🔎 Revisé ${itemShort}: ${trend}.`,
+      `🔔 A ${money(perMonth)}/mes llegas ${whenTxt}. ¡No pares!`,
+      pc ? `💛 Estás dedicando el ${pc}% de tu salario a algo que amas.` : `💛 Cada aporte te acerca a ${who}.`,
+    ];
+
+    const initialLetter = `Hoy empecé a ahorrar por <b>${who}</b>. Mi meta es <b>${goalLc}</b>, y aunque parece lejos, cada mes guardo <b>${money(perMonth)}</b> con una sonrisa. Si estás leyendo esto, es porque <b>lo logramos ${whenTxt}</b>. Valió cada peso. 💛`;
+
+    const box = $("#letterBox");
+    if(reminderTimer) clearInterval(reminderTimer);
+
+    const showSealed = () => {
+      // Estado SELLADO: la carta se escribe hoy y se guarda para el día de la meta
+      box.innerHTML = `
+        <div class="sealed fade-in">
+          <div class="wax">${emoji}</div>
+          <h3>Tu carta voló y quedó sellada.</h3>
+          <div class="lock">La escribiste hoy para <b>${who}</b>. Se abrirá el día que llegues a <b>${goalLc}</b>.</div>
+          <div class="when">${months <= 0 ? "¡Ábrela, ya lo lograste!" : `Llegas ${whenTxt}`}</div>
+          <div class="to-email">🔎 Vigilando&nbsp;<b>${itemShort}</b>${isLink ? "&nbsp;(link)" : ""} · hoy ${money(amount)}</div>
+          <div class="to-email">✉️ Llegará a&nbsp;<b>${emails}</b></div>
+          <div class="reminder" id="rem">${reminders[0]}</div>
+          <button type="button" class="btn" id="openBtn">Ver el día que lo logres ✨</button>
+        </div>`;
+      // el recordatorio "vivo" rota cada 3.2s
+      let ri = 0;
+      reminderTimer = setInterval(() => {
+        ri = (ri + 1) % reminders.length;
+        const r = document.getElementById("rem");
+        if(!r){ clearInterval(reminderTimer); return; }
+        r.style.opacity = 0;
+        setTimeout(() => { r.textContent = reminders[ri]; r.style.opacity = 1; }, 220);
+      }, 3200);
+      document.getElementById("openBtn").addEventListener("click", () => {
+        if(reminderTimer) clearInterval(reminderTimer);
+        celebrate();
+        box.innerHTML = `
+          <div class="stamp">${emoji}</div>
+          <div style="text-align:center"><span class="delivered">📬 Entregada a ${emails}</span></div>
+          <div class="achieved pop">¡Lo lograste! 🎉</div>
+          <div class="saved-line fade-in">Ahorraste <b>${money(amount)}</b> por <b>${who}</b>${months > 0 ? ` en <b>${months} ${months===1?"mes":"meses"}</b>` : ""}.</div>
+          <h3 class="fade-in" style="margin-top:6px">Querido yo del futuro,</h3>
+          <div class="body fade-in">${initialLetter}</div>
+          <div class="lt-summary fade-in">
+            <div><div class="lbl">Tu carta inicial</div><div class="big">${goal} ${emoji}</div></div>
+            <div style="text-align:right"><div class="lbl">Meta cumplida</div><div class="big">100%</div></div>
+          </div>
+          <div class="gc-bar" style="margin-top:16px"><i style="width:100%"></i></div>`;
+      });
+    };
+
+    // "sellando…", la carta vuela desde el botón, y al aterrizar aparece sellada
+    box.innerHTML = `<div class="placeholder"><div><div class="hb">💌</div>Sellando y enviando…</div></div>`;
+    box.scrollIntoView({behavior:"smooth", block:"center"});
+    flyLetter(e.submitter || $("#form .build-btn"), showSealed);
+  });
+
+  /* ---- hero: tarjetas de metas que rotan ---- */
+  const HERO_CARDS = [
+    {e:"✈️", goal:"El viaje en familia", who:"por mamá, papá & tú", have:5850000, amount:9000000, when:"Faltan 7 meses 💛"},
+    {e:"🏡", goal:"La casa propia", who:"por nosotros dos", have:37800000, amount:90000000, when:"Faltan 14 meses 🔑"},
+    {e:"🐾", goal:"La cirugía de Toby", who:"por mi perro", have:2640000, amount:3000000, when:"¡Falta 1 mes! 🐾"},
+    {e:"🎁", goal:"El regalo de mi hermana", who:"por Lucía", have:560000, amount:800000, when:"Faltan 3 meses 🎀"},
+    {e:"🌱", goal:"Mi fondo de libertad", who:"por mi yo futuro", have:4500000, amount:15000000, when:"Faltan 21 meses ✨"},
+  ];
+  const C = 2 * Math.PI * 52;
+  const hc = {goal:$("#hcGoal"), for:$("#hcFor"), pct:$("#hcPct"), meta:$("#hcMeta"), fill:$("#hcFill"), bar:$("#hcBar"), dots:$("#hcDots")};
+  const swaps = document.querySelectorAll(".hero-swap");
+
+  // número que "cuenta" (pct y montos) para que la tarjeta se sienta viva
+  function countTo(el, to, ms, fmt){
+    const start = performance.now();
+    (function step(t){
+      const p = Math.min(1, (t - start) / ms);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(Math.round(to * eased));
+      if(p < 1) requestAnimationFrame(step);
+    })(start);
+  }
+
+  function paintHero(c, i){
+    const pct = Math.min(100, Math.round(c.have / c.amount * 100));
+    hc.goal.textContent = `${c.goal} ${c.e}`;
+    hc.for.textContent = c.who;
+    countTo(hc.pct, pct, 900, v => v + "%");
+    hc.meta.innerHTML = `Llevas <strong id="hcHave">${money(c.have)}</strong><br>de una meta de <strong>${money(c.amount)}</strong><br><span style="color:var(--amber-deep)">${c.when}</span>`;
+    countTo($("#hcHave"), c.have, 900, money);
+    hc.bar.style.width = pct + "%";
+    hc.fill.style.strokeDashoffset = C * (1 - pct/100);
+    [...hc.dots.children].forEach((d, di) => d.classList.toggle("on", di === i));
+  }
+
+  if(hc.goal){
+    let hi = 0, timer;
+    // puntos indicadores (clic para saltar)
+    HERO_CARDS.forEach((_, i) => {
+      const b = document.createElement("b");
+      b.addEventListener("click", () => { hi = i; swap(); restart(); });
+      hc.dots.appendChild(b);
+    });
+    function render(){
+      swaps.forEach(el => { el.style.opacity = 0; el.style.transform = "translateY(12px)"; });
+      setTimeout(() => {
+        paintHero(HERO_CARDS[hi], hi);
+        swaps.forEach(el => { el.style.opacity = 1; el.style.transform = "none"; });
+      }, 450);
+    }
+    function swap(){ render(); }
+    function tick(){ hi = (hi + 1) % HERO_CARDS.length; render(); }
+    function restart(){ clearInterval(timer); timer = setInterval(tick, 3600); }
+    // primer pintado dispara la animación del anillo desde 0
+    hc.fill.style.strokeDashoffset = C;
+    requestAnimationFrame(() => paintHero(HERO_CARDS[0], 0));
+    restart();
+  }
+</script>
+</body>
+</html>

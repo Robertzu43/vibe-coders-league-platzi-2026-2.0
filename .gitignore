@@ -36,5 +36,13 @@ npm-debug.log*
 # Codex CLI local config
 .codex/
 
+# Third-party skills installed locally (taste-skill, etc.) — usables, fuera del repo
+.claude/skills/
+.agents/
+skills-lock.json
+
+# Wrangler local cache
+.wrangler/
+
 # Private live-challenge prep (contains account IDs / creds refs — keep local)
 LIVE-PREP.md
