@@ -6,5 +6,9 @@ create table if not exists tickets (
   area text not null default 'general',
   autor text not null default 'equipo',
   estado text not null default 'nuevo',
-  creado text not null default (datetime('now'))
+  creado text not null default (datetime('now')),
+  -- ¿la colmena puede resolverlo sola? la IA lo evalúa al entrar, el humano autoriza.
+  automatizable integer not null default 0,
+  accion text not null default '',
+  resuelto text not null default ''
 );
