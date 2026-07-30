@@ -28,7 +28,25 @@ Cuando lo detecta, la tarjeta muestra la acción concreta y un botón: **"Autori
 
 Nada físico se automatiza. Las reglas vetan a la IA: si el mensaje habla de una puerta, un motor o una impresora, el botón no aparece aunque el modelo se entusiasme.
 
+Y las reglas también **promueven**: el mismo modelo cambiaba de opinión entre corridas con el texto idéntico, así que `accionPorReglas()` es el piso determinista — un reset de contraseña siempre ofrece el botón. La IA solo redacta mejor la acción.
+
 > La ejecución es **simulada** — el valor del reto es la decisión, no el side effect. Cablearla de verdad es un `fetch` por acción (Gmail para los resets, la API de accesos para los permisos).
+
+## El aviso de vuelta
+
+Un ticket que se cierra en silencio es un ticket que el equipo deja de reportar. Cuando algo entra a **Resuelto** — lo arrastres vos o lo resuelva la colmena — quien lo reportó recibe el aviso en el mismo chat donde lo dijo:
+
+```
+🐝 ¡Listo! Ya terminamos:
+
+Acceso a contabilidad
+
+🐝 lo resolvió la colmena: Dar acceso a carpeta compartida
+
+gracias por avisar 🍯
+```
+
+Solo avisa **al entrar** a Resuelto, nunca dos veces. Los tickets sin chat guardado (los de la demo web) simplemente no notifican, y un fallo de Telegram deja rastro en los logs pero jamás tumba el cambio de estado. El `chat_id` se guarda en D1 y no se expone en la API pública.
 
 ## El tablero
 
@@ -78,7 +96,7 @@ curl -X POST "https://api.telegram.org/bot<TOKEN>/setWebhook" \
   -d "secret_token=<TG_SECRET>" -d 'allowed_updates=["message"]'
 ```
 
-**Gotcha:** después de `wrangler deploy`, el edge tarda ~30s en servir la versión nueva de forma consistente. Verificar E2E antes de eso devuelve la versión vieja.
+**Gotcha:** después de `wrangler deploy` el edge sirve versiones **mezcladas** por un rato — un request puede pegar en la versión vieja y el siguiente en la nueva, aunque `wrangler deployments status` diga 100%. Verificar E2E inmediatamente da resultados contradictorios; esperar y repetir.
 
 ## Lo que no tiene
 
