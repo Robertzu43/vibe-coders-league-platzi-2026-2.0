@@ -1,0 +1,11 @@
+name = "anotado"
+main = "src/index.ts"
+compatibility_date = "2026-07-30"
+
+[ai]
+binding = "AI"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "yatedije"
+database_id = "254fcc63-4bdc-4608-8816-7b4a6325e0aa"
