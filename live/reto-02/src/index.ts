@@ -37,20 +37,38 @@ const AUTOMATIZABLE = /contrase|password|credencial|clave|acceso|permiso|vpn|lic
 /** Nada físico se automatiza, aunque la frase mencione software. */
 const FISICO = /puerta|foco|bombill|llave|cerradur|máquina|maquina|motor|caj[óo]n|estanter|piso|techo|goter|fuga|camion|cami[óo]n|llanta|caf[ée]tera|impresora|papel|tóner|toner|cable|silla|escritorio/;
 
+/**
+ * Piso determinista: qué haría la colmena con este trámite.
+ * El modelo es inconsistente entre corridas — esto no.
+ */
+export function accionPorReglas(texto: string): string {
+  const b = texto.toLowerCase();
+  if (!AUTOMATIZABLE.test(b) || FISICO.test(b)) return '';
+  if (/contrase|password|clave|credencial|resetea|reinici/.test(b))
+    return 'Enviar correo de restablecimiento de contraseña';
+  if (/bloquead|desbloque/.test(b)) return 'Desbloquear la cuenta y avisar por correo';
+  if (/acceso|permiso|carpeta|vpn|usuario|cuenta/.test(b))
+    return 'Dar el acceso solicitado y avisar por correo';
+  if (/factura|recibo/.test(b)) return 'Reenviar el documento por correo';
+  if (/licencia|instal|suscripci/.test(b)) return 'Asignar la licencia y avisar por correo';
+  if (/reporte|export/.test(b)) return 'Generar el reporte y enviarlo por correo';
+  return 'Ejecutar el trámite de sistemas y avisar por correo';
+}
+
 /** Reglas: lo que corre si la IA falla. Nunca perdemos el mensaje. */
 export function porReglas(texto: string): Ticket {
   const t = texto.trim();
   const bajo = t.toLowerCase();
   const urgente = /urge|urgent|ya|hoy|caí|cai[oó]|parad|no funciona|se dañ|grave|cliente/.test(bajo);
   const leve = /cuando pueda|algún d|algun d|no corre prisa|menor|detalle/.test(bajo);
-  const auto = AUTOMATIZABLE.test(bajo) && !FISICO.test(bajo);
+  const accion = accionPorReglas(t);
   return {
     titulo: t.length > 70 ? t.slice(0, 67).trimEnd() + '…' : t,
     detalle: t,
     prioridad: urgente ? 'alta' : leve ? 'baja' : 'media',
-    area: auto ? 'sistemas' : 'general',
-    automatizable: auto,
-    accion: auto ? 'Ejecutar el trámite de sistemas y avisar a quien lo pidió' : '',
+    area: accion ? 'sistemas' : 'general',
+    automatizable: accion !== '',
+    accion,
   };
 }
 
@@ -79,15 +97,19 @@ export async function extraer(ai: Ai, texto: string): Promise<Ticket> {
     const o = (typeof raw === 'string' ? JSON.parse(raw) : raw) as Partial<Ticket>;
     if (!o?.titulo) throw new Error('sin titulo');
 
-    // La IA propone, las reglas vetan: nada físico se marca como automatizable.
-    const auto = o.automatizable === true && !FISICO.test(texto.toLowerCase());
-    const accion = auto ? String(o.accion ?? '').trim() : '';
+    // Las reglas vetan Y promueven. La IA solo redacta mejor la acción.
+    // Sin esto el modelo cambia de opinión entre corridas con el mismo texto.
+    const piso = accionPorReglas(texto);
+    const fisico = FISICO.test(texto.toLowerCase());
+    const auto = piso !== '' || (o.automatizable === true && !fisico);
+    const deIA = String(o.accion ?? '').trim();
+    const accion = auto ? deIA || piso || 'Ejecutar el trámite y avisar por correo' : '';
     return {
       titulo: String(o.titulo).slice(0, 70),
       detalle: texto,
       prioridad: o.prioridad === 'alta' || o.prioridad === 'baja' ? o.prioridad : 'media',
       area: (o.area ? String(o.area) : 'general').toLowerCase().slice(0, 20),
-      automatizable: auto && accion.length > 0,
+      automatizable: auto,
       accion: accion.slice(0, 120),
     };
   } catch {
@@ -95,13 +117,45 @@ export async function extraer(ai: Ai, texto: string): Promise<Ticket> {
   }
 }
 
-async function guardar(db: D1Database, t: Ticket, autor: string) {
+async function guardar(db: D1Database, t: Ticket, autor: string, chat = 0) {
   await db
     .prepare(
-      'insert into tickets (titulo, detalle, prioridad, area, autor, automatizable, accion) values (?,?,?,?,?,?,?)',
+      'insert into tickets (titulo, detalle, prioridad, area, autor, automatizable, accion, chat) values (?,?,?,?,?,?,?,?)',
     )
-    .bind(t.titulo, t.detalle, t.prioridad, t.area, autor, t.automatizable ? 1 : 0, t.accion)
+    .bind(t.titulo, t.detalle, t.prioridad, t.area, autor, t.automatizable ? 1 : 0, t.accion, chat)
     .run();
+}
+
+function telegram(env: Env, chat: number, text: string) {
+  return fetch(`https://api.telegram.org/bot${env.TG_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ chat_id: chat, text, parse_mode: 'Markdown' }),
+  });
+}
+
+/**
+ * El que reportó se entera de que ya está. Sin chat guardado (tickets de demo)
+ * no hay a quién avisarle, y el fallo de Telegram nunca rompe el movimiento.
+ */
+async function avisar(env: Env, id: number) {
+  try {
+    const t = await env.DB.prepare('select titulo, chat, resuelto from tickets where id = ?')
+      .bind(id)
+      .first<{ titulo: string; chat: number; resuelto: string }>();
+    if (!t?.chat) return;
+    const cola = t.resuelto ? `\n\n🐝 lo resolvió la colmena: _${t.resuelto}_` : '';
+    const r = await telegram(
+      env,
+      t.chat,
+      `🐝 *¡Listo!* Ya terminamos:\n\n${t.titulo}${cola}\n\ngracias por avisar 🍯`,
+    );
+    // Cortesía, no puede tumbar el cambio de estado — pero un aviso perdido deja rastro.
+    console.log('aviso ticket', id, 'chat', t.chat, r.ok ? 'enviado' : 'FALLÓ ' + r.status);
+    if (!r.ok) console.error(await r.text());
+  } catch (e) {
+    console.error('aviso ticket', id, 'excepción', String(e));
+  }
 }
 
 const COLUMNAS =
@@ -128,7 +182,13 @@ export default {
     if (url.pathname === '/api/move' && req.method === 'POST') {
       const { id, estado } = (await req.json()) as { id?: number; estado?: string };
       if (!id || !ESTADOS.includes(estado as Estado)) return json({ error: 'datos inválidos' }, 400);
+      const antes = await env.DB.prepare('select estado from tickets where id = ?')
+        .bind(id)
+        .first<{ estado: string }>();
+      if (!antes) return json({ error: 'no existe' }, 404);
       await env.DB.prepare('update tickets set estado = ? where id = ?').bind(estado, id).run();
+      // Solo al entrar a listo: mover dentro de listo no vuelve a avisar.
+      if (estado === 'listo' && antes.estado !== 'listo') await avisar(env, id);
       return json({ ok: true });
     }
 
@@ -148,6 +208,7 @@ export default {
       await env.DB.prepare("update tickets set estado = 'listo', resuelto = ? where id = ?")
         .bind(resuelto, id)
         .run();
+      await avisar(env, id);
       return json({ ok: true, resuelto });
     }
 
@@ -165,21 +226,17 @@ export default {
 
       const autor = u.message?.from?.first_name ?? 'equipo';
       const t = await extraer(env.AI, texto);
-      await guardar(env.DB, t, autor);
+      await guardar(env.DB, t, autor, chatId);
 
       const emoji = t.prioridad === 'alta' ? '🔥' : t.prioridad === 'baja' ? '🌱' : '📌';
       const cola = t.automatizable
         ? '\n\n🐝 esto lo puede resolver la colmena sola: _' + t.accion + '_'
         : '';
-      await fetch(`https://api.telegram.org/bot${env.TG_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: `listo, anotado ✅\n\n${emoji} *${t.titulo}*\n${t.area} · prioridad ${t.prioridad}${cola}\n\nya está en el tablero.`,
-          parse_mode: 'Markdown',
-        }),
-      });
+      await telegram(
+        env,
+        chatId,
+        `listo, anotado ✅\n\n${emoji} *${t.titulo}*\n${t.area} · prioridad ${t.prioridad}${cola}\n\nya está en el tablero. te aviso cuando quede listo.`,
+      );
       return json({ ok: true });
     }
 
