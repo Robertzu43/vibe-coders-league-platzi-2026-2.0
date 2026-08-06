@@ -27,6 +27,7 @@ out/
 
 # Superpowers
 .superpowers/
+.worktrees/
 
 # Logs
 *.log
