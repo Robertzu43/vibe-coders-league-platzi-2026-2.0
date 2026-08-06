@@ -13,6 +13,8 @@ construidos en la ventana en vivo.
 
 | # | Reto | Fecha | Estado |
 |---|------|-------|--------|
-| — | _(próximamente)_ | | |
+| 01 | [Cariño — Ahorra por quien amas](./reto-01) | 2026-07-23 | 🏆 Ganado |
+| 02 | [Anotado 🐝 — tickets por Telegram + IA](./reto-02) | 2026-07-30 | 🏆 Ganado |
+| 03 | [nexum — bosque infinito de investigación](./reto-03) | 2026-08-06 | Presentado |
 
 _La tabla se completa conforme avancen los retos en vivo._
