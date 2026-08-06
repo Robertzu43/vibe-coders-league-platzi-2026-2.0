@@ -1,7 +1,7 @@
 # Nexum Photorealistic Forest Design
 
 **Date:** 2026-08-06  
-**Status:** Approved for an isolated preview; production changes require a second explicit approval
+**Status:** Approved for implementation on an isolated preview branch; merging or deploying requires a second explicit approval
 
 ## Context
 
@@ -15,7 +15,7 @@ The current forest works, but its procedural SVG trees read as flat clusters of 
 - Preserve citation-based height, regional grouping, growth, hover enlargement, infinite horizontal loading, and click-to-open details.
 - Keep natural bark and foliage colors.
 - Preserve region identity through a restrained colored moonlight rim.
-- Show an isolated interactive preview and obtain explicit approval before changing the production page.
+- Show the complete change on an isolated Git branch and obtain explicit approval before merging it into `main` or deploying it.
 - Keep the production asset small enough for a fast first forest render.
 
 ## Non-goals
@@ -43,7 +43,7 @@ This could add depth, fog, and parallax, but it would replace the existing DOM i
 
 ### Tree assets
 
-- Use one locally bundled transparent WebP atlas containing exactly six distinct broadleaf trees.
+- Use one locally bundled 1536 × 1024 transparent WebP atlas arranged as a 3 × 2 grid containing exactly six distinct broadleaf trees.
 - Trees share the same nighttime direction of light and realistic color treatment, but vary in trunk shape, branching, canopy outline, density, and age.
 - The atlas must contain no ground, labels, borders, shadows baked into the background, or overlapping trees.
 - Target a maximum atlas size of 1.2 MB. Reusing one cached asset prevents the infinite forest from creating additional image requests.
@@ -76,7 +76,7 @@ This could add depth, fog, and parallax, but it would replace the existing DOM i
 
 ## Component Boundary
 
-Only the tree-specific CSS and the `arbolSVG` rendering function may change during production integration. Rename the renderer to `arbolHTML`; `plantar` must continue receiving equivalent clickable markup.
+The preview branch may add `public/forest-trees.js` to isolate the deterministic renderer and make it testable. In `public/index.html`, only the tree-specific CSS, renderer loading, and call from `plantar` may change. The exported renderer is named `arbolHTML`; `plantar` must continue receiving equivalent clickable markup.
 
 The following remain unchanged:
 
@@ -91,7 +91,7 @@ The following remain unchanged:
 
 ## Preview Gate
 
-The first implementation is an isolated preview in the thread-owned visualization directory, not in `live/reto-03/public/index.html`.
+The complete implementation lives on `codex/nexum-realistic-trees-preview`. The `main` branch and deployed site remain unchanged until the user explicitly approves merging the preview branch.
 
 The preview will contain:
 
@@ -103,17 +103,16 @@ The preview will contain:
 - clickable sample trees with representative detail content;
 - desktop and narrow-screen layouts.
 
-The preview may be revised repeatedly. Production integration begins only after the user explicitly approves this preview in Codex.
+The branch also includes a standalone `public/forest-preview.html` harness so the final renderer can be reviewed immediately with representative data. The preview may be revised repeatedly. Merging or deploying begins only after the user explicitly approves the branch preview in Codex.
 
 ## Production Integration
 
 After preview approval:
 
-1. Copy the optimized atlas into `live/reto-03/public/assets/`.
-2. Replace only the tree renderer and related tree CSS in `public/index.html`.
+1. Re-run functional and visual verification on the preview branch.
+2. Merge or cherry-pick the approved branch into `main` only with explicit user approval.
 3. Keep all current data and UI functions intact.
-4. Run local functional and visual verification.
-5. Do not deploy unless deployment is separately requested.
+4. Do not deploy unless deployment is separately requested.
 
 ## Failure Handling
 
@@ -151,7 +150,7 @@ After preview approval:
 
 ## Acceptance Criteria
 
-- The user approves the isolated preview before production files change.
+- The user approves the isolated branch preview before it is merged into `main` or deployed.
 - Trees look photorealistic and visually compatible with the hero video.
 - Region colors appear as subtle moonlight rims, not canopy tints.
 - All existing Nexum functionality remains available and behaves as before.
