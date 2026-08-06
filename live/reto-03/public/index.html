@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>nexum — bosque infinito de investigación</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  body { font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-font-smoothing: antialiased; background: #04070a; }
+  .silk { font-family: 'Silkscreen', cursive; }
+  .cta-grad { background: linear-gradient(to bottom, #2B2B2B, #101010); }
+  .cta-grad:hover { opacity: .9; }
+  .glass { background: rgba(255,255,255,.10); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+  /* Fallback nocturno si el video externo falla */
+  #cielo { background: radial-gradient(1200px 600px at 70% -10%, #0c2233 0%, #04070a 55%), #04070a; }
+
+  /* Árboles: crecen desde el suelo, y vuelven a crecer al pasar el cursor */
+  .arbol { transform: scaleY(0); transform-origin: bottom center; opacity: 0; flex: none;
+    transition: transform .9s cubic-bezier(.2,1.4,.3,1), opacity .4s ease, filter .3s ease; cursor: pointer; }
+  .arbol.crecido { transform: scaleY(1); opacity: 1; }
+  .arbol.crecido:hover { transform: scaleY(1.14) scaleX(1.05);
+    filter: drop-shadow(0 0 16px rgba(255,240,180,.5)) brightness(1.2); }
+
+  #sueloWrap { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.25) transparent; overflow-anchor: none;
+    background: linear-gradient(to bottom, transparent calc(100% - 130px), rgba(16,26,16,.85) calc(100% - 70px), #0a120b 100%); }
+  body { overflow-anchor: none; }
+
+  .niebla { position: absolute; left: -20%; width: 140%; height: 130px; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(150,180,215,.11), transparent 70%);
+    filter: blur(26px); animation: derivar 46s ease-in-out infinite alternate; }
+  @keyframes derivar { from { transform: translateX(-4%); } to { transform: translateX(5%); } }
+
+  .luciernaga { position: absolute; width: 3px; height: 3px; border-radius: 50%;
+    background: #ffe9a3; box-shadow: 0 0 8px 2px rgba(255,233,163,.7);
+    animation: flotar linear infinite; opacity: 0; }
+  @keyframes flotar {
+    0% { transform: translate(0,0); opacity: 0; }
+    15% { opacity: .9; } 50% { transform: translate(28px,-46px); opacity: .35; }
+    85% { opacity: .8; } 100% { transform: translate(-12px,-90px); opacity: 0; }
+  }
+
+  #panelDetalle { transition: transform .5s cubic-bezier(.16,1,.3,1); }
+  .entra { animation: subir .7s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes subir { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+  .pulso { animation: pulsar 1.5s ease-out; border-radius: 9999px; }
+  @keyframes pulsar {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    30% { box-shadow: 0 0 0 10px rgba(255,255,255,.35); }
+    60% { box-shadow: 0 0 0 4px rgba(255,255,255,.2); }
+  }
+</style>
+</head>
+<body class="text-white">
+
+<!-- Filtros SVG compartidos: turbulencia = borde de follaje orgánico -->
+<svg width="0" height="0" class="absolute">
+  <defs>
+    <filter id="foliaje" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="4" seed="7" result="ruido"/>
+      <feDisplacementMap in="SourceGraphic" in2="ruido" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- copa realista: silueta orgánica + borde de hojas finas + moteado de luz solar -->
+    <filter id="copaReal" x="-25%" y="-25%" width="150%" height="150%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="4" seed="7" result="grande"/>
+      <feDisplacementMap in="SourceGraphic" in2="grande" scale="16" result="forma"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="3" result="fino"/>
+      <feDisplacementMap in="forma" in2="fino" scale="7" result="hoja"/>
+      <feDiffuseLighting in="fino" lighting-color="#ffffff" surfaceScale="2.6" diffuseConstant="1.05" result="luz">
+        <feDistantLight azimuth="230" elevation="62"/>
+      </feDiffuseLighting>
+      <feComposite in="luz" in2="hoja" operator="in" result="luzRec"/>
+      <feBlend in="hoja" in2="luzRec" mode="multiply"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero" class="relative h-screen w-full overflow-hidden">
+  <div id="cielo" class="absolute inset-0"></div>
+  <video id="video" class="absolute inset-0 h-full w-full object-cover" autoplay loop muted playsinline
+    src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260803_192301_9231ed6b-c55c-4a48-909c-4ebe11cf2e11.mp4"></video>
+  <div class="absolute inset-0 bg-black/25"></div>
+  <div class="absolute inset-x-0 bottom-0 h-72" style="background: linear-gradient(to bottom, transparent, rgba(4,7,10,.55) 45%, #04070a 100%)"></div>
+
+  <div class="relative z-10 flex h-full flex-col">
+    <!-- Nav -->
+    <nav class="flex items-center justify-between px-5 py-5 sm:px-8 sm:py-6 lg:px-12">
+      <div class="flex items-center gap-2">
+        <svg width="24" height="24" viewBox="0 0 256 256" class="fill-white"><path d="M 128 128 C 128 198.692 70.692 256 0 256 C 0 185.308 57.308 128 128 128 Z M 128 128 C 198.692 128 256 185.308 256 256 C 185.308 256 128 198.692 128 128 Z M 0 0 C 70.692 0 128 57.308 128 128 C 57.308 128 0 70.692 0 0 Z M 256 0 C 256 70.692 198.692 128 128 128 C 128 57.308 185.308 0 256 0 Z"/></svg>
+        <span class="text-lg font-semibold">nexum</span>
+      </div>
+      <div class="hidden md:flex items-center gap-3">
+        <div class="flex items-center gap-1 rounded-full glass px-1.5 py-1.5">
+          <button onclick="abrirMetodo()" class="rounded-full px-4 py-1.5 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white transition-colors">Método</button>
+        </div>
+        <button onclick="document.getElementById('tema').focus()" class="cta-grad self-stretch rounded-full px-5 text-sm font-medium text-white transition-opacity">Investigar</button>
+      </div>
+    </nav>
+
+    <!-- Contenido anclado abajo -->
+    <main class="mt-auto flex flex-col gap-6 px-5 pb-8 sm:gap-8 sm:px-8 sm:pb-12 lg:flex-row lg:items-end lg:justify-between lg:px-12 lg:pb-16">
+      <div class="max-w-xl">
+        <h1 class="text-3xl sm:text-4xl lg:text-[3.5rem] font-semibold leading-[1.1] tracking-tight">
+          Planta una pregunta,<br/>cosecha un bosque de conocimiento
+        </h1>
+        <form id="formulario" class="mt-6 sm:mt-8 flex flex-col gap-3 sm:inline-flex sm:flex-row sm:items-center sm:rounded-full sm:bg-white sm:p-1.5">
+          <input id="tema" type="text" required placeholder="Escribe tu tema de investigación"
+            class="rounded-full bg-white px-5 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none sm:w-72 sm:rounded-none sm:bg-transparent sm:px-4 sm:py-2" />
+          <button id="btnInvestigar" type="submit" class="cta-grad rounded-full px-6 py-3 sm:py-2.5 text-sm font-medium text-white transition-opacity">Investigar</button>
+        </form>
+        <p class="mt-3 text-xs text-white/60">Fuentes académicas reales · citaciones verificables · DOI en cada resultado</p>
+      </div>
+
+      <div class="flex w-full flex-col gap-4 sm:flex-row lg:w-auto lg:gap-5">
+        <div class="glass flex flex-col justify-between rounded-2xl p-5 sm:p-6 sm:w-64">
+          <div class="silk text-3xl sm:text-4xl font-normal tracking-tight">254M+</div>
+          <p class="mt-3 sm:mt-4 text-sm leading-relaxed text-white/70">Papers académicos indexados. Cada árbol del bosque es una fuente real.</p>
+        </div>
+        <div class="glass rounded-2xl p-5 sm:p-6 sm:w-64">
+          <div class="mb-3 sm:mb-4 flex items-center gap-2">
+            <div class="flex h-6 w-6 items-center justify-center rounded bg-black text-sm font-bold text-white">N</div>
+            <span class="text-sm font-semibold">Rigor primero</span>
+          </div>
+          <p class="text-sm leading-relaxed text-white/80">"La altura de cada árbol son sus citaciones. El color, su universidad. Nada es inventado."</p>
+          <div class="mt-4 sm:mt-5 flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-xs font-bold">DOI</div>
+            <div>
+              <div class="text-sm font-semibold">Toda fuente, clickeable</div>
+              <div class="text-xs text-white/60">citación APA incluida</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ══════════ EL BOSQUE ══════════ -->
+<section id="bosque" class="relative hidden min-h-screen overflow-hidden">
+  <div class="pointer-events-none absolute inset-0" id="cieloBosque"
+    style="background: linear-gradient(to bottom, #04070a 0%, #0a1626 40%, #08121c 72%, #05090d 100%)"></div>
+  <svg id="fondoBosque" class="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"></svg>
+  <div class="niebla" style="bottom: 22%"></div>
+  <div class="niebla" style="bottom: 8%; animation-delay: -20s; animation-duration: 60s"></div>
+  <div id="luciernagas" class="pointer-events-none absolute inset-0"></div>
+
+  <div class="relative z-10 mx-auto max-w-6xl px-5 pt-14 sm:px-8">
+    <!-- Síntesis -->
+    <div class="entra glass rounded-2xl p-6 sm:p-8">
+      <div class="flex flex-wrap items-baseline justify-between gap-3">
+        <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight" id="tituloTema"></h2>
+        <div class="silk text-sm text-white/70" id="statsLinea"></div>
+      </div>
+      <p id="resumen" class="mt-4 text-sm sm:text-base leading-relaxed text-white/85"></p>
+      <div id="hallazgos" class="mt-4 flex flex-wrap gap-2"></div>
+      <div id="leyenda" class="mt-5 flex flex-wrap items-center gap-2 border-t border-white/10 pt-4 text-xs text-white/60"></div>
+    </div>
+
+    <p class="entra mt-8 text-center text-xs uppercase tracking-[.3em] text-white/40">altura = citaciones · arboleda = región del mundo · clic en un árbol para ver la fuente</p>
+  </div>
+
+  <!-- Suelo del bosque: una sola línea, scroll horizontal infinito -->
+  <div class="relative z-10">
+    <div id="sueloWrap" class="overflow-x-auto overflow-y-hidden">
+      <div id="suelo" class="flex w-max items-end gap-3 px-10 pt-10 pb-9" style="min-height: 500px"></div>
+    </div>
+    <p class="pt-4 pb-2 text-center text-xs uppercase tracking-[.3em] text-white/40">desliza → el bosque es infinito</p>
+    <p id="cargando" class="hidden pb-6 text-center text-sm text-white/50">el bosque sigue creciendo…</p>
+  </div>
+
+  <div class="relative z-10 h-16" style="background: linear-gradient(to top, #020403, transparent)"></div>
+</section>
+
+<!-- Modal: Método -->
+<div id="modalMetodo" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-5 backdrop-blur-md" onclick="if(event.target===this)cerrarMetodo()">
+  <div class="glass entra w-full max-w-lg rounded-2xl p-7 sm:p-9">
+    <div class="mb-4 flex items-center justify-between">
+      <h3 class="text-xl font-semibold tracking-tight">El método nexum</h3>
+      <button onclick="cerrarMetodo()" class="glass flex h-9 w-9 items-center justify-center rounded-full text-white/80 hover:text-white">✕</button>
+    </div>
+    <ol class="space-y-4 text-sm leading-relaxed text-white/85">
+      <li class="flex gap-3"><span class="silk shrink-0 text-white/60">01</span> Tu tema se busca en <b>OpenAlex</b>, el índice académico abierto más grande del mundo: 254M+ papers de universidades y revistas revisadas por pares.</li>
+      <li class="flex gap-3"><span class="silk shrink-0 text-white/60">02</span> Las fuentes se ordenan por <b>citaciones reales</b> — la moneda de la ciencia. Cada árbol trae universidad, revista, año y <b>DOI verificable</b>.</li>
+      <li class="flex gap-3"><span class="silk shrink-0 text-white/60">03</span> La IA <b>solo sintetiza</b> lo que dicen los papers más citados — nunca inventa fuentes. Si la IA falla, el bosque crece igual con los datos crudos.</li>
+    </ol>
+    <p class="mt-6 border-t border-white/10 pt-4 text-xs text-white/50">Rigor no es un adjetivo: es que puedas hacer clic y llegar al paper.</p>
+  </div>
+</div>
+
+<!-- Tarjeta flotante al pasar el cursor -->
+<div id="miniInfo" class="pointer-events-none fixed z-40 hidden w-72 rounded-xl bg-black/85 p-4 backdrop-blur-xl shadow-2xl"></div>
+
+<!-- Panel de detalle (fuente) -->
+<div id="panelDetalle" class="fixed right-0 top-0 z-50 h-full w-full max-w-md translate-x-full overflow-y-auto bg-black/90 p-6 backdrop-blur-xl sm:p-8">
+  <button onclick="cerrarPanel()" class="glass mb-6 flex h-10 w-10 items-center justify-center rounded-full text-white/80 hover:text-white">✕</button>
+  <div id="detalleContenido"></div>
+</div>
+
+<script>
+// ── Nav: al bosque si existe; si no, al input (con pulso visible)
+function irAlBosque(destino) {
+  const bosque = document.getElementById('bosque');
+  if (bosque.classList.contains('hidden')) {
+    const form = document.getElementById('formulario');
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    form.classList.add('pulso');
+    setTimeout(() => form.classList.remove('pulso'), 1600);
+    document.getElementById('tema').focus({ preventScroll: true });
+    return;
+  }
+  document.getElementById(destino === 'suelo' ? 'suelo' : 'bosque').scrollIntoView({ behavior: 'smooth' });
+}
+function abrirMetodo() { const m = document.getElementById('modalMetodo'); m.classList.remove('hidden'); m.classList.add('flex'); }
+function cerrarMetodo() { const m = document.getElementById('modalMetodo'); m.classList.add('hidden'); m.classList.remove('flex'); }
+
+// ── Fallback de video: si el CDN externo falla, queda el cielo nocturno propio
+const video = document.getElementById('video');
+video.addEventListener('error', () => video.remove());
+
+// ── Arboledas: agrupación por región académica (país real de OpenAlex)
+const REGIONES = [
+  { id: 'ivy',   nombre: '🏛 Ivy League',     color: '#e3b34c' },
+  { id: 'na',    nombre: '🍁 Norteamérica',   color: '#38bdf8' },
+  { id: 'eu',    nombre: '🏰 Europa',         color: '#c084fc' },
+  { id: 'latam', nombre: '🌎 Latinoamérica',  color: '#4ade80' },
+  { id: 'asia',  nombre: '🌏 Asia & Oceanía', color: '#f472b6' },
+  { id: 'otros', nombre: '🌍 Otras regiones', color: '#2dd4bf' },
+];
+const IVY = ['harvard','yale','princeton','columbia university','cornell','brown university','dartmouth','university of pennsylvania'];
+const LATAM = new Set(['MX','GT','SV','HN','NI','CR','PA','CO','VE','EC','PE','BO','CL','AR','UY','PY','BR','CU','DO','PR']);
+const EUROPA = new Set(['GB','IE','FR','DE','ES','PT','IT','NL','BE','CH','AT','SE','NO','DK','FI','PL','CZ','SK','GR','HU','RO','BG','HR','RS','UA','RU','EE','LV','LT','SI','IS','LU']);
+const ASIA = new Set(['CN','JP','KR','IN','SG','TW','HK','MY','TH','ID','VN','PH','AU','NZ','IL','SA','AE','QA','PK','BD','IR','KZ']);
+
+function regionDe(w) {
+  const n = (w.institucion || '').toLowerCase();
+  if (IVY.some(u => n.includes(u))) return REGIONES[0];
+  const p = w.pais;
+  if (p === 'US' || p === 'CA') return REGIONES[1];
+  if (EUROPA.has(p)) return REGIONES[2];
+  if (LATAM.has(p)) return REGIONES[3];
+  if (ASIA.has(p)) return REGIONES[4];
+  return REGIONES[5];
+}
+
+function prepararArboledas() {
+  document.getElementById('suelo').innerHTML = REGIONES.map(r => `
+    <div class="arboleda flex-col justify-end gap-3" data-region="${r.id}" style="display:none">
+      <div id="arboleda-${r.id}" class="flex items-end gap-3 px-3"></div>
+      <div class="mx-3 flex items-center justify-center gap-2 rounded-full glass px-4 py-1.5 text-xs uppercase tracking-widest text-white/80"
+        style="box-shadow: inset 0 2px 0 ${r.color}66">
+        ${r.nombre} · <span id="contador-${r.id}" class="silk">0</span>
+      </div>
+    </div>`).join('');
+}
+
+const estado = { tema: '', page: 1, works: [], cargando: false, fin: false };
+
+// ── OpenAlex directo desde el navegador (CORS abierto, sin rate-limit de IP compartida)
+function abstractDeInvertido(inv) {
+  if (!inv) return '';
+  const palabras = [];
+  for (const [palabra, posiciones] of Object.entries(inv))
+    for (const p of posiciones) palabras[p] = palabra;
+  return palabras.join(' ');
+}
+
+function mapWork(w) {
+  const auths = (w.authorships ?? []).slice(0, 3);
+  const inst = auths.flatMap(a => a.institutions ?? [])[0];
+  return {
+    titulo: w.title ?? 'Sin título',
+    anio: w.publication_year ?? null,
+    citas: w.cited_by_count ?? 0,
+    doi: w.doi ?? '',
+    autores: auths.map(a => a.author?.display_name).filter(Boolean),
+    institucion: inst?.display_name ?? 'Institución independiente',
+    pais: inst?.country_code ?? '',
+    revista: w.primary_location?.source?.display_name ?? '',
+    abstract: abstractDeInvertido(w.abstract_inverted_index).slice(0, 420),
+  };
+}
+
+async function buscarOpenAlex(tema, page) {
+  const u = new URL('https://api.openalex.org/works');
+  u.searchParams.set('search', tema);
+  u.searchParams.set('per-page', '24');
+  u.searchParams.set('page', String(page));
+  // sin sort: OpenAlex ordena por RELEVANCIA al tema (con cited_by_count traía
+  // los papers más citados que apenas mencionan la palabra — tema equivocado)
+  u.searchParams.set('filter', 'has_abstract:true');
+  u.searchParams.set('mailto', 'robertzu43@gmail.com');
+  const r = await fetch(u);
+  if (!r.ok) throw new Error(`OpenAlex HTTP ${r.status}`);
+  const d = await r.json();
+  return { total: d.meta?.count ?? 0, works: (d.results ?? []).map(mapWork) };
+}
+
+// ── Árbol SVG procedural: secuoya realista, altura por log de citaciones
+// rng con semilla estable por índice: el mismo árbol siempre se ve igual
+function rngDe(semilla) {
+  let s = semilla * 2654435761 >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+
+function arbolSVG(w, i) {
+  const citas = w.citas || 0;
+  const rnd = rngDe(i + 7);
+  const t = Math.min(1, Math.log10(citas + 1) / 4);            // 0..1 (10k citas ≈ máximo)
+  const alto = Math.round(100 + Math.pow(t, 0.85) * 340);      // 100–440px: contraste fuerte
+  const ancho = Math.round(alto * (0.62 + rnd() * 0.12));      // copa ancha, proporción de árbol frondoso
+  const cx = ancho / 2;
+  const color = regionDe(w).color;
+
+  // Copa: centro y radio — el tronco ocupa el tercio inferior, la copa los 2/3 superiores
+  const copaCY = alto * 0.36, copaRX = cx * 0.94, copaRY = alto * 0.30;
+  const sueloY = alto - 4;
+  const baseW = Math.max(4, alto * 0.032);
+
+  // Sombra en el pasto
+  const sombra = `<ellipse cx="${cx}" cy="${sueloY}" rx="${copaRX * .8}" ry="${4 + t * 4}" fill="#000" opacity=".3"/>`;
+
+  // Tronco claro con vetas y raíces acampanadas (como las referencias)
+  const topY = alto * 0.56;
+  const tronco = `
+    <path d="M ${cx - baseW*2.6} ${sueloY} Q ${cx - baseW*1.1} ${sueloY - alto*.05} ${cx - baseW*.75} ${alto*.75}
+             L ${cx - baseW*.55} ${topY} L ${cx + baseW*.55} ${topY} L ${cx + baseW*.75} ${alto*.75}
+             Q ${cx + baseW*1.1} ${sueloY - alto*.05} ${cx + baseW*2.6} ${sueloY} Z" fill="#5d4a33"/>
+    <path d="M ${cx - baseW*.1} ${sueloY} Q ${cx + baseW*.15} ${alto*.78} ${cx + baseW*.05} ${topY}
+             L ${cx + baseW*.55} ${topY} L ${cx + baseW*.75} ${alto*.75}
+             Q ${cx + baseW*1.05} ${sueloY - alto*.04} ${cx + baseW*2.2} ${sueloY} Z" fill="#8a7357"/>
+    <path d="M ${cx - baseW*.45} ${sueloY} Q ${cx - baseW*.3} ${alto*.8} ${cx - baseW*.35} ${topY + alto*.03}" stroke="#453520" stroke-width="1.2" fill="none" opacity=".7"/>
+    <path d="M ${cx + baseW*.3} ${sueloY} Q ${cx + baseW*.45} ${alto*.82} ${cx + baseW*.32} ${topY + alto*.05}" stroke="#453520" stroke-width="1" fill="none" opacity=".5"/>`;
+
+  // Esqueleto de ramas: del tronco hacia puntos de la copa (se ven entre los racimos)
+  const puntas = [];
+  const nRamas = 4 + Math.round(rnd() * 2);
+  let ramas = '';
+  for (let r = 0; r < nRamas; r++) {
+    const ex = cx + (rnd() - .5) * 2 * copaRX * .72;
+    const ey = copaCY - copaRY * .1 + (rnd() - .5) * 2 * copaRY * .55;
+    const mx = cx + (ex - cx) * .35, my = topY - (topY - ey) * .45;
+    ramas += `<path d="M ${cx} ${topY + alto*.02} Q ${mx} ${my} ${ex} ${ey}" stroke="#4a3520" stroke-width="${baseW*.55}" fill="none" stroke-linecap="round"/>
+      <path d="M ${(cx+mx)/2} ${(topY+my)/2} Q ${mx + (rnd()-.5)*20} ${my - 10} ${ex + (rnd()-.5)*26} ${ey + (rnd()-.5)*20}" stroke="#4a3520" stroke-width="${baseW*.3}" fill="none" stroke-linecap="round"/>`;
+    puntas.push([ex, ey]);
+    if (rnd() > .4) puntas.push([ex + (rnd()-.5)*copaRX*.4, ey - rnd()*copaRY*.3]);
+  }
+  puntas.push([cx, copaCY - copaRY*.55], [cx - copaRX*.35, copaCY + copaRY*.35], [cx + copaRX*.38, copaCY + copaRY*.3],
+    [cx, copaCY], [cx - copaRX*.5, copaCY - copaRY*.15], [cx + copaRX*.5, copaCY - copaRY*.1], [cx, copaCY + copaRY*.4]);
+
+  // Copa densa en 4 verdes vivos; el filtro copaReal le da borde de hojas y moteado de sol
+  const T = { dark: '#2b511c', mid: '#3f7a1e', light: '#5da329', hi: '#82c53a' };
+  let capaDark = '', capaMid = '', capaLight = '', capaHi = '';
+  for (const [px, py] of puntas) {
+    const rc = copaRX * (0.22 + rnd() * 0.14) * (py > copaCY ? 1.15 : 1);
+    const ry = rc * .72;
+    capaDark  += `<ellipse cx="${px}" cy="${py + rc*.12}" rx="${rc}" ry="${ry}" fill="${T.dark}"/>`;
+    capaMid   += `<ellipse cx="${px - rc*.06}" cy="${py - rc*.08}" rx="${rc*.85}" ry="${ry*.8}" fill="${T.mid}"/>`;
+    capaLight += `<ellipse cx="${px - rc*.14}" cy="${py - rc*.26}" rx="${rc*.58}" ry="${ry*.55}" fill="${T.light}"/>`;
+    if (rnd() > .3) capaHi += `<ellipse cx="${px - rc*.2}" cy="${py - rc*.42}" rx="${rc*.32}" ry="${ry*.3}" fill="${T.hi}"/>`;
+  }
+  const copa =
+    `<g filter="url(#copaReal)">${capaDark}${capaMid}${capaLight}${capaHi}</g>` +
+    `<g filter="url(#foliaje)" opacity=".12"><ellipse cx="${cx}" cy="${copaCY}" rx="${copaRX*.9}" ry="${copaRY*.9}" fill="${color}"/></g>`;
+
+  return `<svg class="arbol" data-i="${i}" width="${ancho}" height="${alto}" viewBox="0 0 ${ancho} ${alto}"
+    style="transition-delay:${(i % 24) * 70}ms">
+    ${sombra}${tronco}${ramas}${copa}
+  </svg>`;
+}
+
+function plantar(works, desde) {
+  works.forEach((w, j) => {
+    const region = regionDe(w);
+    const fila = document.getElementById('arboleda-' + region.id);
+    fila.closest('.arboleda').style.display = 'flex';
+    fila.insertAdjacentHTML('beforeend', arbolSVG(w, desde + j));
+    const c = document.getElementById('contador-' + region.id);
+    c.textContent = Number(c.textContent) + 1;
+  });
+  requestAnimationFrame(() =>
+    document.querySelectorAll('#suelo .arbol:not(.crecido)').forEach(a => a.classList.add('crecido')));
+}
+
+// ── Cita APA construida con los datos reales
+function citaAPA(w) {
+  const autores = w.autores.length ? w.autores.join(', ') : 'Autor desconocido';
+  return `${autores} (${w.anio ?? 's.f.'}). ${w.titulo}. ${w.revista ? `<i>${w.revista}</i>. ` : ''}${w.doi}`;
+}
+
+let panelI = -1;
+function abrirPanel(i) {
+  if (i === panelI) return;
+  panelI = i;
+  const w = estado.works[i];
+  const region = regionDe(w);
+  document.getElementById('detalleContenido').innerHTML = `
+    <div class="mb-2 text-xs uppercase tracking-widest" style="color:${region.color}">${w.institucion} · ${region.nombre}</div>
+    <h3 class="text-xl font-semibold leading-snug">${w.titulo}</h3>
+    <div class="mt-3 flex flex-wrap gap-2 text-xs text-white/70">
+      <span class="glass rounded-full px-3 py-1">${w.anio ?? 's.f.'}</span>
+      <span class="glass rounded-full px-3 py-1 silk">${(w.citas).toLocaleString('es')} citas</span>
+      ${w.revista ? `<span class="glass rounded-full px-3 py-1">${w.revista}</span>` : ''}
+    </div>
+    ${w.abstract ? `<p class="mt-5 text-sm leading-relaxed text-white/80">${w.abstract}…</p>` : ''}
+    <div class="glass mt-6 rounded-xl p-4 text-xs leading-relaxed text-white/80">
+      <div class="mb-2 font-semibold text-white">Cita APA</div>
+      <div id="textoCita">${citaAPA(w)}</div>
+    </div>
+    <div class="mt-4 flex gap-3">
+      <button onclick="copiarCita(this)" class="cta-grad rounded-full px-5 py-2.5 text-sm font-medium">Copiar cita</button>
+      ${w.doi ? `<a href="${w.doi}" target="_blank" class="glass rounded-full px-5 py-2.5 text-sm font-medium hover:bg-white/20">Ver fuente ↗</a>` : ''}
+    </div>`;
+  document.getElementById('panelDetalle').classList.remove('translate-x-full');
+}
+function cerrarPanel() { document.getElementById('panelDetalle').classList.add('translate-x-full'); panelI = -1; }
+function copiarCita(btn) {
+  navigator.clipboard.writeText(document.getElementById('textoCita').innerText);
+  btn.textContent = 'Copiada ✓'; setTimeout(() => (btn.textContent = 'Copiar cita'), 1500);
+}
+
+document.getElementById('suelo').addEventListener('click', (e) => {
+  const a = e.target.closest('.arbol'); if (a) abrirPanel(Number(a.dataset.i));
+});
+// hover: tarjeta flotante junto al cursor (no tapa el bosque); click = panel completo
+let miniI = -1;
+const mini = document.getElementById('miniInfo');
+document.getElementById('suelo').addEventListener('mousemove', (e) => {
+  const a = e.target.closest('.arbol');
+  if (!a) { mini.classList.add('hidden'); miniI = -1; return; }
+  const i = Number(a.dataset.i);
+  if (i !== miniI) {
+    miniI = i;
+    const w = estado.works[i];
+    const region = regionDe(w);
+    mini.innerHTML = `
+      <div class="text-[10px] uppercase tracking-widest" style="color:${region.color}">${w.institucion}</div>
+      <div class="mt-1 text-sm font-semibold leading-snug">${w.titulo}</div>
+      <div class="mt-1.5 text-xs text-white/60">${w.anio ?? 's.f.'} · <span class="silk">${w.citas.toLocaleString('es')}</span> citas · clic para la fuente</div>`;
+  }
+  mini.classList.remove('hidden');
+  const x = Math.min(e.clientX + 18, window.innerWidth - 300);
+  mini.style.left = x + 'px';
+  mini.style.top = Math.max(12, e.clientY - 90) + 'px';
+});
+document.getElementById('suelo').addEventListener('mouseleave', () => { mini.classList.add('hidden'); miniI = -1; });
+
+// ── Fondo del bosque: luna, estrellas y siluetas lejanas con bruma
+(function () {
+  const rnd = rngDe(99);
+  let s = `<defs>
+    <radialGradient id="halo"><stop offset="0%" stop-color="#dceaff" stop-opacity=".85"/>
+      <stop offset="20%" stop-color="#b8d0f2" stop-opacity=".28"/><stop offset="100%" stop-color="#b8d0f2" stop-opacity="0"/></radialGradient>
+  </defs>`;
+  for (let i = 0; i < 80; i++)
+    s += `<circle cx="${rnd() * 1600}" cy="${rnd() * 400}" r="${0.5 + rnd() * 1.1}" fill="#cfe3ff" opacity="${0.12 + rnd() * 0.45}"/>`;
+  // tres líneas de bosque lejano: más clara y difusa = más lejos (perspectiva atmosférica)
+  const capas = [
+    { base: 600, copa: 55, fill: '#122234', blur: 4, op: .9 },
+    { base: 680, copa: 75, fill: '#0c1826', blur: 2, op: .95 },
+    { base: 760, copa: 95, fill: '#070f18', blur: 0, op: 1 },
+  ];
+  for (const c of capas) {
+    let p = `M 0 900 L 0 ${c.base}`;
+    let x = 0;
+    while (x < 1600) {
+      const w = 26 + rnd() * 46;
+      const pico = c.base - c.copa * (0.35 + rnd() * 0.65);
+      p += ` Q ${x + w * .3} ${pico} ${x + w * .55} ${pico + 8 + rnd() * 14} Q ${x + w * .8} ${c.base - rnd() * 18} ${x + w} ${c.base - rnd() * 10}`;
+      x += w;
+    }
+    p += ` L 1600 900 Z`;
+    s += `<path d="${p}" fill="${c.fill}" opacity="${c.op}" ${c.blur ? `style="filter: blur(${c.blur}px)"` : ''}/>`;
+  }
+  document.getElementById('fondoBosque').innerHTML = s;
+})();
+
+// ── Luciérnagas
+(function () {
+  const cont = document.getElementById('luciernagas');
+  for (let i = 0; i < 22; i++) {
+    const f = document.createElement('div');
+    f.className = 'luciernaga';
+    f.style.left = Math.random() * 100 + '%';
+    f.style.top = 30 + Math.random() * 65 + '%';
+    f.style.animationDuration = 6 + Math.random() * 9 + 's';
+    f.style.animationDelay = Math.random() * 8 + 's';
+    cont.appendChild(f);
+  }
+})();
+
+// ── Búsqueda
+document.getElementById('formulario').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const tema = document.getElementById('tema').value.trim();
+  if (!tema || estado.cargando) return;
+  const btn = document.getElementById('btnInvestigar');
+  btn.textContent = 'Sembrando…'; btn.disabled = true; estado.cargando = true;
+  try {
+    const d = await buscarOpenAlex(tema, 1);
+    estado.tema = tema; estado.page = 1; estado.works = d.works; estado.fin = d.works.length < 24;
+
+    document.getElementById('tituloTema').textContent = tema;
+    document.getElementById('statsLinea').textContent =
+      `${d.total.toLocaleString('es')} papers · ${d.works.reduce((s, w) => s + w.citas, 0).toLocaleString('es')} citas en pantalla`;
+
+    document.getElementById('leyenda').innerHTML = REGIONES.map(r =>
+      `<span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:${r.color}"></span>${r.nombre.replace(/^\S+ /, '')}</span>`).join('');
+
+    prepararArboledas();
+    document.getElementById('bosque').classList.remove('hidden');
+    document.getElementById('bosque').scrollIntoView({ behavior: 'smooth' });
+
+    // 1º la IA lee y entrega el resumen; 2º recién ahí crece el bosque
+    const resumenEl = document.getElementById('resumen');
+    const pasos = [
+      '🌱 La IA está revisando OpenAlex y Google Scholar…',
+      '🔍 Contrastando fuentes, citaciones y universidades…',
+      '🌿 Sembrando tu respuesta…',
+    ];
+    let paso = 0;
+    resumenEl.textContent = pasos[0];
+    resumenEl.classList.add('animate-pulse');
+    const rotador = setInterval(() => { resumenEl.textContent = pasos[++paso % pasos.length]; }, 2200);
+    document.getElementById('hallazgos').innerHTML = '';
+    try {
+      const r = await fetch('/api/sintesis', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ tema, corpus: d.works.slice(0, 8) }),
+        signal: AbortSignal.timeout(20000),
+      });
+      if (!r.ok) throw new Error();
+      const s = await r.json();
+      resumenEl.textContent = s.resumen;
+      document.getElementById('hallazgos').innerHTML =
+        (s.hallazgos ?? []).map(h => `<span class="glass rounded-full px-3 py-1.5 text-xs text-white/85">🌱 ${h}</span>`).join('');
+    } catch {
+      resumenEl.textContent = 'Síntesis no disponible — abajo están las fuentes reales ordenadas por citaciones.';
+    }
+    clearInterval(rotador);
+    resumenEl.classList.remove('animate-pulse');
+    setTimeout(() => plantar(d.works, 0), 350);
+  } catch (err) {
+    alert('No pude investigar ese tema: ' + err.message);
+  } finally {
+    btn.textContent = 'Investigar'; btn.disabled = false; estado.cargando = false;
+  }
+});
+
+// ── Bosque infinito: deslizar a la derecha siembra más
+document.getElementById('sueloWrap').addEventListener('scroll', async (e) => {
+  const el = e.target;
+  if (el.scrollLeft + el.clientWidth < el.scrollWidth - 500) return;
+  if (estado.cargando || estado.fin || !estado.tema) return;
+  estado.cargando = true;
+  document.getElementById('cargando').classList.remove('hidden');
+  try {
+    const d = await buscarOpenAlex(estado.tema, estado.page + 1);
+    if (d.works.length) {
+      const desde = estado.works.length;
+      estado.works.push(...d.works); estado.page++;
+      plantar(d.works, desde);
+      if (d.works.length < 24) estado.fin = true;
+    } else estado.fin = true;
+  } catch { /* el bosque simplemente deja de crecer */ }
+  document.getElementById('cargando').classList.add('hidden');
+  estado.cargando = false;
+});
+</script>
+</body>
+</html>
