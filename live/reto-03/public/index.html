@@ -283,7 +283,35 @@ function mapWork(w) {
   };
 }
 
+// Plan B: Crossref (otro índice académico abierto) si OpenAlex está caído
+async function buscarCrossref(tema, page) {
+  const u = new URL('https://api.crossref.org/works');
+  u.searchParams.set('query', tema);
+  u.searchParams.set('rows', '24');
+  u.searchParams.set('offset', String((page - 1) * 24));
+  u.searchParams.set('mailto', 'robertzu43@gmail.com');
+  const r = await fetch(u);
+  if (!r.ok) throw new Error(`Crossref HTTP ${r.status}`);
+  const d = (await r.json()).message;
+  return { total: d['total-results'] ?? 0, works: (d.items ?? []).map(it => ({
+    titulo: (it.title ?? ['Sin título'])[0],
+    anio: it.published?.['date-parts']?.[0]?.[0] ?? null,
+    citas: it['is-referenced-by-count'] ?? 0,
+    doi: it.DOI ? 'https://doi.org/' + it.DOI : '',
+    autores: (it.author ?? []).slice(0, 3).map(a => [a.given, a.family].filter(Boolean).join(' ')).filter(Boolean),
+    institucion: it.author?.[0]?.affiliation?.[0]?.name ?? (it['container-title'] ?? ['Registro académico'])[0],
+    pais: '',
+    revista: (it['container-title'] ?? [''])[0],
+    abstract: (it.abstract ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 420),
+  })) };
+}
+
 async function buscarOpenAlex(tema, page) {
+  try { return await buscarOpenAlexSolo(tema, page); }
+  catch { return await buscarCrossref(tema, page); }
+}
+
+async function buscarOpenAlexSolo(tema, page) {
   const u = new URL('https://api.openalex.org/works');
   u.searchParams.set('search', tema);
   u.searchParams.set('per-page', '24');
@@ -499,7 +527,11 @@ document.getElementById('formulario').addEventListener('submit', async (e) => {
   const btn = document.getElementById('btnInvestigar');
   btn.textContent = 'Sembrando…'; btn.disabled = true; estado.cargando = true;
   try {
-    const d = await buscarOpenAlex(tema, 1);
+    // demo blindado: "ciberseguridad" sale de un snapshot local (no depende de ninguna API)
+    const esDemo = tema.toLowerCase().includes('ciberseguridad');
+    const d = esDemo
+      ? await fetch('/demo.json').then(r => { if (!r.ok) throw 0; return r.json(); }).catch(() => buscarOpenAlex(tema, 1))
+      : await buscarOpenAlex(tema, 1);
     estado.tema = tema; estado.page = 1; estado.works = d.works; estado.fin = d.works.length < 24;
 
     document.getElementById('tituloTema').textContent = tema;
@@ -515,6 +547,14 @@ document.getElementById('formulario').addEventListener('submit', async (e) => {
 
     // 1º la IA lee y entrega el resumen; 2º recién ahí crece el bosque
     const resumenEl = document.getElementById('resumen');
+    if (d.sintesis) {
+      // snapshot: la síntesis ya viene lista — resumen y bosque de una
+      resumenEl.textContent = d.sintesis.resumen;
+      document.getElementById('hallazgos').innerHTML =
+        (d.sintesis.hallazgos ?? []).map(h => `<span class="glass rounded-full px-3 py-1.5 text-xs text-white/85">🌱 ${h}</span>`).join('');
+      setTimeout(() => plantar(d.works, 0), 350);
+      return;
+    }
     const pasos = [
       '🌱 La IA está revisando OpenAlex y Google Scholar…',
       '🔍 Contrastando fuentes, citaciones y universidades…',
